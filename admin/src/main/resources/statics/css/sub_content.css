@@ -1,0 +1,26 @@
+@charset "utf-8";
+.sub-content{
+    padding:10px;
+}
+.searchForm{display:inline-block;margin-right: 10px;}
+[v-cloak] {
+    display: none;
+}
+.x-text-red{color:#FF5722;}
+.x-text-green{color:#5FB878;}
+.x-text-normal{color:#1E9FFF;}
+.x-text-orange{color:#FFB800;}
+.x-text-grey{color:#e2e2e2;}
+
+.x-tip{
+    display: inline-block;
+    height: 38px;
+    line-height: 38px;
+    color: #FF5722;
+}
+
+@media screen and (max-width: 825px) {
+    .sub-content{
+        width:800px;
+    }
+}

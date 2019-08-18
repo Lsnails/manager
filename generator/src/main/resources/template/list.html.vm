@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>${comments}</title>
+	#set($header='<#include "/header.html">')
+	#set($save='<#if shiro.hasPermission("'+${moduleName}+':'+${pathName}+':save")>')
+	#set($update='<#if shiro.hasPermission("'+${moduleName}+':'+${pathName}+':update")>')
+	#set($delete='<#if shiro.hasPermission("'+${moduleName}+':'+${pathName}+':delete")>')
+	#set($end='</#if>')
+	$header
+</head>
+<body  class="sub-content">
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+		<form class="layui-form searchForm" lay-filter="searchForm" action="">
+			<div class="layui-inline">
+				<input type="text" class="layui-input"   placeholder="">
+			</div>
+
+			<button type="button" class="layui-btn"  @click="query">查询</button>
+		</form>
+		<div class="layui-btn-group">
+			$save
+			<button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i></button>
+			$end
+			$update
+			<button class="layui-btn  " @click="update" title="修改"><i class="layui-icon layui-icon-edit"></i></button>
+			$end
+			$delete
+			<button class="layui-btn  " @click="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+			$end
+		</div>
+		<table id="listData" lay-filter="listData"></table>
+    </div>
+
+    <div v-show="!showList"  class="layui-card">
+		<div class="layui-card-header"><h3 class="x-card-title">{{title}}</h3><span @click="reload" class="x-pull-right"><i class="layui-icon layui-icon-close-fill x-closeCard"></i></span></div>
+		<div class="layui-card-body" >
+			<form class="layui-form"  lay-filter="myForm">
+			#foreach($column in $columns)
+			#if($column.columnName != $pk.columnName)
+			<div class="layui-form-item">
+				<label class="layui-form-label">${column.comments}</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="${classname}.${column.attrname}" placeholder="${column.comments}"/>
+				</div>
+			</div>
+			#end
+			#end
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="*" >确定</button>
+					<button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
+				</div>
+			</div>
+        	</form>
+		</div>
+    </div>
+</div>
+<script type="text/html" id="toptoolbar"></script>
+<script type="text/html" id="operationBar">
+    <a class="layui-btn layui-btn-sm"  lay-event="look" title="查看"><i class="layui-icon layui-icon-search"></i></a>
+</script>
+<script src="${request.contextPath}/statics/js/modules/${moduleName}/${pathName}.js?_${.now?long}"></script>
+</body>
+</html>

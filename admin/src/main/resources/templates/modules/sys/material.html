@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>素材管理</title>
+    <#include "/header.html">
+</head>
+<body  class="sub-content">
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+
+        <form class="layui-form searchForm" lay-filter="searchForm" action="">
+            <div class="layui-inline">
+                <input type="text" class="layui-input" v-model="uploadFiles.newFileName" @keyup.enter="query" placeholder="新文件名稱">
+            </div>
+            <button class="layui-btn"  @click="query">查询</button>
+        </form>
+
+        <div class="layui-btn-group">
+<!-- 	<#if shiro.hasPermission("system:material:save")>
+        <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+        </#if>
+        <#if shiro.hasPermission("system:material:update")>
+        <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+        </#if> -->
+        <#if shiro.hasPermission("system:material:delete")>
+            <button class="layui-btn " @click="del"><i class="layui-icon layui-icon-delete"></i></button>
+        </#if>
+        </div>
+        <table id="listData" lay-filter="listData"></table>
+    </div>
+
+    <div v-show="!showList"  class="layui-card">
+        <div class="layui-card-header">{{title}}</div>
+        <div class="layui-card-body">
+        <form class="form-horizontal" novalidate>
+					<div class="layui-form-item">
+                        <label class="layui-form-label">原文件名稱</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="uploadFiles.oldName" placeholder="原文件名稱"/>
+                        </div>
+                    </div>
+		            <div class="layui-form-item">
+                        <label class="layui-form-label">文件大小</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="uploadFiles.fileSize" placeholder="文件大小"/>
+                        </div>
+                    </div>
+		            <div class="layui-form-item">
+                        <label class="layui-form-label">文件類型</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="uploadFiles.fileType" placeholder="文件類型"/>
+                        </div>
+                    </div>
+		            <div class="layui-form-item">
+                        <label class="layui-form-label">文件服務器路徑</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="uploadFiles.fileServerPath" placeholder="文件服務器路徑"/>
+                        </div>
+                    </div>
+		            <div class="layui-form-item">
+                        <label class="layui-form-label">新文件名稱</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="uploadFiles.newFileName" placeholder="新文件名稱"/>
+                        </div>
+                    </div>
+		            <div class="layui-form-item">
+                        <label class="layui-form-label">圖片訪問路徑</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="uploadFiles.viewFilePath" placeholder="圖片訪問路徑"/>
+                        </div>
+                    </div>
+		            <div class="layui-form-item">
+                        <label class="layui-form-label">狀態（0：新增 1：使用 2：臨時）</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="uploadFiles.fileStatus" placeholder="狀態（0：新增 1：使用 2：臨時）"/>
+                        </div>
+                    </div>
+		            <div class="layui-form-item">
+                        <label class="layui-form-label">關聯模塊內容id</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="uploadFiles.contentId" placeholder="關聯模塊內容id"/>
+                        </div>
+                    </div>
+		            <div class="layui-form-item">
+                        <label class="layui-form-label">最新修改時間</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="uploadFiles.lastmodifytime" placeholder="最新修改時間"/>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="col-sm-12  ">
+                            <div class="pull-right">
+                                <input type="button" class="btn btn-primary " @click="saveOrUpdate" value="確定"/>
+                                &nbsp;
+                                <input type="button" class="btn btn-warning " @click="reload" value="返回"/>
+                            </div>
+                        </div>
+                    </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/material.js?_${.now?long}"></script>
+</body>
+</html>

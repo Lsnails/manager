@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>角色管理</title>
+<#include "/header.html">
+<link rel="stylesheet" href="${request.contextPath}/statics/plugins/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+</head>
+<body class="sub-content">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div >
+
+			<div class="layui-inline">
+				<input type="text" class="layui-input" v-model="q.roleName" @keyup.enter="query" placeholder="角色名称">
+			</div>
+			<button class="layui-btn"  @click="query">查询</button>
+
+
+
+			<div class="layui-btn-group">
+				<#if shiro.hasPermission("sys:role:save")>
+				<button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i>&nbsp;</button>
+				</#if>
+				<#if shiro.hasPermission("sys:role:update")>
+				<button class="layui-btn  " @click="update" title="修改"><i class="layui-icon layui-icon-edit"></i>&nbsp;</button>
+				</#if>
+				<#if shiro.hasPermission("sys:role:delete")>
+				<button class="layui-btn  " @click="del" title="删除"><i class="layui-icon layui-icon-delete"></i>&nbsp;</button>
+				</#if>
+			</div>
+
+		</div>
+		<table id="listData" lay-filter="listData"></table>
+    </div>
+
+	<div v-show="!showList"  class="layui-card">
+		<div class="layui-card-header">{{title}}</div>
+		<div class="layui-card-body">
+		<form class="layui-form">
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">角色名称</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="role.roleName" placeholder="角色名称" autocomplete="off" required  lay-verify="required"/>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">所属部门</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" style="cursor:pointer;" v-model="role.deptName" @click="deptTree" readonly="readonly" placeholder="所属部门"  required  lay-verify="required"/>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">备注</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="role.remark" placeholder="备注"/>
+				</div>
+			</div>
+			<div class="layui-form-item" style="margin-top:30px;margin-left:26px;">
+				<div class="form-group col-md-6">
+					<strong class="col-sm-5 control-label">功能权限</strong>
+					<div class="layui-input-block">
+						<ul id="menuTree" class="ztree"></ul>
+					</div>
+				</div>
+				<!-- <div class="form-group col-md-6">
+					<strong class="col-sm-5 control-label">数据权限</strong>
+					<div class="col-sm-10">
+						<ul id="dataTree" class="ztree"></ul>
+					</div>
+				</div> -->
+			</div>
+
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="*" >确定</button>
+					<button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
+				</div>
+			</div>
+		</form>
+		</div>
+	</div>
+</div>
+
+<!-- 选择部门 -->
+<div id="deptLayer" style="display: none;padding:10px;">
+	<ul id="deptTree" class="ztree"></ul>
+</div>
+
+<script src="${request.contextPath}/statics/plugins/ztree/js/jquery.ztree.all.min.js"></script>
+<script src="${request.contextPath}/statics/js/modules/sys/role.js?_${.now?long}"></script>
+</body>
+</html>

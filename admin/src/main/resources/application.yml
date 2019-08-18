@@ -1,0 +1,117 @@
+# Tomcat
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+  port: 8080
+  servlet:
+    context-path: /admin
+  error: 
+    path: /admin/404
+
+spring:
+  profiles: 
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 500MB     #最大文件大小。 值可以使用后缀“MB”或“KB”来表示兆字节或
+      max-request-size: 500MB  #最大请求大小。 值可以使用后缀“MB”或“KB”来表示兆字节
+      enabled: true
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    password:      # 密码（默认为空）
+    timeout: 6000ms  # 连接超时时长（毫秒）
+    jedis:
+      pool:
+        max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
+        max-wait: -1ms      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-idle: 10      # 连接池中的最大空闲连接
+        min-idle: 5       # 连接池中的最小空闲连接
+  freemarker:
+#    settings:
+#      auto_import: /spring.ftl as spring
+    suffix: .html
+    request-context-attribute: request
+  messages:
+     basename: i18n/mess   #国际化信息所在的文件名 ,一般默认在resource下，指明配置文件以mess开头
+  cache:
+     ehcache: 
+        config: classpath:cache/ehcache.xml  #ehcache配置文件,默认在resource下不需要配置文件   
+  data:
+    solr:
+      host: http://192.168.100.56:8093/solr/   #  服务器端口8093
+            
+      
+renren:
+  cluster: false  #集群配置  true集群环境   false单机环境，还需打开pom.xml里的spring-session-data-redis注释
+  globalSessionTimeout: 3600   #单机环境，session过期时间为60分钟 3600
+  redis:
+    open: false  #是否开启redis缓存  true开启   false关闭
+
+#mybatis
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.base.modules.*.entity
+  global-config:
+    #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+    id-type: 0
+    #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+    field-strategy: 1
+    #驼峰下划线转换
+    db-column-underline: true
+    #刷新mapper 调试神器
+    refresh-mapper: true
+    #数据库大写下划线转换
+    #capital-mode: true
+    # Sequence序列接口实现类配置
+    #key-generator: com.baomidou.mybatisplus.incrementer.OracleKeyGenerator
+    #逻辑删除配置
+    logic-delete-value: -1
+    logic-not-delete-value: 0
+    #自定义填充策略接口实现
+    #meta-object-handler: com.baomidou.springboot.xxx
+    #自定义SQL注入器
+    sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 配置slq打印日志，正式环境不用
+## 打印sql 后续可以放到另外配置文件中
+logging:
+  level:
+     com.basee.**.dao : error
+#上传文件到服务器
+upload: 
+  ftp-enabled : false  #是否启用ftp上传，1.如果没有单独的图片服务器，设置为false，即不走ftp上传，需要配置“本地临时文件dir，并且使用nginx转发 2.有单独的图片服务器，需要配置ftp相关信息，并且做nginx转发”
+  dir: c:/upload/tmp  #本地临时文件，后面不带斜杠
+  ip: 192.168.100.51   #ftp地址
+  port: 22             #ftp端口
+  username: root       #ftp用户名
+  password: 123456        #ftp密码
+  remotePath: /usr/etc/upload  #远程服务器上传服务器路径
+  dirPath:  /files #nginx转发文件，下的子目录 nginx转发后的访问地址 eg：http://192.168.100.228//html/upload/images/78c5007815624d0abd6ac28ed63f2128.png
+  uploadFileType: .doc|.docx|.xls|.xlsx|.zip|.tar|.rar|.7z|.jpg|.png|.gif|.jpeg|.swf|.mp4|.mp3|.txt|.ipa  #可上传文件类型
+nginx:
+  serverip: 127.0.0.1  #nginx代理ip
+  serverport: 8088          #nginx代理端口
+  
+oss:
+  alioss-enabled: true     # 是否启用阿里oss服务  true表示启用   false 默认上传到本地
+  localdir: c:/upload/tmp  # alioss-enabled=false 上传到项目所属的文件目录，后面不带斜杠
+  files: /files            # 上传到项目的c:/upload/tmp/files 文件下,相当于存储空间下的文件夹
+  uploadFileType: .doc|.docx|.xls|.xlsx|.zip|.tar|.rar|.7z|.jpg|.png|.gif|.jpeg|.swf|.mp4|.mp3|.txt|.ipa  #可上传文件类型
+ossConfig: #阿里oss的配置
+  endpoint: http://oss-cn-hongkong.aliyuncs.com  # endpoint是访问OSS的域名。如果您已经在OSS的控制台上 创建了Bucket，请在控制台上查看域名。 例如:http://oss-cn-beijing.aliyuncs.com
+  accessKeyId: LTAIStB1CY0pRUEK  #accessKeyId和accessKeySecret是OSS的访问密钥，您可以在控制台上创建和查看，
+  accessKeySecret: ToV6LyW9s2pyVyvKuFpYQCWhk464JS
+  endpointNotWithHttp: oss-cn-hongkong.aliyuncs.com  # 去除endpoint的http://   例如endpoint=http://oss-cn-beijing.aliyuncs.com  那么endpointNotWithHttp=oss-cn-beijing.aliyuncs.com
+  bucketName:  hkaom-oss # 存储空间名称   为了提高速度，建议先在网站创建bucketName，权限为公共读
+  objectName: files # 相当于存储空间下的文件夹

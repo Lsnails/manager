@@ -1,0 +1,23 @@
+<meta charset="UTF-8">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="stylesheet" href="${request.contextPath}/statics/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="${request.contextPath}/statics/css/sub_content.css" media="all" />
+<script type="text/javascript" src="${request.contextPath}/statics/libs/jquery.min.js"></script>
+<script type="text/javascript" src="${request.contextPath}/statics/plugins/layui/layui.js"></script>
+<script type="text/javascript" src="${request.contextPath}/statics/libs/vue.min.js"></script>
+<script type="text/javascript">
+    var ctx = sessionStorage.getItem('_ctx');
+    var layer,localLayer;
+    layui.use(['layer'],function(){
+        layer = top.layer;//在最外层弹出
+        localLayer = layui.layer;//在内容区弹出
+
+    });
+</script>
+
+<#import "/spring.ftl" as spring>

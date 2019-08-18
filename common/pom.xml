@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>com.base</groupId>
+		<artifactId>demo-security</artifactId>
+		<version>4.0.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.base</groupId>
+	<artifactId>common</artifactId>
+	<packaging>jar</packaging>
+	<description>common</description>
+	
+	<version>4.0.2</version>
+	
+	<name>common</name>
+	<build>
+		<finalName>${project.artifactId}</finalName>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<name>internal nexus repository</name>
+			<url>http://1.85.38.103:12402/nexus/content/groups/public</url>
+		</repository>
+	</distributionManagement>
+	
+</project>

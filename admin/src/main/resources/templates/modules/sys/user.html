@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>管理员列表</title>
+<#include "/header.html">
+<link rel="stylesheet" href="${request.contextPath}/statics/plugins/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+</head>
+<body  class="sub-content">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<form class="layui-form searchForm" lay-filter="searchForm" action="">
+			<div class="layui-inline">
+				<input type="text" class="layui-input" v-model="q.username" @keyup.enter="query" placeholder="用户名">
+			</div>
+			<button class="layui-btn"  @click="query">查询</button>
+		</form>
+
+		<div class="layui-btn-group">
+		<#if shiro.hasPermission("sys:user:save")>
+			<button class="layui-btn  " @click="add"  title="新增"><i class="layui-icon layui-icon-add-1"></i></button>
+		</#if>
+		<#if shiro.hasPermission("sys:user:update")>
+			<button class="layui-btn  " @click="update" title="修改"><i class="layui-icon layui-icon-edit"></i></button>
+		</#if>
+		<#if shiro.hasPermission("sys:user:delete")>
+			<button class="layui-btn  " @click="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+		</#if>
+		</div>
+		<table id="listData" lay-filter="listData"></table>
+    </div>
+
+	<div v-show="!showList" class="layui-card">
+		<div class="layui-card-header">{{title}}</div>
+		<div class="layui-card-body">
+		<form class="layui-form" lay-filter="myForm">
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="user.username" placeholder="登录账号" lay-verify="required"/>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">所属部门</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" style="cursor:pointer;" v-model="user.deptName" @click="deptTree" readonly="readonly" placeholder="所属部门" lay-verify="required"/>
+				</div>
+			</div>
+
+			<div class="layui-form-item" v-show="!deptFlag">
+				<label class="layui-form-label">角色</label>
+				<div class="layui-input-block">
+					<label class="x-tip">{{deptTip}}</label>
+				</div>
+			</div>
+
+			<div class="layui-form-item" v-show="deptFlag">
+				<label class="layui-form-label">角色</label>
+				<div class="layui-input-block" id="roleBlock">
+					<template v-for="role in roleList">
+						<input  type="checkbox" :value="role.roleId"  v-model="user.roleIdList"  lay-skin="primary"  :title="role.roleName">
+					</template>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="user.email" placeholder="邮箱"/>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">手机号</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="user.mobile" placeholder="手机号"/>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">状态</label>
+
+				<div class="layui-input-block">
+					<input type="radio" name="status" value="0" v-model="user.status" title="禁用">
+					<input type="radio" name="status" value="1" v-model="user.status" title="正常"  checked="">
+				</div>
+
+
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="*" >确定</button>
+					<button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+</div>
+<!-- 选择部门 -->
+<div id="deptLayer" style="display: none;padding:10px;">
+	<ul id="deptTree" class="ztree"></ul>
+</div>
+
+<script type="text/html" id="toptoolbar"></script>
+<script type="text/html" id="operationBar">
+	<a class="layui-btn layui-btn-sm"  lay-event="resetPassword">重置密码</a>
+</script>
+
+<script src="${request.contextPath}/statics/plugins/ztree/js/jquery.ztree.all.min.js"></script>
+<script src="${request.contextPath}/statics/js/modules/sys/user.js?_${.now?long}"></script>
+</body>
+</html>

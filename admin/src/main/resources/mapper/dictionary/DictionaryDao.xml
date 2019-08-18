@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.base.modules.customizesys.dictionary.dao.DictionaryDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.base.modules.customizesys.dictionary.entity.DictionaryEntity" id="dictionaryMap">
+        <result property="dictId" column="dict_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="icon" column="icon"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="enabled" column="enabled"/>
+    </resultMap>
+
+	 <!-- 查询字典是否被使用 -->
+	<select id="queryDictionaryIsOccupy" resultType="com.base.modules.customizesys.dictionary.entity.DictionaryEntity">
+		<!-- 0：新闻    1：课程     2：教授    3：案例    4:历届学友    5：知识库的领域 -->
+		select t.title as name,"1" as description
+		 from biz_course  t
+		where t.classification  in 
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+          	#{item}
+        </foreach>
+        UNION all
+        <!-- 导师 -->
+        select t.title as name,"2" as description
+		 from biz_professor  t
+		where t.classification  in 
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+          	#{item}
+        </foreach>
+          <!-- 多钟类型，使用UNION all -->
+	</select>
+</mapper>

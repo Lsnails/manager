@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.base.modules.sys.dao.SysMenuDao">
+
+	<select id="queryListParentId" resultType="com.base.modules.sys.entity.SysMenuEntity">
+		select * from sys_menu where kind = 0 and isenable='Y' and parent_id = #{parentId} order by order_num asc 
+	</select>
+	
+	<select id="queryNotButtonList" resultType="com.base.modules.sys.entity.SysMenuEntity">
+		select * from sys_menu where
+		 type != 2 and isenable='Y' 
+		<if test="sysMenuEntity.getLanguage() != null and !''.equals(sysMenuEntity.getLanguage())">
+				and  language='${sysMenuEntity.getLanguage()}'
+		</if>
+		<if test="sysMenuEntity.getKind() != null and !''.equals(sysMenuEntity.getKind())">
+				and  kind='${sysMenuEntity.getKind()}'
+		</if>
+		 order by order_num asc 
+	</select>
+	
+	<select id="queryNotFrontMenuList" resultType="com.base.modules.sys.entity.SysMenuEntity">
+		select * from sys_menu where kind = 0 and isenable='Y' order by order_num asc 
+	</select>
+	<select id="queryFrontMenuList" resultType="com.base.modules.sys.entity.SysMenuEntity">
+		select * from sys_menu where kind = 1 and isenable='Y' and language= #{language} order by order_num asc 
+	</select>
+</mapper>

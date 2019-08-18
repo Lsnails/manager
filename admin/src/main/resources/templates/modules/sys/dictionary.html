@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>業務數據字典包含多層次數據</title>
+	<#include "/header.html">
+    <link rel="stylesheet" href="${request.contextPath}/statics/plugins/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    <script src="${request.contextPath}/statics/plugins/ztree/js/jquery.ztree.all.min.js"></script>
+</head>
+<body class="sub-content">
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div>
+
+            <form class="layui-form searchForm" lay-filter="searchForm" action="">
+                <div class="layui-inline">
+                    <input type="text" class="layui-input"  v-model="dictName"  placeholder="请输入字典名称">
+                </div>
+                <div class="layui-inline">
+                    <select lay-filter="searchLan" class="layui-input" v-model="language" >
+                        <option value="1">中文</option>
+                        <option value="2">英文</option>
+                    </select>
+                </div>
+                <button type="button" class="layui-btn"  @click="query">查询</button>
+            </form>
+
+
+            <div class="layui-btn-group">
+			<#if shiro.hasPermission("system:dictionary:save")>
+            <button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i></button>
+			</#if>
+			<#if shiro.hasPermission("system:dictionary:update")>
+            <button class="layui-btn  " @click="update" title="修改"><i class="layui-icon layui-icon-edit"></i></button>
+			</#if>
+			<#if shiro.hasPermission("system:dictionary:delete")>
+            <button class="layui-btn  " @click="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+			</#if>
+            </div>
+			&nbsp;&nbsp;
+			<!--<div class="btn-group" role="group" aria-label="...">
+			  <button type="button" @click="changeLan(1)" lan="1" id="lanCh" class="btn btn-lan" >中文</button>
+			  <button type="button" @click="changeLan(2)" lan="2" id="lanEn" class="btn " >英文</button>
+			</div>-->
+        </div>
+        <table class="layui-table layui-form" id="tree-table" lay-size="sm"></table>
+    </div>
+
+    <div v-show="!showList" class="layui-card">
+        <div class="layui-card-header">{{title}}</div>
+        <div class="layui-card-body" >
+            <form class="layui-form"  lay-filter="myForm">
+        			<div class="layui-form-item">
+                        <label class="layui-form-label"><span class="layui-bg-red">*</span>語言：</label>
+                        <div class="layui-input-block">
+                            <select  class="layui-input" lay-filter="languageSelect"  v-model="dictionary.language" name="language"  id="language" lay-verify="required"  placeholder="必填項">
+                            	<option value="1">中文</option>
+  								<option value="2">英文</option>
+                            </select>
+                        </div>
+                    </div>
+        
+					<div class="layui-form-item">
+                        <label class="layui-form-label"><span class="layui-bg-red">*</span>父级菜单：</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" style="cursor:pointer;" v-model="dictionary.parentName" @click="dictionaryTree"
+                                   name="parentName" id="parentName"  readonly="readonly" lay-verify="required"/>
+                        </div>
+                    </div>
+                    
+                    
+					<div class="layui-form-item">
+                        <label class="layui-form-label"><i class="layui-bg-red">*</i>字典名称：</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="dictionary.name" name="name"  id="name" placeholder="必填項，1~30個字符" lay-verify="required"/>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">URL：</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="dictionary.url" name="url" id="url" placeholder="選填項，0~100字符。"/>
+                        </div>
+                    </div>
+					<div class="layui-form-item">
+                        <label class="layui-form-label">描述：</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="dictionary.description" name="description" id="description" placeholder="選填項，0~100字符。"/>
+                        </div>
+                    </div>
+					<div class="layui-form-item">
+                        <label class="layui-form-label">排序：</label>
+                        <div class="layui-input-block">
+                            <input type="number" class="layui-input" v-model="dictionary.orderNum" name="ordernum"  id="ordernum" placeholder="選填項，0~999之間的數字。"/>
+                        	
+                        </div>
+                    </div>
+					
+				<div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="*" >确定</button>
+                        <button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
+                    </div>
+               </div>
+        </form>
+        </div>
+		
+    </div>
+</div>
+<!-- 選擇字典 -->
+<div id="dictLayer" style="display: none;padding:10px;">
+	<ul id="dictTree" class="ztree"></ul>
+</div>
+<script src="${request.contextPath}/statics/js/modules/sys/dictionary.js?_${.now?long}"></script>
+</body>
+</html>

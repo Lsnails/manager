@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="ehcache.xsd">
+    <!--timeToIdleSeconds 当缓存闲置n秒后销毁 -->
+    <!--timeToLiveSeconds 当缓存存活n秒后销毁 -->
+    <!-- 缓存配置 
+        name:缓存名称。 
+        maxElementsInMemory：缓存最大数目。 
+        eternal:对象是否永久有效，一但设置了，timeout将不起作用。 
+        timeToIdleSeconds：设置对象在失效前的允许闲置时间（单位：秒）。仅当eternal=false对象不是永久有效时使用，可选属性，默认值是0，也就是可闲置时间无穷大。 
+        timeToLiveSeconds：设置对象在失效前允许存活时间（单位：秒）。最大时间介于创建时间和失效时间之间。仅当eternal=false对象不是永久有效时使用，默认是0.，也就是对象存活时间无穷大。 
+        overflowToDisk：(是否保存到磁盘，当系统宕机时)当内存中对象数量达到maxElementsInMemory时，Ehcache将会对象写到磁盘中。
+        diskSpoolBufferSizeMB：这个参数设置DiskStore（磁盘缓存）的缓存区大小。默认是30MB。每个Cache都应该有自己的一个缓冲区。 
+        maxElementsOnDisk：硬盘最大缓存个数。 
+        diskPersistent：是否缓存虚拟机重启期数据 Whether the disk 
+        store persists between restarts of the Virtual Machine. The default value 
+        is false. 
+        diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是120秒。  
+        memoryStoreEvictionPolicy：当达到maxElementsInMemory限制时，Ehcache将会根据指定的策略去清理内存。默认策略是 
+LRU（最近最少使用）。你可以设置为FIFO（先进先出）或是LFU（较少使用）。 
+        clearOnFlush：内存数量最大时是否清除。 -->
+        
+    <!-- 缓存路径，ehcache分为内存和磁盘两级，此属性定义磁盘的缓存位置
+  		 如下是 磁盘缓存位置 -->
+    <diskStore path="java.io.tmpdir" />
+    <!-- 默认缓存策略，当ehcache找不到定义的缓存时，则使用这个缓存策略。只能定义一个 -->
+    <defaultCache 
+        maxElementsInMemory="10000" 
+        eternal="false"
+        timeToIdleSeconds="120" 
+        timeToLiveSeconds="120" 
+        maxElementsOnDisk="10000000"
+        diskExpiryThreadIntervalSeconds="120" 
+        memoryStoreEvictionPolicy="LRU">
+
+        <persistence strategy="localTempSwap" />
+    </defaultCache>
+
+    <!-- 测试 缓存字典查询 -->
+    <cache name="sysDictQuery" 
+        eternal="false" 
+        timeToIdleSeconds="120"
+        timeToLiveSeconds="120" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+     <!-- 查询新闻集合 -->
+    <cache name="newsList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!-- 网站新闻详情 60*60*24=86400 一天-->
+    <cache name="newsDetails" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!-- 网站头部菜单，前端网站菜单的菜单列表、学院课程只展示一级分类 -->
+    <cache name="queryFrontMenuAndDictionaryList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+     <!-- 网站首页课程信息 -->
+    <cache name="indexCourseList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+     <!-- 网站课程更多列表  60*60*24=86400 一天-->
+    <cache name="courseMoreList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!-- 网站课程更多列表的左侧分类树  60*60*24=86400 一天-->
+    <cache name="courseClsList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+     <!-- 网站课程详细信息 -->
+    <cache name="courseDetails" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+     <!-- 网站首页案例信息 -->
+    <cache name="indexCasesList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!-- 网站案例详情信息 -->
+    <cache name="casesDetails" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!-- 网站案例更多列表 60*60*24=86400 一天-->
+    <cache name="casesMoreList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!-- 网站首页新闻 60*60*24=86400 一天-->
+    <cache name="indexNewsList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!-- 网站首页联系我们 60*60*24=86400 一天-->
+    <cache name="indexContactUs" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!-- 网站首页友情链接 60*60*24=86400 一天-->
+    <cache name="indexFriendlinkList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!-- 网站首页社交媒体 60*60*24=86400 一天-->
+    <cache name="indexSocialMediaList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+     <!-- 网站学院介绍 60*60*24=86400 一天-->
+    <cache name="collegeIntroductionDetails" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!--网站导师更多列表的左侧分类树 60*60*24=86400 一天-->
+    <cache name="professorClsList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!--网站导师更多列表 60*60*24=86400 一天-->
+    <cache name="professorMoreList" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <!--网站导师详情 60*60*24=86400 一天-->
+    <cache name="professorDetails" 
+        eternal="false" 
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="86400" 
+        maxEntriesLocalHeap="10000"
+        maxEntriesLocalDisk="10000000" 
+        diskExpiryThreadIntervalSeconds="120"
+        overflowToDisk="false" 
+        memoryStoreEvictionPolicy="LRU">
+    </cache>
+</ehcache>

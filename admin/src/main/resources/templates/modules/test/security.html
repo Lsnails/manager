@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>接口安全加密解密测试</title>
+    <#include "/header.html">
+</head>
+<body class="sub-content" >
+<div class="layui-card" id="rrapp">
+    <div class="layui-card-header">接口安全加密解密测试</div>
+    <div class="layui-card-body" >
+        <form class="layui-form"  lay-filter="myForm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">案例id：</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input"  name="caseId" id="caseId" value="9876543210" placeholder="案例id"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">标题：</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="title" id="title" value="标题001" placeholder="请输入标题"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">简介：</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input"  name="briefintroduction" id="briefintroduction" value="简介001" placeholder="请输入简介"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">内容：</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input"  name="content" id="content" value="内容001"  placeholder="请输入内容"/>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn" @click="save2"  >save2,data被解密成实体对象</button>
+                    <button type="button" class="layui-btn" @click="save5"  >save5，data被解密成对象map</button>
+                    <button type="button" class="layui-btn" @click="save3"  >save3，data被解密成字符串</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+<script src="${request.contextPath}/statics/libs/aes.js"></script>
+<script src="${request.contextPath}/statics/libs/crypto-js.js"></script>
+<script src="${request.contextPath}/statics/js/modules/test/security.js?_${.now?long}"></script>
+</body>
+</html>

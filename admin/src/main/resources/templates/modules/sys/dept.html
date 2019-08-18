@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>部门管理</title>
+<#include "/header.html">
+	<link rel="stylesheet" href="${request.contextPath}/statics/plugins/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script src="${request.contextPath}/statics/plugins/ztree/js/jquery.ztree.all.min.js"></script>
+</head>
+<body class="sub-content">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="layui-btn-group">
+			<#if shiro.hasPermission("sys:dept:save")>
+			<button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i></button>
+			</#if>
+			<#if shiro.hasPermission("sys:dept:update")>
+			<button class="layui-btn  " @click="update" title="修改"><i class="layui-icon layui-icon-edit"></i></button>
+			</#if>
+			<#if shiro.hasPermission("sys:dept:delete")>
+			<button class="layui-btn  " @click="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+			</#if>
+		</div>
+		<table class="layui-table layui-form" id="tree-table" lay-size="sm"></table>
+	</div>
+
+	<div v-show="!showList" class="layui-card">
+		<div class="layui-card-header">{{title}}</div>
+		<div class="layui-card-body" >
+			<form class="layui-form"  lay-filter="myForm">
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门名称</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="dept.name"  lay-verify="required"/>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">上级部门</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" style="cursor:pointer;" v-model="dept.parentName" @click="deptTree" lay-verify="required" readonly="readonly" />
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序号</label>
+				<div class="layui-input-block">
+					<input type="number" class="layui-input" v-model="dept.orderNum" placeholder="排序号"/>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="*" >确定</button>
+					<button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
+				</div>
+			</div>
+		</form>
+		</div>
+	</div>
+</div>
+
+<!-- 选择部门 -->
+<div id="deptLayer" style="display: none;padding:10px;">
+	<ul id="deptTree" class="ztree"></ul>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sys/dept.js?_${.now?long}"></script>
+</body>
+</html>

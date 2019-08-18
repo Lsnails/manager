@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body  class="sub-content">
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+		<form class="layui-form searchForm" lay-filter="searchForm" action="">
+			<div class="layui-inline">
+				<input type="text" class="layui-input"   placeholder="">
+			</div>
+
+			<button type="button" class="layui-btn"  @click="query">查询</button>
+		</form>
+		<div class="layui-btn-group">
+			<button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i></button>
+			<button class="layui-btn  " @click="update" title="修改"><i class="layui-icon layui-icon-edit"></i></button>
+			<button class="layui-btn  " @click="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+		</div>
+		<table id="listData" lay-filter="listData"></table>
+    </div>
+
+    <div v-show="!showList"  class="layui-card">
+		<div class="layui-card-header"><h3 class="x-card-title">{{title}}</h3><span @click="reload" class="x-pull-right"><i class="layui-icon layui-icon-close-fill x-closeCard"></i></span></div>
+		<div class="layui-card-body" >
+			<form class="layui-form"  lay-filter="myForm">
+			<div class="layui-form-item">
+				<label class="layui-form-label">code</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="codeNameRelation.code" placeholder="code"/>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">名称</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="codeNameRelation.name" placeholder="名称"/>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">类型</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="codeNameRelation.type" placeholder="类型 1：冰箱 2：冰柜 3：洗衣机"/>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">商品全名</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="codeNameRelation.fullName" placeholder=""/>
+				</div>
+			</div>
+									<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="*" >确定</button>
+					<button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
+				</div>
+			</div>
+        	</form>
+		</div>
+    </div>
+</div>
+<script type="text/html" id="toptoolbar"></script>
+<script type="text/html" id="operationBar">
+    <a class="layui-btn layui-btn-sm"  lay-event="look" title="查看"><i class="layui-icon layui-icon-search"></i></a>
+</script>
+<script src="${request.contextPath}/statics/js/modules/codenamerelation/codenamerelation.js?_${.now?long}"></script>
+</body>
+</html>

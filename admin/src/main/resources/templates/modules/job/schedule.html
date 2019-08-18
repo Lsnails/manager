@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>定时任务</title>
+	<#include "/header.html">
+</head>
+<body class="sub-content">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+			<form class="layui-form searchForm" lay-filter="searchForm" action="">
+				<div class="layui-inline">
+					<input type="text" class="layui-input" v-model="q.beanName" @keyup.enter="query" placeholder="bean名称">
+				</div>
+				<button class="layui-btn"  @click="query">查询</button>
+			</form>
+
+			<div class="layui-btn-group">
+				<#if shiro.hasPermission("sys:schedule:save")>
+				<button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i></button>
+				</#if>
+				<#if shiro.hasPermission("sys:schedule:update")>
+				<button class="layui-btn " @click="update"title="修改"><i class="layui-icon layui-icon-edit"></i></button>
+				</#if>
+				<#if shiro.hasPermission("sys:schedule:delete")>
+				<button class="layui-btn " @click="del"title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+				</#if>
+				<#if shiro.hasPermission("sys:schedule:pause")>
+				<button class="layui-btn " @click="pause"title="停止"><i class="layui-icon layui-icon-pause"></i></button>
+				</#if>
+				<#if shiro.hasPermission("sys:schedule:resume")>
+				<button class="layui-btn " @click="resume"title="恢复"><i class="layui-icon layui-icon-refresh-3"></i></button>
+				</#if>
+				<#if shiro.hasPermission("sys:schedule:run")>
+				<button class="layui-btn " @click="runOnce"title="立即执行"><i class="layui-icon layui-icon-play"></i></button>
+				</#if>
+			</div>
+
+			<#if shiro.hasPermission("sys:schedule:log")>
+			<a class="layui-btn layui-btn-danger"  href="schedule_log.html">日志列表</a>
+			</#if>
+
+	<table id="listData" lay-filter="listData"></table>
+</div>
+
+
+	<div v-show="!showList" class="layui-card">
+		<div class="layui-card-header">{{title}}</div>
+		<div class="layui-card-body">
+		<form class="layui-form">
+			<div class="layui-form-item">
+				<label class="layui-form-label">bean名称</label>
+				<div class="layui-input-block">
+			      <input type="text" class="layui-input" v-model="schedule.beanName" placeholder="spring bean名称，如：testTask" autocomplete="off" required  lay-verify="required"  />
+			    </div>
+			</div>
+
+			<div class="layui-form-item">
+			   	<label class="layui-form-label">方法名称</label>
+			   	<div class="layui-input-block">
+			      <input type="text" class="layui-input" v-model="schedule.methodName" placeholder="方法名称" autocomplete="off" required  lay-verify="required"/>
+			    </div>
+			</div>
+			<div class="layui-form-item">
+			   	<label class="layui-form-label">参数</label>
+			   	<div class="layui-input-block">
+			      <input type="text" class="layui-input" v-model="schedule.params" placeholder="参数" autocomplete="off" required  lay-verify="required"/>
+			    </div>
+			</div>
+			<div class="layui-form-item">
+			   	<label class="layui-form-label">cron表达式</label>
+			   	<div class="layui-input-block">
+			      <input type="text" class="layui-input" v-model="schedule.cronExpression" placeholder="如：0 0 12 * * ?" autocomplete="off" required  lay-verify="required"/>
+			    </div>
+			</div>
+			<div class="layui-form-item">
+			   	<label class="layui-form-label">备注</label>
+			   	<div class="layui-input-block">
+			      <input type="text" class="layui-input" v-model="schedule.remark" placeholder="备注" autocomplete="off" />
+			    </div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="*" >确定</button>
+				    <button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
+				</div>
+			</div>
+		</form>
+		</div>
+	</div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/job/schedule.js?_${.now?long}"></script>
+</body>
+</html>
