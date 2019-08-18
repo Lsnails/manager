@@ -1,5 +1,6 @@
 package com.base.modules.customizesys.helper;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -174,6 +175,34 @@ public class ContentUtils {
 	public static String getDateToString(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(date);
+	}
+	
+	/**
+	 * 将Date转成string串
+	 * @param date
+	 * @param format
+	 * @return
+	 */
+	public static String getDateToString(Date date,String format) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+        return sdf.format(date);
+	}
+	/**
+	 * 字符串时间转date对象
+	 * @param dateString
+	 * @return
+	 */
+	public static Date getStringToDate(String dateString) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date =null;
+		try {
+			date = simpleDateFormat.parse(dateString);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException("字符串时间转date对象异常");
+		}
+		return date;
 	}
 	public static String getNickname() {
 //		List<String> nicknameList = new ArrayList<String>();

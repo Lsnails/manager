@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.base.modules.business.system.config.dao.CodeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.base.modules.business.system.config.entity.CodeEntity" id="codeMap">
+        <result property="id" column="id"/>
+        <result property="date" column="date"/>
+        <result property="code" column="code"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+
+</mapper>
