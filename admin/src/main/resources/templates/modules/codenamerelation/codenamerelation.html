@@ -9,7 +9,7 @@
     <div v-show="showList">
 		<form class="layui-form searchForm" lay-filter="searchForm" action="">
 			<div class="layui-inline">
-				<input type="text" class="layui-input"   placeholder="">
+				<input type="text" class="layui-input"    v-model="q.code" @keyup.enter="query" placeholder="code">
 			</div>
 
 			<button type="button" class="layui-btn"  @click="query">查询</button>

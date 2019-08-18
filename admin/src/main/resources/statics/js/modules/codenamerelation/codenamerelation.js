@@ -21,8 +21,8 @@ layui.use(['form','laydate','element','table',],function(){
 		limit : 20,
 		limits : [10,15,20,25,50,100],
 		id : "listTable",
-		toolbar: '#toptoolbar',
-		defaultToolbar: ['filter'],
+//		toolbar: '#toptoolbar',
+//		defaultToolbar: ['filter'],
 		cols : [[
 			{ type: "checkbox", fixed:"left", width:50},
 			{ title: 'id',field: 'id',hide:true },
@@ -31,8 +31,8 @@ layui.use(['form','laydate','element','table',],function(){
 				{ title: '类型 ',field: 'type',minWidth: 70,template: function(item){
 					 return '禁用11' ;
 	            }},
-				{ title: '商品全名',field: 'fullName',minWidth: 70}, 
-				{ title:"操作",fixed:'right',toolbar: "#operationBar",width:100}
+				{ title: '商品全名',field: 'fullName',minWidth: 70}
+//				{ title:"操作",fixed:'right',toolbar: "#operationBar",width:100}
 		]]
 	});
 
@@ -68,6 +68,9 @@ layui.use(['form','laydate','element','table',],function(){
 var vm = new Vue({
 	el:'#rrapp',
 	data:{
+		q:{
+			code: null
+		},
 		showList: true,
 		title: null,
 		q:{},
@@ -161,8 +164,7 @@ var vm = new Vue({
 					curr: 1
 				},
 				where: {
-//					name: vm.q.,
-
+					code: vm.q.code
 				}
 			})
 		}

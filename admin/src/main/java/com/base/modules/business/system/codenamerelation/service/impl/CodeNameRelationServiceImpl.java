@@ -1,11 +1,11 @@
 package com.base.modules.business.system.codenamerelation.service.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.base.common.utils.PageUtils;
 import com.base.common.utils.Query;
 
 import com.base.modules.business.system.codenamerelation.dao.CodeNameRelationDao;
@@ -18,9 +18,14 @@ public class CodeNameRelationServiceImpl extends ServiceImpl<CodeNameRelationDao
 
     @Override
     public Page<CodeNameRelationEntity> queryPage(Map<String, Object> params) {
+    	String code = (String)params.get("code");
+    	EntityWrapper<CodeNameRelationEntity> entityWrapper = new EntityWrapper<CodeNameRelationEntity>();
+    	if(StringUtils.isNotBlank(code)) {
+    		entityWrapper.like("code", code);
+    	}
         Page<CodeNameRelationEntity> page = this.selectPage(
                 new Query<CodeNameRelationEntity>(params).getPage(),
-                new EntityWrapper<CodeNameRelationEntity>()
+                entityWrapper
         );
 
         return page;
