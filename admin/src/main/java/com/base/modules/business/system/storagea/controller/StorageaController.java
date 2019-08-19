@@ -1,18 +1,7 @@
 package com.base.modules.business.system.storagea.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.baomidou.mybatisplus.plugins.Page;
+import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
 import com.base.common.utils.R;
 import com.base.modules.business.system.storagea.entity.StorageaEntity;
@@ -20,9 +9,15 @@ import com.base.modules.business.system.storagea.service.StorageaService;
 import com.base.modules.business.system.storageb.entity.StoragebEntity;
 import com.base.modules.customizesys.helper.ContentUtils;
 import com.base.modules.sys.controller.AbstractController;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -79,6 +74,21 @@ public class StorageaController extends AbstractController{
 	public R uploadFile(@RequestParam("file") MultipartFile file) {
 		String originalFilename = file.getOriginalFilename();
 		long size = file.getSize();
+		if(size>0){
+            try {
+                List<List<String>> read = ExcelReaderUtil.readExcel(file.getInputStream());
+                String date = ExcelReaderUtil.getStorageDate(read);
+                List<List<String>> storageBData = ExcelReaderUtil.getStorageData(read);
+                System.out.println(date);
+                for (List<String> storageBDatum : storageBData) {
+                    for (String s : storageBDatum) {
+                        System.out.println(s);
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 		return R.ok();
     }
 

@@ -81,7 +81,7 @@ public class ExcelReaderUtil {
      * @return
      * @throws IOException
      */
-    public static List<List<String>> read(String file) throws IOException {
+    public static List<List<String>> readCsv(String file) throws IOException {
         // 第一参数：读取文件的路径 第二个参数：分隔符（不懂仔细查看引用百度百科的那段话） 第三个参数：字符集
         CsvReader csvReader = new CsvReader(file, ',', Charset.forName("GBK"));
         csvReader.readHeaders();
@@ -94,7 +94,7 @@ public class ExcelReaderUtil {
      * @return
      * @throws IOException
      */
-    public static List<List<String>> read(InputStream inputStream) throws IOException {
+    public static List<List<String>> readCsv(InputStream inputStream) throws IOException {
         // 第一参数：读取文件的路径 第二个参数：分隔符（不懂仔细查看引用百度百科的那段话） 第三个参数：字符集
         CsvReader csvReader = new CsvReader(inputStream, Charset.forName("GBK"));
         // 如果你的文件没有表头，这行不用执行
@@ -353,7 +353,7 @@ public class ExcelReaderUtil {
      *
      * @return
      */
-    private static List<List<String>> getStorageData(List<List<String>> list) {
+    public static List<List<String>> getStorageData(List<List<String>> list) {
         List<String> l1 = null;
         List<String> l2 = null;
         List<List<String>> returnList = new ArrayList<>();
@@ -379,8 +379,8 @@ public class ExcelReaderUtil {
      * @param list
      * @return
      */
-    public static String getStorageDate(List<String> list) {
-        String str = list.get(10);
+    public static String getStorageDate(List<List<String>> list) {
+        String str = list.get(1).get(10);
         String date = str.split("申请日期：")[1];
         date = date.replace("年", "-").replace("月", "-").replace("日", "");
         return date;
@@ -389,7 +389,7 @@ public class ExcelReaderUtil {
     public static void main(String[] args) throws IOException {
 //        String path = "/Users/ZeChaoWei/test/京东.xlsx";
         String path="E:/test/A.csv";
-        List<List<String>> read = read(path);
+        List<List<String>> read = readCsv(path);
         for (List<String> strings : read) {
             for (String string : strings) {
                 System.out.println(string + " -- ");
