@@ -1,10 +1,12 @@
 package com.base.modules.business.system.storagea.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.base.modules.business.system.storagea.entity.StorageaEntity;
+import com.base.modules.business.system.storageb.entity.StoragebEntity;
 import com.base.utils.UUIDUtils;
 
 /**
@@ -29,7 +31,7 @@ public interface StorageaService extends IService<StorageaEntity> {
      * @param applyDate
      * @return
      */
-    StorageaEntity quweyStorageaEntityByapplyDate(String applyDate);
+    StorageaEntity queryStorageaEntityByapplyDate(String applyDate);
 //    /**
 //     * 通过applyDate日期查询导入A表信息，是否 第一次导入
 //     * 返回  true 表示  
@@ -47,5 +49,13 @@ public interface StorageaService extends IService<StorageaEntity> {
       * @param applyDate
       */
      void deleteStorageA(String applyDate);
+     
+     /**
+      * 插入入库A表信息 和入库B表信息（插入之前先删除 当天已经导入过的数据）
+      * @param storageaEntity
+      * @param storagebVoList  
+      * @param applyDate  格式yyyy-MM-dd
+      */
+     void insertStorageaVoAndStoragebList (StorageaEntity storageaEntity,List<StoragebEntity> storagebVoList,String applyDate);
 }
 

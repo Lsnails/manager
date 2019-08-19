@@ -8,7 +8,7 @@ layui.use(['form','laydate','element','table',],function(){
 	var tableIns = table.render({
 		elem: '#listData',
 		method:'POST',
-		url : ctx+'codenamerelation/list',
+		url : ctx+'storageb/list',
 		page: {
 			layout: ['count', 'prev', 'page', 'next','limit','skip'] //自定义分页布局
 			,first: false
@@ -21,29 +21,29 @@ layui.use(['form','laydate','element','table',],function(){
 		limit : 20,
 		limits : [10,15,20,25,50,100],
 		id : "listTable",
-//		toolbar: '#toptoolbar',
-//		defaultToolbar: ['filter'],
+		toolbar: '#toptoolbar',
+		defaultToolbar: ['filter'],
 		cols : [[
 			{ type: "checkbox", fixed:"left", width:50},
 			{ title: 'id',field: 'id',hide:true },
-				{ title: 'code',field: 'code',minWidth: 70}, 
-				{ title: '名称',field: 'name',minWidth: 70}, 
-				{ title: '类型 ',field: 'type',minWidth: 70,templet: function(item){
-//					1：冰箱 2：冰柜 3：洗衣机
-					if (item.type == 1) {
-						return '<span class="x-text-normal">冰箱</span>';
-					}
-					if (item.type == 2) {
-						return '<span class="x-text-green">冰柜</span>';
-					}
-					if (item.type == 3) {
-						return '<span class="x-text-orange">洗衣机</span>';
-					}else{
-						return '其他';
-					}
-	            }},
-				{ title: '商品全名',field: 'fullName',minWidth: 70}
-//				{ title:"操作",fixed:'right',toolbar: "#operationBar",width:100}
+				{ title: '',field: 'storageId',minWidth: 70}, 
+				{ title: '日期',field: 'date',minWidth: 70}, 
+				{ title: '供应商',field: 'supplier',minWidth: 70}, 
+				{ title: '编号',field: 'number',minWidth: 70}, 
+				{ title: '验收',field: 'accept',minWidth: 70}, 
+				{ title: '保管',field: 'storage',minWidth: 70}, 
+				{ title: '采购方式  1 : 赊购',field: 'buyType',minWidth: 70}, 
+				{ title: '物料编码',field: 'materNumber',minWidth: 70}, 
+				{ title: '物料名称',field: 'materName',minWidth: 70}, 
+				{ title: '单位 1：台',field: 'unit',minWidth: 70}, 
+				{ title: '数量',field: 'amount',minWidth: 70}, 
+				{ title: '单价',field: 'unitPrice',minWidth: 70}, 
+				{ title: '金额',field: 'price',minWidth: 70}, 
+				{ title: '收料仓库',field: 'warehouse',minWidth: 70}, 
+				{ title: '仓位',field: 'position',minWidth: 70}, 
+				{ title: '创建时间',field: 'createDate',minWidth: 70}, 
+				{ title: '修改时间',field: 'updateDate',minWidth: 70}
+				{ title:"操作",fixed:'right',toolbar: "#operationBar",width:100}
 		]]
 	});
 
@@ -79,13 +79,10 @@ layui.use(['form','laydate','element','table',],function(){
 var vm = new Vue({
 	el:'#rrapp',
 	data:{
-		q:{
-			code: null
-		},
 		showList: true,
 		title: null,
 		q:{},
-		codeNameRelation: {},
+		storageb: {},
 	},
 	methods: {
 		query: function () {
@@ -94,7 +91,7 @@ var vm = new Vue({
 		add: function(){
 			vm.showList = false;
 			vm.title = "新增";
-			vm.codeNameRelation = {};
+			vm.storageb = {};
 		},
 		update: function (event) {
 
@@ -105,18 +102,18 @@ var vm = new Vue({
 			}
 			vm.showList = false;
             vm.title = "修改";
-            vm.getInfo(objs.data[0].id);
+            vm.getInfo(objs.data[0].storagebId);
 
 		},
         saveOrUpdate: function (flag) {
-			var url = vm.codeNameRelation.id == null ? "codenamerelation/save" : "codenamerelation/update";
-			var type = vm.codeNameRelation.id == null ? "post":"put";
+			var url = vm.storageb.id == null ? "storageb/save" : "storageb/update";
+			var type = vm.storageb.id == null ? "post":"put";
 
 			$.ajax({
 				type: type,
 				url: ctx + url,
 				contentType: "application/json; charset=utf-8",
-				data: JSON.stringify(vm.codeNameRelation),
+				data: JSON.stringify(vm.storageb),
 				success: function(r){
 					if(r.code == 0){
 						layer.msg('操作成功');
@@ -136,12 +133,12 @@ var vm = new Vue({
 			}
 			var ids = [];
 			for(var key in objs.data){
-				ids.push(objs.data[key].id)
+				ids.push(objs.data[key].storagebId)
 			}
 			layer.confirm('确定删除？', function(){
 				$.ajax({
 					type: "DELETE",
-				    url: ctx + "codenamerelation/delete",
+				    url: ctx + "storageb/delete",
                     contentType: "application/json",
 				    data: JSON.stringify(ids),
 				    success: function(r){
@@ -157,14 +154,14 @@ var vm = new Vue({
 		},
 
 		getInfo: function(id){
-			$.get(ctx + "codenamerelation/info/"+id, function(r){
-                vm.codeNameRelation = r.codeNameRelation;
+			$.get(ctx + "storageb/info/"+id, function(r){
+                vm.storageb = r.storageb;
             });
 		},
 
 		closePanel: function (event) {
 			vm.showList = true;
-			vm.codeNameRelation= {};
+			vm.storageb= {};
 
 		},
 		
@@ -175,7 +172,8 @@ var vm = new Vue({
 					curr: 1
 				},
 				where: {
-					code: vm.q.code
+					name: vm.q,
+
 				}
 			})
 		}

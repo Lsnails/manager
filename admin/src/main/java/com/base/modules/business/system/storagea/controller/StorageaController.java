@@ -1,10 +1,10 @@
 package com.base.modules.business.system.storagea.controller;
 
-import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +16,9 @@ import com.base.common.utils.PageUtils;
 import com.base.common.utils.R;
 import com.base.modules.business.system.storagea.entity.StorageaEntity;
 import com.base.modules.business.system.storagea.service.StorageaService;
+import com.base.modules.business.system.storageb.entity.StoragebEntity;
+import com.base.modules.customizesys.helper.ContentUtils;
 import com.base.modules.sys.controller.AbstractController;
-import com.base.utils.UUIDUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -65,12 +66,10 @@ public class StorageaController extends AbstractController{
 //     * 保存
 //     */
     @PostMapping("/save")
-    @ApiOperation("保存入库A表导入信息")
-    public R save(@RequestBody StorageaEntity storagea){
-    	String uuId = UUIDUtils.getRandomUUID();
-    	storagea.setId(uuId);
-        storageaService.insertStorageaEntity(storagea);
-
+    @ApiOperation("(没调试，调试参数总是报错)保存入库A表导入信息 和 入库B表信息")
+    public R save(@RequestBody StorageaEntity storagea,@RequestBody List<StoragebEntity>  storagebVoList,@RequestBody String applyDate){
+    	storagea.setApplyDate(ContentUtils.getStringToDate("2019-08-19"));
+        storageaService.insertStorageaVoAndStoragebList(storagea, storagebVoList, applyDate);
         return R.ok();
     }
 

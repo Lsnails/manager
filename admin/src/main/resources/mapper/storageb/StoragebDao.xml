@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.base.modules.business.system.storageb.dao.StoragebDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.base.modules.business.system.storageb.entity.StoragebEntity" id="storagebMap">
+        <result property="id" column="id"/>
+        <result property="storageId" column="storage_id"/>
+        <result property="date" column="date"/>
+        <result property="supplier" column="supplier"/>
+        <result property="number" column="number"/>
+        <result property="accept" column="accept"/>
+        <result property="storage" column="storage"/>
+        <result property="buyType" column="buy_type"/>
+        <result property="materNumber" column="mater_number"/>
+        <result property="materName" column="mater_name"/>
+        <result property="unit" column="unit"/>
+        <result property="amount" column="amount"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="price" column="price"/>
+        <result property="warehouse" column="warehouse"/>
+        <result property="position" column="position"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+
+</mapper>
