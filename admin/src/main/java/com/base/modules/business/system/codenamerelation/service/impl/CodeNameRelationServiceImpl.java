@@ -30,6 +30,7 @@ public class CodeNameRelationServiceImpl extends ServiceImpl<CodeNameRelationDao
     	if(StringUtils.isNotBlank(name)){
     	    entityWrapper.like("name",name);
         }
+        entityWrapper.orderBy("code asc");
         Page<CodeNameRelationEntity> page = this.selectPage(
                 new Query<CodeNameRelationEntity>(params).getPage(),
                 entityWrapper
