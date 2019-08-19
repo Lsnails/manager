@@ -388,22 +388,22 @@ public class ExcelReaderUtil {
 
     public static void main(String[] args) throws IOException {
 //        String path = "/Users/ZeChaoWei/test/京东.xlsx";
-        String path="E:/test/A.csv";
+       /* String path="E:/test/A.csv";
         List<List<String>> read = readCsv(path);
         for (List<String> strings : read) {
             for (String string : strings) {
                 System.out.println(string + " -- ");
             }
-        }
-       /* String path = "E:/test/A.xlsx";
+        }*/
+       String path = "E:/test/A.xlsx";
         List<List<String>> lists = readExcel(path);
-        getStorageDate(lists.get(1));
         List<List<String>> storageData = getStorageData(lists);
         for (List<String> storageDatum : storageData) {
+            System.out.println(storageDatum.get(1));
             for (String s : storageDatum) {
                 System.out.println(s);
             }
-        }*/
+        }
         /*for (List<String> list : lists) {
             for (String strs : list) {
                 System.out.println(strs);

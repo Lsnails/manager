@@ -4,6 +4,11 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
 import com.base.common.utils.R;
+import com.base.modules.business.system.codenamerelation.service.CodeNameRelationService;
+import com.base.modules.business.system.config.entity.CodeEntity;
+import com.base.modules.business.system.config.service.CodeService;
+import com.base.modules.business.system.storagea.BuyType;
+import com.base.modules.business.system.storagea.UnitType;
 import com.base.modules.business.system.storagea.entity.StorageaEntity;
 import com.base.modules.business.system.storagea.service.StorageaService;
 import com.base.modules.business.system.storageb.entity.StoragebEntity;
@@ -16,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +41,10 @@ import java.util.Map;
 public class StorageaController extends AbstractController{
     @Autowired
     private StorageaService storageaService;
+    @Autowired
+    private CodeService codeService;
+    @Autowired
+    private CodeNameRelationService codeNameRelationService;
 
     /**
      * 列表
@@ -76,21 +87,60 @@ public class StorageaController extends AbstractController{
 		long size = file.getSize();
 		if(size>0){
             try {
-                List<List<String>> read = ExcelReaderUtil.readExcel(file.getInputStream());
-                String date = ExcelReaderUtil.getStorageDate(read);
-                List<List<String>> storageBData = ExcelReaderUtil.getStorageData(read);
-                System.out.println(date);
-                for (List<String> storageBDatum : storageBData) {
-                    for (String s : storageBDatum) {
-                        System.out.println(s);
-                    }
-                }
+                List<List<String>> readList = ExcelReaderUtil.readExcel(file.getInputStream());
+                String date = ExcelReaderUtil.getStorageDate(readList);
+                List<List<String>> storageBData = ExcelReaderUtil.getStorageData(readList);
+                List<StoragebEntity> list = getList(storageBData, date);
+                StorageaEntity storageaEntity = new StorageaEntity();
+                storageaEntity.setApplyDate(ContentUtils.getStringToDate(date));
+                storageaEntity.setApplyName(originalFilename);
+                storageaEntity.setOutCode(list.get(0).getNumber());
+                storageaService.insertStorageaVoAndStoragebList(storageaEntity,list,date);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
 		return R.ok();
     }
+
+    private List<StoragebEntity> getList(List<List<String>> list,String date){
+        List<StoragebEntity> rList = new ArrayList<>();
+        CodeEntity codeEntity = codeService.queryCodeEntityByDate(date);
+        for (List<String> strings : list) {
+            StoragebEntity entity = new StoragebEntity();
+            entity.setDate(ContentUtils.getStringToDate(date));
+            entity.setSupplier("新飞制冷器具有限公司");
+            if (codeEntity.getCode() >= 100) {
+                entity.setNumber("WIN000" + codeEntity.getCode());
+            } else if (codeEntity.getCode() >= 10 && codeEntity.getCode() < 100) {
+                entity.setNumber("WIN0000" + codeEntity.getCode());
+            } else {
+                entity.setNumber("WIN00000" + codeEntity.getCode());
+            }
+            entity.setAccept("XX");
+            entity.setStorage("XX");
+            entity.setBuyType(BuyType.T1.getCode());
+            List<String> relationNameAndCode = codeNameRelationService.getRelationNameAndCode(strings.get(1));
+            if (null != relationNameAndCode && relationNameAndCode.size() > 0) {
+                entity.setMaterNumber(relationNameAndCode.get(0));
+                entity.setMaterName(relationNameAndCode.get(1));
+            } else {
+                entity.setMaterNumber("未知");
+                entity.setMaterName("未知");
+            }
+            entity.setUnit(UnitType.T1.getCode());
+            Integer number = Integer.valueOf(strings.get(2)).intValue();
+            Double unitPrice = Double.valueOf(strings.get(3)).doubleValue();
+            BigDecimal price = new BigDecimal(number * unitPrice);
+            entity.setAmount(Integer.valueOf(strings.get(2)));
+            entity.setUnitPrice(new BigDecimal(unitPrice));
+            entity.setPrice(price);
+            entity.setWarehouse("新飞一等品");
+            rList.add(entity);
+        }
+        return rList;
+    }
+
 
 //    /**
 //     * 修改

@@ -1,10 +1,11 @@
 package com.base.modules.business.system.codenamerelation.service;
 
-import java.util.Map;
-
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.base.modules.business.system.codenamerelation.entity.CodeNameRelationEntity;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -16,5 +17,7 @@ import com.base.modules.business.system.codenamerelation.entity.CodeNameRelation
 public interface CodeNameRelationService extends IService<CodeNameRelationEntity> {
 
     Page<CodeNameRelationEntity> queryPage(Map<String, Object> params);
+
+    List<String> getRelationNameAndCode(String name);
 }
 
