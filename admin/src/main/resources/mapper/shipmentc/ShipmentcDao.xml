@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.base.modules.business.system.shipmentc.dao.ShipmentcDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.base.modules.business.system.shipmentc.entity.ShipmentcEntity" id="shipmentcMap">
+        <result property="id" column="id"/>
+        <result property="shipmentId" column="shipment_id"/>
+        <result property="serialNumber" column="serial_number"/>
+        <result property="orderId" column="order_id"/>
+        <result property="shipmentOrderId" column="shipment_order_id"/>
+        <result property="orderName" column="order_name"/>
+        <result property="orderPhone" column="order_phone"/>
+        <result property="orderAddress" column="order_address"/>
+        <result property="ysNature" column="ys_nature"/>
+        <result property="payType" column="pay_type"/>
+        <result property="deliverType" column="deliver_type"/>
+        <result property="productName" column="product_name"/>
+        <result property="number" column="number"/>
+        <result property="price" column="price"/>
+        <result property="type" column="type"/>
+        <result property="remark" column="remark"/>
+        <result property="remark2" column="remark2"/>
+        <result property="remark3" column="remark3"/>
+        <result property="remark4" column="remark4"/>
+        <result property="remark5" column="remark5"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+
+</mapper>

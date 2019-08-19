@@ -19,5 +19,7 @@ public interface CodeNameRelationService extends IService<CodeNameRelationEntity
     Page<CodeNameRelationEntity> queryPage(Map<String, Object> params);
 
     List<String> getRelationNameAndCode(String name);
+     
+    List<CodeNameRelationEntity> getList(Map<String, Object> params);
 }
 

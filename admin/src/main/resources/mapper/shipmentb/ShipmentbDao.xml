@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.base.modules.business.system.shipmentb.dao.ShipmentbDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.base.modules.business.system.shipmentb.entity.ShipmentbEntity" id="shipmentbMap">
+        <result property="id" column="id"/>
+        <result property="shipmentId" column="shipment_id"/>
+        <result property="date" column="date"/>
+        <result property="shopUnit" column="shop_unit"/>
+        <result property="number" column="number"/>
+        <result property="saleType" column="sale_type"/>
+        <result property="ship" column="ship"/>
+        <result property="storage" column="storage"/>
+        <result property="saleBussinessType" column="sale_bussiness_type"/>
+        <result property="productCode" column="product_code"/>
+        <result property="productName" column="product_name"/>
+        <result property="unit" column="unit"/>
+        <result property="amount" column="amount"/>
+        <result property="unitCost" column="unit_cost"/>
+        <result property="cost" column="cost"/>
+        <result property="remark" column="remark"/>
+        <result property="shipWarehouse" column="ship_warehouse"/>
+        <result property="warehouse" column="warehouse"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="price" column="price"/>
+        <result property="type" column="type"/>
+        <result property="createDate" column="create_date"/>
+        <result property="updateDate" column="update_date"/>
+    </resultMap>
+
+
+</mapper>

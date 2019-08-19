@@ -44,8 +44,7 @@ public class CodeNameRelationServiceImpl extends ServiceImpl<CodeNameRelationDao
         List<String> list = new ArrayList<>();
         Map<String,Object> map  = new HashMap<>();
         map.put("name",name);
-        Page<CodeNameRelationEntity> codeNameRelationEntityPage = queryPage(map);
-        List<CodeNameRelationEntity> records = codeNameRelationEntityPage.getRecords();
+        List<CodeNameRelationEntity> records = getList(map);
         if(null != records && records.size() >0){
             for (CodeNameRelationEntity record : records) {
                 list.add(record.getCode());
@@ -54,5 +53,20 @@ public class CodeNameRelationServiceImpl extends ServiceImpl<CodeNameRelationDao
         }
         return list;
     }
+
+	@Override
+	public List<CodeNameRelationEntity> getList(Map<String, Object> params) {
+		String code = (String)params.get("code");
+    	String name = (String) params.get("name");
+    	EntityWrapper<CodeNameRelationEntity> entityWrapper = new EntityWrapper<CodeNameRelationEntity>();
+    	if(StringUtils.isNotBlank(code)) {
+    		entityWrapper.like("code", code);
+    	}
+    	if(StringUtils.isNotBlank(name)){
+    	    entityWrapper.like("name",name);
+        }
+        entityWrapper.orderBy("code asc");
+		return this.selectList(entityWrapper);
+	}
 
 }

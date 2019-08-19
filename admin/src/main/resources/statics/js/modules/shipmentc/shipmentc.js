@@ -1,15 +1,14 @@
 
-layui.use(['form','laydate','element','table','upload',],function(){
+layui.use(['form','laydate','element','table',],function(){
 	var form = layui.form,
 		laydate = layui.laydate,
 		element = layui.element,
-		table = layui.table,
-	    upload = layui.upload;
+		table = layui.table;
 
 	var tableIns = table.render({
 		elem: '#listData',
 		method:'POST',
-		url : ctx+'cms/storagea/list',
+		url : ctx+'shipmentc/list',
 		page: {
 			layout: ['count', 'prev', 'page', 'next','limit','skip'] //自定义分页布局
 			,first: false
@@ -22,15 +21,32 @@ layui.use(['form','laydate','element','table','upload',],function(){
 		limit : 20,
 		limits : [10,15,20,25,50,100],
 		id : "listTable",
-//		toolbar: '#toptoolbar',
-//		defaultToolbar: ['filter'],
+		toolbar: '#toptoolbar',
+		defaultToolbar: ['filter'],
 		cols : [[
 			{ type: "checkbox", fixed:"left", width:50},
 			{ title: 'id',field: 'id',hide:true },
-				{ title: '导入日期',field: 'applyDate',minWidth: 70}, 
-				{ title: '导入名称',field: 'applyName',minWidth: 70}, 
-				{ title: '输出编码',field: 'outCode',minWidth: 70}, 
-				{ title: '创建日期',field: 'createDate',minWidth: 70}
+				{ title: '',field: 'shipmentId',minWidth: 70}, 
+				{ title: '序号',field: 'serialNumber',minWidth: 70}, 
+				{ title: '订单编号',field: 'orderId',minWidth: 70}, 
+				{ title: '物流单号',field: 'shipmentOrderId',minWidth: 70}, 
+				{ title: '收件人姓名',field: 'orderName',minWidth: 70}, 
+				{ title: '收件人手机',field: 'orderPhone',minWidth: 70}, 
+				{ title: '收货地址',field: 'orderAddress',minWidth: 70}, 
+				{ title: '运输性质',field: 'ysNature',minWidth: 70}, 
+				{ title: '付款方式',field: 'payType',minWidth: 70}, 
+				{ title: '送货方式',field: 'deliverType',minWidth: 70}, 
+				{ title: '货物名称',field: 'productName',minWidth: 70}, 
+				{ title: '数量',field: 'number',minWidth: 70}, 
+				{ title: '金额',field: 'price',minWidth: 70}, 
+				{ title: '类型 1：京东 2：天猫 3：淘宝 4：拼多多',field: 'type',minWidth: 70}, 
+				{ title: '',field: 'remark',minWidth: 70}, 
+				{ title: '',field: 'remark2',minWidth: 70}, 
+				{ title: '',field: 'remark3',minWidth: 70}, 
+				{ title: '',field: 'remark4',minWidth: 70}, 
+				{ title: '',field: 'remark5',minWidth: 70}, 
+				{ title: '创建时间',field: 'createDate',minWidth: 70}, 
+				{ title: '修改时间',field: 'updateDate',minWidth: 70}
 //				{ title:"操作",fixed:'right',toolbar: "#operationBar",width:100}
 		]]
 	});
@@ -59,39 +75,7 @@ layui.use(['form','laydate','element','table','upload',],function(){
 		return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
 	});
 
-	upload.render({ //允许上传的文件后缀
-	    elem: '#storageaUpload',
-	    url: ctx + 'cms/storagea/uploadFile',
-	    accept: 'file', //普通文件
-	    before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
-//	        layer.load(); //上传loading
-	        layer.msg('上传中', {
-	        	  icon: 16
-	        	  ,shade: 0.01
-	        	});
-	    },
-	    exts: 'xlsx|xls|cvs', //只允许上传压缩文件
-	    done: function(res){
-//	    	layer.closeAll('loading'); //关闭loading
-	    	layer.msg("上传成功");
-	    	console.log(res)
-	    	vm.reload();
-	    },
-	    error: function(index, upload){
-//	        layer.closeAll('loading'); //关闭loading
-	    	layer.msg('服务器出错。联系管理员', {icon: 5});
-	    }
-	  });
-	
-	laydate.render({
-	    elem: '#searchDate',
-	    done: function(value, date){
-	    	console.log(date);
-	    	console.log(value);
-	    	vm.q.searchDate = value;
-	    }
-	});
-	  
+
 
 })
 
@@ -101,10 +85,8 @@ var vm = new Vue({
 	data:{
 		showList: true,
 		title: null,
-		q:{
-			searchDate : null
-		},
-		storagea: {},
+		q:{},
+		shipmentc: {},
 	},
 	methods: {
 		query: function () {
@@ -113,7 +95,7 @@ var vm = new Vue({
 		add: function(){
 			vm.showList = false;
 			vm.title = "新增";
-			vm.storagea = {};
+			vm.shipmentc = {};
 		},
 		update: function (event) {
 
@@ -124,18 +106,18 @@ var vm = new Vue({
 			}
 			vm.showList = false;
             vm.title = "修改";
-            vm.getInfo(objs.data[0].id);
+            vm.getInfo(objs.data[0].shipmentcId);
 
 		},
         saveOrUpdate: function (flag) {
-			var url = vm.storagea.id == null ? "cms/storagea/save" : "cms/storagea/update";
-			var type = vm.storagea.id == null ? "post":"put";
+			var url = vm.shipmentc.id == null ? "shipmentc/save" : "shipmentc/update";
+			var type = vm.shipmentc.id == null ? "post":"put";
 
 			$.ajax({
 				type: type,
 				url: ctx + url,
 				contentType: "application/json; charset=utf-8",
-				data: JSON.stringify(vm.storagea),
+				data: JSON.stringify(vm.shipmentc),
 				success: function(r){
 					if(r.code == 0){
 						layer.msg('操作成功');
@@ -146,20 +128,6 @@ var vm = new Vue({
 				}
 			});
 		},
-		exportB:function(event){
-			var objs = layui.table.checkStatus('listTable');
-			if(objs.data.length ==0 || objs.data.length >1){
-				layer.msg('请选择一条要导出的内容');
-				return ;
-			}
-			var ids = [];
-			var  storageAId = "";
-			for(var key in objs.data){
-				storageAId = objs.data[key].id;
-			}
-			debugger;
-			window.location.href=ctx + "cms/storagea/exportB?storageAId="+storageAId;
-		},
 		del: function (event) {
 
 			var objs = layui.table.checkStatus('listTable');
@@ -169,12 +137,12 @@ var vm = new Vue({
 			}
 			var ids = [];
 			for(var key in objs.data){
-				ids.push(objs.data[key].id)
+				ids.push(objs.data[key].shipmentcId)
 			}
 			layer.confirm('确定删除？', function(){
 				$.ajax({
 					type: "DELETE",
-				    url: ctx + "cms/storagea/delete",
+				    url: ctx + "shipmentc/delete",
                     contentType: "application/json",
 				    data: JSON.stringify(ids),
 				    success: function(r){
@@ -190,14 +158,14 @@ var vm = new Vue({
 		},
 
 		getInfo: function(id){
-			$.get(ctx + "cms/storagea/info/"+id, function(r){
-                vm.storagea = r.storagea;
+			$.get(ctx + "shipmentc/info/"+id, function(r){
+                vm.shipmentc = r.shipmentc;
             });
 		},
 
 		closePanel: function (event) {
 			vm.showList = true;
-			vm.storagea= {};
+			vm.shipmentc= {};
 
 		},
 		
@@ -208,7 +176,8 @@ var vm = new Vue({
 					curr: 1
 				},
 				where: {
-					searchDate: vm.q.searchDate,
+//					name: vm.q,
+
 				}
 			})
 		}

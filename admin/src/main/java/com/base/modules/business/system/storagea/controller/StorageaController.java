@@ -141,6 +141,12 @@ public class StorageaController extends AbstractController{
         return rList;
     }
 
+    @RequestMapping("/exportB")
+	@ApiOperation("上传方法")
+    public void exportB(String storageAId) {
+    	
+    	System.out.println(storageAId);
+    }
 
 //    /**
 //     * 修改

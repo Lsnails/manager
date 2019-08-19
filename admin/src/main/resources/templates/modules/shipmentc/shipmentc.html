@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>出库C表数据</title>
+		<#include "/header.html">
+</head>
+<body  class="sub-content">
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+		<form class="layui-form searchForm" lay-filter="searchForm" action="">
+			<div class="layui-inline">
+				<input type="text" class="layui-input"   placeholder="">
+			</div>
+
+			<button type="button" class="layui-btn"  @click="query">查询</button>
+		</form>
+		<div class="layui-btn-group">
+			<#if shiro.hasPermission("shipmentc:shipmentc:save")>
+			<button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i></button>
+			</#if>
+			<#if shiro.hasPermission("shipmentc:shipmentc:update")>
+			<button class="layui-btn  " @click="update" title="修改"><i class="layui-icon layui-icon-edit"></i></button>
+			</#if>
+			<#if shiro.hasPermission("shipmentc:shipmentc:delete")>
+			<button class="layui-btn  " @click="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+			</#if>
+		</div>
+		<table id="listData" lay-filter="listData"></table>
+    </div>
+
+    <div v-show="!showList"  class="layui-card">
+		<div class="layui-card-header"><h3 class="x-card-title">{{title}}</h3><span @click="reload" class="x-pull-right"><i class="layui-icon layui-icon-close-fill x-closeCard"></i></span></div>
+		<div class="layui-card-body" >
+			<form class="layui-form"  lay-filter="myForm">
+															<div class="layui-form-item">
+				<label class="layui-form-label"></label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.shipmentId" placeholder=""/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">序号</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.serialNumber" placeholder="序号"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">订单编号</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.orderId" placeholder="订单编号"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">物流单号</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.shipmentOrderId" placeholder="物流单号"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">收件人姓名</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.orderName" placeholder="收件人姓名"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">收件人手机</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.orderPhone" placeholder="收件人手机"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">收货地址</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.orderAddress" placeholder="收货地址"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">运输性质</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.ysNature" placeholder="运输性质"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">付款方式</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.payType" placeholder="付款方式"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">送货方式</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.deliverType" placeholder="送货方式"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">货物名称</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.productName" placeholder="货物名称"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">数量</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.number" placeholder="数量"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">金额</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.price" placeholder="金额"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">类型 1：京东 2：天猫 3：淘宝 4：拼多多</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.type" placeholder="类型 1：京东 2：天猫 3：淘宝 4：拼多多"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label"></label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.remark" placeholder=""/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label"></label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.remark2" placeholder=""/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label"></label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.remark3" placeholder=""/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label"></label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.remark4" placeholder=""/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label"></label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.remark5" placeholder=""/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.createDate" placeholder="创建时间"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">修改时间</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmentc.updateDate" placeholder="修改时间"/>
+				</div>
+			</div>
+									<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="*" >确定</button>
+					<button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
+				</div>
+			</div>
+        	</form>
+		</div>
+    </div>
+</div>
+<script type="text/html" id="toptoolbar"></script>
+<script type="text/html" id="operationBar">
+    <a class="layui-btn layui-btn-sm"  lay-event="look" title="查看"><i class="layui-icon layui-icon-search"></i></a>
+</script>
+<script src="${request.contextPath}/statics/js/modules/shipmentc/shipmentc.js?_${.now?long}"></script>
+</body>
+</html>
