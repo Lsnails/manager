@@ -1,9 +1,10 @@
 
-layui.use(['form','laydate','element','table',],function(){
+layui.use(['form','laydate','element','table','upload',],function(){
 	var form = layui.form,
 		laydate = layui.laydate,
 		element = layui.element,
-		table = layui.table;
+		table = layui.table,
+	    upload = layui.upload;
 
 	var tableIns = table.render({
 		elem: '#listData',
@@ -58,7 +59,24 @@ layui.use(['form','laydate','element','table',],function(){
 		return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
 	});
 
-
+	upload.render({ //允许上传的文件后缀
+	    elem: '#test3',
+	    url: ctx + 'cms/storagea/uploadFile',
+	    accept: 'file', //普通文件
+	    before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+	        layer.load(); //上传loading
+	    },
+	    exts: 'xlsx|xls|cvs', //只允许上传压缩文件
+	    done: function(res){
+	    	layer.closeAll('loading'); //关闭loading
+	    	layer.msg("上传成功");
+	    	console.log(res)
+	    	vm.reload();
+	    },
+	    error: function(index, upload){
+	        layer.closeAll('loading'); //关闭loading
+	    }
+	  });
 
 })
 

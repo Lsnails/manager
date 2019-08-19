@@ -1,6 +1,5 @@
 package com.base.modules.business.system.storagea.controller;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.PageUtils;
@@ -71,6 +72,14 @@ public class StorageaController extends AbstractController{
     	storagea.setApplyDate(ContentUtils.getStringToDate("2019-08-19"));
         storageaService.insertStorageaVoAndStoragebList(storagea, storagebVoList, applyDate);
         return R.ok();
+    }
+    
+    @RequestMapping("/uploadFile")
+	@ApiOperation("上传方法")
+	public R uploadFile(@RequestParam("file") MultipartFile file) {
+		String originalFilename = file.getOriginalFilename();
+		long size = file.getSize();
+		return R.ok();
     }
 
 //    /**
