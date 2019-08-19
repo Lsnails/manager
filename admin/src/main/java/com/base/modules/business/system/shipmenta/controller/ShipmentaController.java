@@ -1,26 +1,26 @@
 package com.base.modules.business.system.shipmenta.controller;
 
-import java.util.Date;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.baomidou.mybatisplus.plugins.Page;
+import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
 import com.base.common.utils.R;
+import com.base.modules.business.system.shipmenta.ShipmentType;
 import com.base.modules.business.system.shipmenta.entity.ShipmentaEntity;
 import com.base.modules.business.system.shipmenta.service.ShipmentaService;
 import com.base.modules.sys.controller.AbstractController;
 import com.base.utils.UUIDUtils;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -66,9 +66,59 @@ public class ShipmentaController extends AbstractController{
     @RequestMapping("/uploadFile")
 	@ApiOperation("上传方法")
 	public R uploadFile(@RequestParam("file") MultipartFile file,String impType) {
-		String originalFilename = file.getOriginalFilename();
-		long size = file.getSize();
-		return R.ok();
+        String originalFilename = file.getOriginalFilename();
+        long size = file.getSize();
+        if (size > 0) {
+            try {
+                List<T> list = new ArrayList<>();
+                List<List<String>> lists = ExcelReaderUtil.readCsv(file.getInputStream());
+                ShipmentType shipmentType = ShipmentType.getShipmentType(Integer.valueOf(impType));
+                //根据不同类型 得到不同数据
+                switch (shipmentType) {
+                    case JD:
+                        list = getJDList(lists);
+                        break;
+                    case TM:
+                        list = getTMList(lists);
+                        break;
+                    case TB:
+                        list = getTBList(lists);
+                        break;
+                    case PDD:
+                        list = getPDDList(lists);
+                        break;
+                }
+                //处理数据
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            return R.error("上传文件为空");
+        }
+        return R.ok();
+    }
+
+    public static List<T> getJDList(List<List<String>> lists){
+        return null;
+    }
+
+    public static List<T> getTMList(List<List<String>> lists){
+        return null;
+    }
+
+    public static List<T> getTBList(List<List<String>> lists){
+        return null;
+    }
+
+    public static List<T> getPDDList(List<List<String>> lists){
+        return null;
+    }
+
+    public static void main(String[] args) {
+        String s1="新飞（Frestec）276升 家用商用一级能效冷柜 节能单温柜 BC/BD-276HJ1EW";
+        String s2="BC/BD-276HJ1EW";
+        System.out.println(s1.contains(s2));
+        System.out.println(s1.contentEquals(s2));
     }
 
 

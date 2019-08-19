@@ -48,7 +48,7 @@ layui.use(['form','laydate','element','table','upload','layer',],function(){
 	    	return vm.q.impType;
 	    }},
 	    auto: false,
-	    exts: 'xlsx|xls|cvs', //只允许上传压缩文件
+	    exts: 'xlsx|xls|cvs|csv', //只允许上传压缩文件
 	    accept: 'file', //普通文件
 	    before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
 //	    	return false;

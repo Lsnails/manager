@@ -88,7 +88,7 @@ layui.use(['form','laydate','element','table','upload','layer',],function(){
         	   ,shade: 0.01
         	  });
 	    },
-	    exts: 'xlsx|xls|cvs', //只允许上传压缩文件
+	    exts: 'xlsx|xls|cvs|csv', //只允许上传压缩文件
 	    done: function(res){
 	    	layer.msg("上传成功");
 	    	console.log(res)
