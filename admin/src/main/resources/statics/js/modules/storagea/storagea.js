@@ -146,6 +146,18 @@ var vm = new Vue({
 				}
 			});
 		},
+		exportB:function(event){
+			var objs = layui.table.checkStatus('listTable');
+			if(objs.data.length ==0 || objs.data.length >1){
+				layer.msg('请选择一条要导出的内容');
+				return ;
+			}
+			var ids = [];
+			for(var key in objs.data){
+				ids.push(objs.data[key].id)
+			}
+			debugger;
+		},
 		del: function (event) {
 
 			var objs = layui.table.checkStatus('listTable');
