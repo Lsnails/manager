@@ -33,6 +33,13 @@ public class StorageaServiceImpl extends ServiceImpl<StorageaDao, StorageaEntity
     @Override
     public Page<StorageaEntity> queryPage(Map<String, Object> params) {
     	EntityWrapper<StorageaEntity> entityWrapper = new EntityWrapper<StorageaEntity>();
+    	
+    	if(params!=null) {
+    		String searchDate = (String)params.get("searchDate");
+    		if(StringUtils.isNotBlank(searchDate)) {
+    			entityWrapper.eq("apply_date", searchDate);
+    		}
+    	}
     	entityWrapper.orderBy(" apply_date desc ");
         Page<StorageaEntity> page = this.selectPage(
                 new Query<StorageaEntity>(params).getPage(),

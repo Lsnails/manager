@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>入库A表存储</title>
+    <title>出库A表存储</title>
 		<#include "/header.html">
 </head>
 <body  class="sub-content">
@@ -13,14 +13,13 @@
 		        <input type="text" class="layui-input"  v-model="q.searchDate" @keyup.enter="query" id="searchDate" placeholder="导入日期 ">
 		      </div>
 		    </div>
-
 			<button type="button" class="layui-btn"  @click="query">查询</button>
 		</form>
 		<div class="layui-btn-group">
-			<button type="button" class="layui-btn" id="storageaUpload"><i class="layui-icon"></i>上传入库文件</button>
+			<button type="button" class="layui-btn" id="upload" @click="showExpression">上传出库文件</button>
 			<!-- <button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i></button>
 			<button class="layui-btn  " @click="update" title="修改"><i class="layui-icon layui-icon-edit"></i></button>
-			<button class="layui-btn  " @click="del" title="删除"><i  class="layui-icon layui-icon-delete"></i></button>-->
+			<button class="layui-btn  " @click="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button> -->
 		</div>
 		<table id="listData" lay-filter="listData"></table>
     </div>
@@ -32,28 +31,28 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">导入日期</label>
 				<div class="layui-input-block">
-					<input type="text" class="layui-input" v-model="storagea.applyDate" placeholder="导入日期"/>
+					<input type="text" class="layui-input" v-model="shipmenta.impDate" placeholder="导入日期"/>
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">导入名称</label>
 				<div class="layui-input-block">
-					<input type="text" class="layui-input" v-model="storagea.applyName" placeholder="导入名称"/>
+					<input type="text" class="layui-input" v-model="shipmenta.impName" placeholder="导入名称"/>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">类型 </label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="shipmenta.impType" placeholder="类型 1：京东 2：天猫 3：淘宝 4：拼多多"/>
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">输出编码</label>
 				<div class="layui-input-block">
-					<input type="text" class="layui-input" v-model="storagea.outCode" placeholder="输出编码"/>
+					<input type="text" class="layui-input" v-model="shipmenta.outCode" placeholder="输出编码"/>
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label">创建日期</label>
-				<div class="layui-input-block">
-					<input type="text" class="layui-input" v-model="storagea.createDate" placeholder="创建日期"/>
-				</div>
-			</div>
-									<div class="layui-form-item">
 				<div class="layui-input-block">
 					<button class="layui-btn" lay-submit lay-filter="*" >确定</button>
 					<button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
@@ -67,6 +66,6 @@
 <script type="text/html" id="operationBar">
     <a class="layui-btn layui-btn-sm"  lay-event="look" title="查看"><i class="layui-icon layui-icon-search"></i></a>
 </script>
-<script src="${request.contextPath}/statics/js/modules/storagea/storagea.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/js/modules/shipmenta/shipmenta.js?_${.now?long}"></script>
 </body>
 </html>
