@@ -1,22 +1,5 @@
 package com.base.modules.business.system.shipmenta.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
@@ -32,7 +15,6 @@ import com.base.modules.business.system.storagea.service.StorageaService;
 import com.base.modules.customizesys.helper.ContentUtils;
 import com.base.modules.sys.controller.AbstractController;
 import com.base.utils.UUIDUtils;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.formula.functions.T;
@@ -63,7 +45,7 @@ public class ShipmentaController extends AbstractController{
     @Autowired
     private ShipmentaService shipmentaService;
     @Autowired
-    private static StorageaService storageaService;
+    private StorageaService storageaService;
 
     /**
      * 列表
@@ -97,13 +79,14 @@ public class ShipmentaController extends AbstractController{
         long size = file.getSize();
         if (size > 0) {
             try {
-                List<T> list = new ArrayList<>();
+                List list = new ArrayList<>();
                 List<List<String>> lists = ExcelReaderUtil.readCsv(file.getInputStream());
                 ShipmentType shipmentType = ShipmentType.getShipmentType(Integer.valueOf(impType));
+                Date date = getDate(shipmentType.getCode(),lists);
                 //根据不同类型 得到不同数据
                 switch (shipmentType) {
                     case JD:
-                        list = getJDList(lists);
+                        list = getJDList(lists,date);
                         break;
                     case TM:
                         list = getTMList(lists);
@@ -116,6 +99,13 @@ public class ShipmentaController extends AbstractController{
                         break;
                 }
                 //处理数据
+                System.out.println(list);
+                ShipmentaEntity a = new ShipmentaEntity();
+                a.setImpDate(date);
+                a.setImpName(originalFilename);
+                List<ShipmentbEntity> shipaList = (List<ShipmentbEntity>)list.get(0);
+                List<ShipmentcEntity> shipbList = (List<ShipmentcEntity>)list.get(1);
+                shipmentaService.insertShipmentAandBAndC(a,shipaList,shipbList);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -139,12 +129,20 @@ public class ShipmentaController extends AbstractController{
 		System.out.println(shipmentAId);
 	}
 
-    public static List getJDList(List<List<String>> lists){
+    /**
+     * 获取JD数据
+     * @param lists
+     * @param date
+     * @return
+     */
+    public List<List> getJDList(List<List<String>> lists,Date date){
         List<List> reList = new ArrayList<>();
         List<ShipmentbEntity> entityB = new ArrayList<>();
         List<ShipmentcEntity> entityC = new ArrayList<>();
-        Date date = getDate(ShipmentType.JD.getCode(),lists);
         for (List<String> list : lists) {
+            if(list.get(2).toString().contains("评价")){
+                continue;
+            }
             ShipmentbEntity b = new ShipmentbEntity();
             b.setDate(date);
             b.setShopUnit(ShipmentShopType.JD.getDesc());
