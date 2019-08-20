@@ -20,6 +20,39 @@
 							</select>
                        </div>
                 </div>
+                <div class="layui-form-item"  v-if="q.impType==1">
+                       <label class="layui-form-label"><span class="layui-bg-red">*</span>购货单位：</label>
+                       <div class="layui-input-block">
+                           <select  class="layui-input" lay-filter="shopUnitSelect"  v-model="q.shopUnit" name="shopUnit"  id="shopUnit" lay-verify="required"  placeholder="必填項">
+								<option value="11">京东-新飞冰洗旗舰店 </option>
+								<option value="12">京东-星诺电器专营店</option>
+							</select>
+                       </div>
+                </div>
+                <div class="layui-form-item"  v-if="q.impType==2">
+                	   <label class="layui-form-label"><span class="layui-bg-red">*</span>购货单位：</label>
+                       <div class="layui-input-block">
+                           <select  class="layui-input" lay-filter="shopUnitSelect"  v-model="q.shopUnit" name="shopUnit"  id="shopUnit" lay-verify="required"  placeholder="必填項">
+								<option value="21">天猫-新飞大豫云商专卖店   </option>
+							</select>
+                       </div>
+                </div>
+                <div class="layui-form-item"  v-if="q.impType==3">
+                 	   <label class="layui-form-label"><span class="layui-bg-red">*</span>购货单位：</label>
+                       <div class="layui-input-block">
+                           <select  class="layui-input" lay-filter="shopUnitSelect"  v-model="q.shopUnit" name="shopUnit"  id="shopUnit" lay-verify="required"  placeholder="必填項">
+								<option value="31">淘宝-大豫电器商城 </option>
+							</select>
+                       </div>
+                </div>
+                <div class="layui-form-item"  v-if="q.impType==4">
+                	   <label class="layui-form-label"><span class="layui-bg-red">*</span>购货单位：</label>
+                       <div class="layui-input-block">
+                           <select  class="layui-input" lay-filter="shopUnitSelect"  v-model="q.shopUnit" name="shopUnit"  id="shopUnit" lay-verify="required"  placeholder="必填項">
+								<option value="41">拼多多-大豫电器商城 </option>
+							</select>
+                       </div>
+                </div>
 				<!-- <div class="layui-form-item">
 					<label class="layui-form-label">选择文件</label>
 					<button type="button" class="layui-btn" id="storageaUpload"><i class="layui-icon"></i>上传文件</button>

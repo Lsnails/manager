@@ -16,9 +16,15 @@ layui.use(['form','laydate','element','table','upload','layer',],function(){
 	
 	form.on('select(impTypeSelect)', function(data){
         vm.q.impType = data.value;
+    });
+	
+	form.on('select(shopUnitSelect)', function(data){
+        vm.q.shopUnit = data.value;
         $("#chooseDiv").css('display', 'block');
         $("#btnDiv").css('display', 'block');
     });
+	
+	
 //	upload.render({ //允许上传的文件后缀
 //	    elem: '#shipmentaUpload',
 //	    url: ctx + 'cms/storagea/uploadFile',
@@ -44,9 +50,9 @@ layui.use(['form','laydate','element','table','upload','layer',],function(){
 	  upload.render({
 	    elem: '#chooseFile',
 	    url: ctx + 'cms/shipmenta/uploadFile',
-	    data: {"impType": function(){
-	    	return vm.q.impType;
-	    }},
+	    data: {"impType": function(){return vm.q.impType;},
+	    		"shopUnit":function(){return vm.q.shopUnit;}
+	    },
 	    auto: false,
 	    exts: 'xlsx|xls|cvs|csv', //只允许上传压缩文件
 	    accept: 'file', //普通文件
@@ -85,7 +91,8 @@ var vm = new Vue({
 		showList: true,
 		title: null,
 		q:{
-			impType:''
+			impType:'',
+			shopUnit:''
 		},
 		shipmenta: {},
 	},
