@@ -36,5 +36,12 @@ public interface StoragebService extends IService<StoragebEntity> {
      * @param storagaIdList
      */
     void deleteStorageAandBInfoBystoragaIds(List<String> storagaIdList);
+    
+    /**
+     * 导出入库B表数据
+     * @param storageAId
+     * @return
+     */
+    List<StoragebEntity> exportStorageBList(String storageAId);
 }
 

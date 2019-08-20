@@ -63,4 +63,14 @@ public class StoragebServiceImpl extends ServiceImpl<StoragebDao, StoragebEntity
 		this.delete(entityWrapper);
 	}
 
+	@Override
+	public List<StoragebEntity> exportStorageBList(String storageAId) {
+		if(StringUtils.isBlank(storageAId)) {
+			return null;
+		}
+		EntityWrapper<StoragebEntity> entityWrapper = new EntityWrapper<StoragebEntity>();
+		entityWrapper.eq("storage_id", storageAId);
+		return this.selectList(entityWrapper);
+	}
+
 }
