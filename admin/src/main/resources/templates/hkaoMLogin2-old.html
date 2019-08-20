@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>数据转换平台</title>
+	<title>网站管理系统1</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/plugins/layui/css/layui.css">
-    <link rel="stylesheet" href="${request.contextPath}/statics/css/admin.css">
-    <link rel="stylesheet" href="${request.contextPath}/statics/css/login.css">
   <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -63,38 +61,52 @@
 	.login-btn:hover{background-color: #27B5FF;}
   </style>
 </head>
-<body layadmin-themealias="default" >
- <div id="rrapp" class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;" v-cloak>
+<body class="hold-transition login-page">
+<div id="rrapp" class="layui-clear" v-cloak>
+	<div class="login-box box-left pull-left" >
+		<img src="${request.contextPath}/statics/images/login.png" alt="" />
+	</div>
+	<div class="login-box box-right pull-right" >
+		<form class="layui-form login-form" action="">
+			<div class="login-con">
+				<div class="login-logo">
+					<img src="${request.contextPath}/statics/images/hk_logo.svg" alt="" />
+				</div>
+				<div class="login-box-body">
+					<p class="login-box-msg">管理员登录</p>
+					<div v-if="error" class="error-info">
+						<h4><i class="fa fa-exclamation-triangle"></i> {{errorMsg}}</h4>
+					</div>
+					<div class="layui-form-item">
+						<div class="layui-input-block ">
+							<input type="text" class="layui-input username" v-model="username" placeholder="账号">
+							<span class="layui-icon layui-icon-username"></span>
+						</div>
+					</div>
 
-    <div class="layadmin-user-login-main">
-      <div class="layadmin-user-login-box layadmin-user-login-header">
-        <h2>数据转换平台</h2>
-        <p></p>
-      </div>
-      <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
-      	<div v-if="error" class="error-info">
-			<h4><i class="fa fa-exclamation-triangle"></i> {{errorMsg}}</h4>
-		</div>
-        <div class="layui-form-item">
-          <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
-          <input type="text" name="username" v-model="username" d="LAY-user-login-username" lay-verify="required" placeholder="账号" class="layui-input">
-        </div>
-        <div class="layui-form-item">
-          <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
-          <input type="password" name="password"  @keyup.enter="login" v-model="password" id="LAY-user-login-password" lay-verify="required" placeholder="密码" class="layui-input">
-        </div>
-        
-        <div class="layui-form-item">
-          <button class="layui-btn layui-btn-fluid"  @click="login">登 入</button>
-        </div>
+					<div class="layui-form-item">
+						<div class="layui-input-block ">
+							<input type="password" class="layui-input pwd" @keyup.enter="login" v-model="password" placeholder="密码">
+							<span class="layui-icon layui-icon-password"></span>
+						</div>
+					</div>
 
-      </div>
-    </div>
-    
+					<div class="row">
+						<div class="col-xs-8">
+							<div class="checkbox icheck">
+							</div>
+						</div>
+						<div class="col-xs-4">
+							<button type="button" class="layui-btn  layui-btn-fluid login-btn" @click="login">登录</button>
+						</div>
+					</div>
 
-    
-  </div>
-  
+				</div>
+			</div>
+		</form>
+	</div>
+
+</div>
 <script src="${request.contextPath}/statics/libs/jquery.min.js"></script>
 <script src="${request.contextPath}/statics/libs/vue.min.js"></script>
 <script type="text/javascript">
@@ -139,6 +151,5 @@ var vm = new Vue({
 	}
 });
 </script>
-
 </body>
 </html>
