@@ -30,7 +30,7 @@ layui.define(["element","jquery"],function(exports){
             if(data[i].list != undefined && data[i].list.length > 0){
                 tabStr += '<a href="javascript:;">';
                 if(data[i].icon != undefined && data[i].icon != ''){
-                    tabStr += '<i class=""'+data[i].icon+'"></i>';
+                    tabStr += '<i class="'+data[i].icon+'"> </i>';
                 }
                 tabStr += '<cite>'+data[i].name+'</cite>';
                 tabStr += '<span class="layui-nav-more"></span>';
@@ -44,7 +44,7 @@ layui.define(["element","jquery"],function(exports){
                     }
                     if(data[i].list[j].icon != undefined && data[i].list[j].icon != ''){
 
-                       tabStr += '<i class=""'+data[i].list[j].icon+'"></i>';
+                       tabStr += '<i class="'+data[i].list[j].icon+'"> </i>';
                     }
                     tabStr += '<cite>'+data[i].list[j].name+'</cite></a></dd>';
                 }
@@ -56,7 +56,7 @@ layui.define(["element","jquery"],function(exports){
                     tabStr += '<a href="javascript:;" data-url="'+data[i].url+'">';
                 }
                 if(data[i].icon != undefined && data[i].icon != ''){
-                    tabStr += '<i class=""'+data[i].icon+'"></i>';
+                    tabStr += '<i class="'+data[i].icon+'"> </i>';
                 }
                 tabStr += '<cite>'+data[i].name+'</cite></a>';
             }

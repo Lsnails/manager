@@ -7,7 +7,7 @@
 .header .layui-nav .layui-nav-item{margin: 0 20px;}
 
 .body{display: block;}
-.layui-layout-admin .header{background-color:#01acb4;border-bottom-color: #01acb4;}
+.layui-layout-admin .header{background-color:#009688;border-bottom-color: #009688;}
 .header .logo{font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;left: 10px;top: 8px;font-size: 24px;font-weight:bold; color:#fff;height: 50px;line-height: 50px;text-align: center;}
 .header .layui-nav{top: 0;}
 .header .layui-nav .layui-nav-item{margin: 0 10px;}
@@ -107,9 +107,9 @@
 }
 /* ======================= */
 /* 左侧区域 */
-.layui-side-menu{background-color: #344058 !important;}
-.layui-side-menu .layui-nav-tree .layui-nav-item a:hover{background-color: #01acb4!important;}
-.layui-side-menu .layui-nav{background-color: #344058 !important;}
+.layui-side-menu{background-color:#20222A !important;}
+.layui-side-menu .layui-nav-tree .layui-nav-item a:hover{}
+.layui-side-menu .layui-nav{background-color: #20222A !important;}
 .layui-larry-side{
 	padding: 0px;
 }
@@ -128,7 +128,7 @@
 }
 
 .layui-side-menu .layui-nav-tree .layui-nav-child dd.layui-this a,.layui-side-menu .layui-nav-tree .layui-this>a{
-	background-color: #01acb4!important;
+	background-color: #009688!important;
 }
 
 
