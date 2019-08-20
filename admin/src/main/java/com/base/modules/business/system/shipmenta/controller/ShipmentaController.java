@@ -156,6 +156,9 @@ public class ShipmentaController extends AbstractController {
             }
             String codeAndName = getCodeAndName(list.get(2));
             ShipmentbEntity b = initData(date, shopUnit, codeAndName);
+            if(StringUtils.isBlank(codeAndName)){
+                b.setProductName(list.get(2));
+            }
             b.setAmount(Integer.valueOf(list.get(3)));
             b.setRemark(list.get(0) + "_" + list.get(14));
             BigDecimal price = new BigDecimal(list.get(8)); // 结算金额
@@ -195,6 +198,9 @@ public class ShipmentaController extends AbstractController {
             }
             String codeAndName = getCodeAndName(list.get(21));
             ShipmentbEntity b = initData(date, shopUnit, codeAndName);
+            if(StringUtils.isBlank(codeAndName)){
+                b.setProductName(list.get(21));
+            }
             b.setAmount(Integer.valueOf(list.get(26)));
             b.setRemark(list.get(0) + "_" + list.get(14));
             BigDecimal price = new BigDecimal(list.get(10)); // 实付金额
@@ -235,6 +241,9 @@ public class ShipmentaController extends AbstractController {
             }
             String codeAndName = getCodeAndName(list.get(21));
             ShipmentbEntity b = initData(date, shopUnit, codeAndName);
+            if(StringUtils.isBlank(codeAndName)){
+                b.setProductName(list.get(21));
+            }
             b.setAmount(Integer.valueOf(list.get(26)));
             b.setRemark(list.get(0) + "_" + list.get(14));
             BigDecimal price = new BigDecimal(list.get(10)); // 实付金额
@@ -275,6 +284,9 @@ public class ShipmentaController extends AbstractController {
             }
             String codeAndName = getCodeAndName(list.get(0));
             ShipmentbEntity b = initData(date, shopUnit, codeAndName);
+            if(StringUtils.isBlank(codeAndName)){
+                b.setProductName(list.get(0));
+            }
             b.setAmount(Integer.valueOf(list.get(11).toString().trim()));
             b.setRemark(list.get(1) + "_" + list.get(14));
             BigDecimal price = new BigDecimal(list.get(10).replace("\t", "")); //实收金额
