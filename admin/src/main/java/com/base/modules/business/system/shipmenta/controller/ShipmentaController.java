@@ -24,11 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 /**
@@ -259,5 +255,15 @@ public class ShipmentaController extends AbstractController{
 //
 //        return R.ok();
 //    }
+
+    /**
+     * 删除
+     */
+    @DeleteMapping("/delete")
+    @ApiOperation("删除导出A表信息")
+    public R delete(@RequestBody String[] ids){
+        shipmentaService.deleteBatchShipmentAandBAndCInfo(Arrays.asList(ids));
+        return R.ok();
+    }
 
 }
