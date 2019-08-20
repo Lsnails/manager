@@ -70,28 +70,30 @@ public class ShipmentaController extends AbstractController{
     
     @RequestMapping("/uploadFile")
 	@ApiOperation("上传方法")
-	public R uploadFile(@RequestParam("file") MultipartFile file,String impType) {
+	public R uploadFile(@RequestParam("file") MultipartFile file,String impType,String shopUnit) {
         String originalFilename = file.getOriginalFilename();
         long size = file.getSize();
+        Integer su = Integer.valueOf(shopUnit);
         if (size > 0) {
             try {
                 List list = new ArrayList<>();
                 List<List<String>> lists = ExcelReaderUtil.readCsv(file.getInputStream());
                 ShipmentType shipmentType = ShipmentType.getShipmentType(Integer.valueOf(impType));
+                ShipmentShopType shipmentShopUnit = ShipmentShopType.getShopUnit(Integer.valueOf(shopUnit));
                 Date date = getDate(shipmentType.getCode(),lists);
                 //根据不同类型 得到不同数据
                 switch (shipmentType) {
                     case JD:
-                        list = getJDList(lists,date);
+                        list = getJDList(lists,date,shipmentShopUnit);
                         break;
                     case TM:
-                        list = getTMList(lists,date);
+                        list = getTMList(lists,date,shipmentShopUnit);
                         break;
                     case TB:
-                        list = getTBList(lists,date);
+                        list = getTBList(lists,date,shipmentShopUnit);
                         break;
                     case PDD:
-                        list = getPDDList(lists,date);
+                        list = getPDDList(lists,date,shipmentShopUnit);
                         break;
                 }
                 //处理数据
@@ -132,13 +134,13 @@ public class ShipmentaController extends AbstractController{
      * @param date
      * @return
      */
-    public List<List> getJDList(List<List<String>> lists,Date date){
+    public List<List> getJDList(List<List<String>> lists,Date date,ShipmentShopType shopUnit){
         List<List> reList = new ArrayList<>();
         List<ShipmentbEntity> entityB = new ArrayList<>();
         List<ShipmentcEntity> entityC = new ArrayList<>();
         String d = ContentUtils.getDateToString(date,"yyyy-MM-dd");
         for (List<String> list : lists) {
-            if(list.get(2).toString().contains("评价")){
+            if(list.get(2).contains("评价")){
                 continue;
             }
             if(null == list.get(5)){
@@ -147,8 +149,7 @@ public class ShipmentaController extends AbstractController{
             if(null!=list.get(5) && !list.get(5).contains(d)){
                 continue;
             }
-            ShipmentbEntity b = initData(list,date);
-            b.setShopUnit(ShipmentShopType.JD.getDesc());
+            ShipmentbEntity b = initData(list,date,shopUnit);
             b.setProductCode("001");
             b.setProductName("001");
             b.setSaleBussinessType("XX");
@@ -172,7 +173,7 @@ public class ShipmentaController extends AbstractController{
         reList.add(entityC);
         return reList;
     }
-    public List<List> getTMList(List<List<String>> lists,Date date){
+    public List<List> getTMList(List<List<String>> lists,Date date,ShipmentShopType shopUnit){
         List<List> reList = new ArrayList<>();
         List<ShipmentbEntity> entityB = new ArrayList<>();
         List<ShipmentcEntity> entityC = new ArrayList<>();
@@ -186,8 +187,7 @@ public class ShipmentaController extends AbstractController{
             if(!dateToString.contains(d)){
                 continue;
             }
-            ShipmentbEntity b = initData(list,date);
-            b.setShopUnit(ShipmentShopType.TM.getDesc());
+            ShipmentbEntity b = initData(list,date,shopUnit);
             b.setProductCode("001");
             b.setProductName("001");
             b.setSaleBussinessType("XX");
@@ -213,7 +213,7 @@ public class ShipmentaController extends AbstractController{
         return reList;
     }
 
-    public List<List> getTBList(List<List<String>> lists,Date date){
+    public List<List> getTBList(List<List<String>> lists,Date date,ShipmentShopType shopUnit){
         List<List> reList = new ArrayList<>();
         List<ShipmentbEntity> entityB = new ArrayList<>();
         List<ShipmentcEntity> entityC = new ArrayList<>();
@@ -227,8 +227,7 @@ public class ShipmentaController extends AbstractController{
             if(!dateToString.contains(d)){
                 continue;
             }
-            ShipmentbEntity b = initData(list,date);
-            b.setShopUnit(ShipmentShopType.TB.getDesc());
+            ShipmentbEntity b = initData(list,date,shopUnit);
             b.setProductCode("001");
             b.setProductName("001");
             b.setSaleBussinessType("XX");
@@ -254,7 +253,7 @@ public class ShipmentaController extends AbstractController{
         return reList;
     }
 
-    public List<List> getPDDList(List<List<String>> lists,Date date){
+    public List<List> getPDDList(List<List<String>> lists,Date date,ShipmentShopType shopUnit){
         List<List> reList = new ArrayList<>();
         List<ShipmentbEntity> entityB = new ArrayList<>();
         List<ShipmentcEntity> entityC = new ArrayList<>();
@@ -268,8 +267,7 @@ public class ShipmentaController extends AbstractController{
             if(!dateToString.contains(d)){
                 continue;
             }
-            ShipmentbEntity b = initData(list,date);
-            b.setShopUnit(ShipmentShopType.PDD.getDesc());
+            ShipmentbEntity b = initData(list,date,shopUnit);
             b.setSaleBussinessType("XX");
             b.setProductCode("001");
             b.setProductName("001");
@@ -295,10 +293,11 @@ public class ShipmentaController extends AbstractController{
         return reList;
     }
 
-    private ShipmentbEntity initData(List list,Date date){
+    private ShipmentbEntity initData(List list,Date date,ShipmentShopType shopUnit){
         String d = ContentUtils.getDateToString(date,"yyyy-MM-dd");
         ShipmentbEntity b = new ShipmentbEntity();
         b.setDate(date);
+        b.setShopUnit(shopUnit.getDesc());
         b.setSaleType(SaleType.T1.getCode());
         b.setShip("XX");
         b.setStorage("XX");
