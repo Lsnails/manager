@@ -17,6 +17,7 @@ import com.base.modules.sys.controller.AbstractController;
 import com.base.utils.UUIDUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -85,7 +86,7 @@ public class ShipmentaController extends AbstractController{
                         list = getJDList(lists,date);
                         break;
                     case TM:
-                        list = getTMList(lists);
+                        list = getTMList(lists,date);
                         break;
                     case TB:
                         list = getTBList(lists);
@@ -95,12 +96,14 @@ public class ShipmentaController extends AbstractController{
                         break;
                 }
                 //处理数据
-                System.out.println(list);
+                List<ShipmentbEntity> shipaList = (List<ShipmentbEntity>)list.get(0);
+                List<ShipmentcEntity> shipbList = (List<ShipmentcEntity>)list.get(1);
+//                System.out.println(list);
                 ShipmentaEntity a = new ShipmentaEntity();
                 a.setImpDate(date);
                 a.setImpName(originalFilename);
-                List<ShipmentbEntity> shipaList = (List<ShipmentbEntity>)list.get(0);
-                List<ShipmentcEntity> shipbList = (List<ShipmentcEntity>)list.get(1);
+                a.setOutCode(shipaList.get(0).getNumber());
+                a.setImpType(shipmentType.getCode());
                 shipmentaService.insertShipmentAandBAndC(a,shipaList,shipbList);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -135,8 +138,15 @@ public class ShipmentaController extends AbstractController{
         List<List> reList = new ArrayList<>();
         List<ShipmentbEntity> entityB = new ArrayList<>();
         List<ShipmentcEntity> entityC = new ArrayList<>();
+        String d = ContentUtils.getDateToString(date,"yyyy-MM-dd");
         for (List<String> list : lists) {
             if(list.get(2).toString().contains("评价")){
+                continue;
+            }
+            if(null == list.get(5)){
+                continue;
+            }
+            if(null!=list.get(5) && !list.get(5).toString().contains(d)){
                 continue;
             }
             ShipmentbEntity b = new ShipmentbEntity();
@@ -146,7 +156,7 @@ public class ShipmentaController extends AbstractController{
             b.setShip("XX");
             b.setStorage("XX");
             b.setSaleBussinessType("XX");
-            b.setNumber(storageaService.getCode(ContentUtils.getDateToString(date,"yyyy-MM-dd"),1));
+            b.setNumber(storageaService.getCode(d,1));
             b.setProductCode("001");
             b.setProductName("001");
             b.setUnit("台");
@@ -163,7 +173,6 @@ public class ShipmentaController extends AbstractController{
             entityB.add(b);
             ShipmentcEntity c = new ShipmentcEntity();
             c.setOrderId(list.get(0));
-            c.setShipmentOrderId("xxx1111");
             c.setOrderName(list.get(14));
             c.setOrderPhone(list.get(16));
             c.setPayType("月结");
@@ -174,6 +183,63 @@ public class ShipmentaController extends AbstractController{
         reList.add(entityB);
         reList.add(entityC);
         return reList;
+    }
+    public List<List> getTMList(List<List<String>> lists,Date date){
+        List<List> reList = new ArrayList<>();
+        List<ShipmentbEntity> entityB = new ArrayList<>();
+        List<ShipmentcEntity> entityC = new ArrayList<>();
+        String d = ContentUtils.getDateToString(date,"yyyy-MM-dd");
+        for (List<String> list : lists) {
+            if(StringUtils.isBlank(list.get(20))){
+                continue;
+            }
+            Date stringToDate = ContentUtils.getStringToDate(list.get(20).replace("/", "-"));
+            String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
+            if(!dateToString.contains(d)){
+                continue;
+            }
+            ShipmentbEntity b = new ShipmentbEntity();
+            b.setDate(date);
+            b.setShopUnit(ShipmentShopType.TM.getDesc());
+            b.setSaleType(SaleType.T1.getCode());
+            b.setShip("XX");
+            b.setStorage("XX");
+            b.setSaleBussinessType("XX");
+            b.setNumber(storageaService.getCode(d,1));
+            b.setProductCode("001");
+            b.setProductName("001");
+            b.setUnit("台");
+            b.setAmount(Integer.valueOf(list.get(26)));
+            BigDecimal unitCost = new BigDecimal(0.00000);
+            b.setUnitCost(unitCost);
+            BigDecimal cost = new BigDecimal(0.00);
+            b.setCost(cost);
+            b.setRemark(list.get(0)+"_"+list.get(14));
+            b.setShipWarehouse("新飞一等品");
+            BigDecimal unitPrice = new BigDecimal(list.get(8));
+            b.setPrice(unitPrice);
+            b.setType(ShipmentType.TM.getCode());
+            entityB.add(b);
+            ShipmentcEntity c = new ShipmentcEntity();
+            c.setOrderId(list.get(0));
+            c.setOrderName(list.get(14));
+            c.setOrderPhone(list.get(18));
+            c.setPayType("月结");
+            c.setProductName(list.get(21));
+            c.setPrice(unitPrice);
+            entityC.add(c);
+        }
+        reList.add(entityB);
+        reList.add(entityC);
+        return reList;
+    }
+
+    public static List<T> getTBList(List<List<String>> lists){
+        return null;
+    }
+
+    public static List<T> getPDDList(List<List<String>> lists){
+        return null;
     }
 
     /**
@@ -189,7 +255,7 @@ public class ShipmentaController extends AbstractController{
                 break;
             case TM:
                 date =  ContentUtils.getStringToDate(lists.get(0).get(20).replace("/","-"));
-              break;
+                break;
             case TB:
                 date =  ContentUtils.getStringToDate(lists.get(0).get(20).replace("/","-"));
                 break;
@@ -198,18 +264,6 @@ public class ShipmentaController extends AbstractController{
                 break;
         }
         return date;
-    }
-
-    public static List<T> getTMList(List<List<String>> lists){
-        return null;
-    }
-
-    public static List<T> getTBList(List<List<String>> lists){
-        return null;
-    }
-
-    public static List<T> getPDDList(List<List<String>> lists){
-        return null;
     }
 
     public static void main(String[] args) {

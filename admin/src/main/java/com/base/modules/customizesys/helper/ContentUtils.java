@@ -1,5 +1,7 @@
 package com.base.modules.customizesys.helper;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,8 +10,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * 内容维护相关工具类
@@ -198,9 +198,7 @@ public class ContentUtils {
 		try {
 			date = simpleDateFormat.parse(dateString);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException("字符串时间转date对象异常");
+			throw new RuntimeException("字符串时间转date对象异常",e);
 		}
 		return date;
 	}
