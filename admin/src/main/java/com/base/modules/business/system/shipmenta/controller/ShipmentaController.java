@@ -97,6 +97,20 @@ public class ShipmentaController extends AbstractController{
         }
         return R.ok();
     }
+    
+	@RequestMapping("/exportB")
+	@ApiOperation("下载出库B表信息")
+	public void exportB(String shipmentAId) {
+
+		System.out.println(shipmentAId);
+	}
+	
+	@RequestMapping("/exportC")
+	@ApiOperation("下载出库C表信息")
+	public void exportC(String shipmentAId) {
+
+		System.out.println(shipmentAId);
+	}
 
     public static List<T> getJDList(List<List<String>> lists){
         return null;

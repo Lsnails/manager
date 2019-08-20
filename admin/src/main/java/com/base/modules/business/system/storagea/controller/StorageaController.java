@@ -1,5 +1,21 @@
 package com.base.modules.business.system.storagea.controller;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
@@ -14,17 +30,9 @@ import com.base.modules.business.system.storagea.service.StorageaService;
 import com.base.modules.business.system.storageb.entity.StoragebEntity;
 import com.base.modules.customizesys.helper.ContentUtils;
 import com.base.modules.sys.controller.AbstractController;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 
 
@@ -160,15 +168,14 @@ public class StorageaController extends AbstractController{
 //        return R.ok();
 //    }
 
-//    /**
-//     * 删除
-//     */
-//    @DeleteMapping("/delete")
-//    @ApiOperation("删除XX")
-//    public R delete(@RequestBody String[] ids){
-//        storageaService.deleteBatchIds(Arrays.asList(ids));
-//
-//        return R.ok();
-//    }
+    /**
+     * 删除
+     */
+    @DeleteMapping("/delete")
+    @ApiOperation("删除入库数据")
+    public R delete(@RequestBody String[] ids){
+        storageaService.deleteStorageAandBInfo(Arrays.asList(ids));
+        return R.ok();
+    }
 
 }

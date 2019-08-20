@@ -43,7 +43,7 @@ public interface StorageaService extends IService<StorageaEntity> {
      * 删除StorageA 和 StorageB
      * @param applyDate
      */
-     void  deleteStorageAandBInfo(String applyDate);
+    void  deleteStorageAandBInfo(String applyDate);
      /**
       * 删除StorageA，通过applyDate
       * @param applyDate
@@ -57,5 +57,10 @@ public interface StorageaService extends IService<StorageaEntity> {
       * @param applyDate  格式yyyy-MM-dd
       */
      void insertStorageaVoAndStoragebList (StorageaEntity storageaEntity,List<StoragebEntity> storagebVoList,String applyDate);
+     /**
+      * 通过入库A表Ids删除 入库A and 入库B
+      * @param asList
+      */
+     void  deleteStorageAandBInfo(List<String> asList);
 }
 

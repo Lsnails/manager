@@ -174,6 +174,34 @@ var vm = new Vue({
 				}
 			});
 		},
+		exportB:function(event){
+			var objs = layui.table.checkStatus('listTable');
+			if(objs.data.length ==0 || objs.data.length >1){
+				layer.msg('请选择一条要导出的内容');
+				return ;
+			}
+			var ids = [];
+			var  shipmentAId = "";
+			for(var key in objs.data){
+				shipmentAId = objs.data[key].id;
+			}
+			debugger;
+			window.location.href=ctx + "cms/shipmenta/exportB?shipmentAId="+shipmentAId;
+		},
+		exportC:function(event){
+			var objs = layui.table.checkStatus('listTable');
+			if(objs.data.length ==0 || objs.data.length >1){
+				layer.msg('请选择一条要导出的内容');
+				return ;
+			}
+			var ids = [];
+			var  shipmentAId = "";
+			for(var key in objs.data){
+				shipmentAId = objs.data[key].id;
+			}
+			debugger;
+			window.location.href=ctx + "cms/shipmenta/exportC?shipmentAId="+shipmentAId;
+		},
 		del: function (event) {
 
 			var objs = layui.table.checkStatus('listTable');
