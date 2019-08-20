@@ -39,7 +39,7 @@ layui.use(['form','laydate','element','table','upload','layer',],function(){
 						return '<span class="x-text-green">天猫</span>';
 					}
 					if (item.impType == 3) {
-						return '<span class="x-text-green">淘宝</span>';
+						return '<span class="x-text-orange2">淘宝</span>';
 					}
 					if (item.impType == 4) {
 						return '<span class="x-text-orange">拼多多</span>';
