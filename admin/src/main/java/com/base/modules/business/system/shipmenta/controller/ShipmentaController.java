@@ -4,9 +4,15 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
 import com.base.common.utils.R;
+import com.base.modules.business.system.shipmenta.ShipmentShopType;
 import com.base.modules.business.system.shipmenta.ShipmentType;
 import com.base.modules.business.system.shipmenta.entity.ShipmentaEntity;
 import com.base.modules.business.system.shipmenta.service.ShipmentaService;
+import com.base.modules.business.system.shipmentb.SaleType;
+import com.base.modules.business.system.shipmentb.entity.ShipmentbEntity;
+import com.base.modules.business.system.shipmentc.entity.ShipmentcEntity;
+import com.base.modules.business.system.storagea.service.StorageaService;
+import com.base.modules.customizesys.helper.ContentUtils;
 import com.base.modules.sys.controller.AbstractController;
 import com.base.utils.UUIDUtils;
 import io.swagger.annotations.Api;
@@ -17,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +44,8 @@ import java.util.Map;
 public class ShipmentaController extends AbstractController{
     @Autowired
     private ShipmentaService shipmentaService;
+    @Autowired
+    private static StorageaService storageaService;
 
     /**
      * 列表
@@ -98,8 +107,71 @@ public class ShipmentaController extends AbstractController{
         return R.ok();
     }
 
-    public static List<T> getJDList(List<List<String>> lists){
-        return null;
+    public static List getJDList(List<List<String>> lists){
+        List<List> reList = new ArrayList<>();
+        List<ShipmentbEntity> entityB = new ArrayList<>();
+        List<ShipmentcEntity> entityC = new ArrayList<>();
+        Date date = getDate(ShipmentType.JD.getCode(),lists);
+        for (List<String> list : lists) {
+            ShipmentbEntity b = new ShipmentbEntity();
+            b.setDate(date);
+            b.setShopUnit(ShipmentShopType.JD.getDesc());
+            b.setSaleType(SaleType.T1.getCode());
+            b.setShip("XX");
+            b.setStorage("XX");
+            b.setSaleBussinessType("XX");
+            b.setNumber(storageaService.getCode(ContentUtils.getDateToString(date,"yyyy-MM-dd"),1));
+            b.setProductCode("001");
+            b.setProductName("001");
+            b.setUnit("台");
+            b.setAmount(Integer.valueOf(list.get(3)));
+            BigDecimal unitCost = new BigDecimal(0.00000);
+            b.setUnitCost(unitCost);
+            BigDecimal cost = new BigDecimal(0.00);
+            b.setCost(cost);
+            b.setRemark(list.get(0)+"_"+list.get(14));
+            b.setShipWarehouse("新飞一等品");
+            BigDecimal unitPrice = new BigDecimal(list.get(7));
+            b.setPrice(unitPrice);
+            b.setType(ShipmentType.JD.getCode());
+            entityB.add(b);
+            ShipmentcEntity c = new ShipmentcEntity();
+            c.setOrderId(list.get(0));
+            c.setShipmentOrderId("xxx1111");
+            c.setOrderName(list.get(14));
+            c.setOrderPhone(list.get(16));
+            c.setPayType("月结");
+            c.setProductName(list.get(2));
+            c.setPrice(unitPrice);
+            entityC.add(c);
+        }
+        reList.add(entityB);
+        reList.add(entityC);
+        return reList;
+    }
+
+    /**
+     * 获取日期
+     * @return
+     */
+    public static Date getDate(int type,List<List<String>> lists){
+        Date date = null;
+        ShipmentType shipmentType = ShipmentType.getShipmentType(type);
+        switch (shipmentType){
+            case JD:
+                date = ContentUtils.getStringToDate(lists.get(0).get(24));
+                break;
+            case TM:
+                date =  ContentUtils.getStringToDate(lists.get(0).get(20).replace("/","-"));
+              break;
+            case TB:
+                date =  ContentUtils.getStringToDate(lists.get(0).get(20).replace("/","-"));
+                break;
+            case PDD:
+                date =  ContentUtils.getStringToDate(lists.get(0).get(22).replace("/","-"));
+                break;
+        }
+        return date;
     }
 
     public static List<T> getTMList(List<List<String>> lists){

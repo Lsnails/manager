@@ -1,13 +1,12 @@
 package com.base.modules.business.system.storagea.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.base.modules.business.system.storagea.entity.StorageaEntity;
 import com.base.modules.business.system.storageb.entity.StoragebEntity;
-import com.base.utils.UUIDUtils;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 入库A表存储
@@ -57,5 +56,14 @@ public interface StorageaService extends IService<StorageaEntity> {
       * @param applyDate  格式yyyy-MM-dd
       */
      void insertStorageaVoAndStoragebList (StorageaEntity storageaEntity,List<StoragebEntity> storagebVoList,String applyDate);
+
+    /**
+     * 获取编号,根据不同的类型获取不同的编号
+     * 入库和出库
+     * @param date
+     * @param type
+     * @return
+     */
+     String getCode(String date,int type);
 }
 

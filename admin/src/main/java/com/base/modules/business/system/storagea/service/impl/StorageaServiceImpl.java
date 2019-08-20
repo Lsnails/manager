@@ -1,25 +1,26 @@
 package com.base.modules.business.system.storagea.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.base.common.utils.Query;
+import com.base.modules.business.system.config.entity.CodeEntity;
+import com.base.modules.business.system.config.service.CodeService;
 import com.base.modules.business.system.storagea.dao.StorageaDao;
 import com.base.modules.business.system.storagea.entity.StorageaEntity;
 import com.base.modules.business.system.storagea.service.StorageaService;
 import com.base.modules.business.system.storageb.entity.StoragebEntity;
 import com.base.modules.business.system.storageb.service.StoragebService;
 import com.base.utils.UUIDUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 @Service("storageaService")
@@ -28,6 +29,8 @@ public class StorageaServiceImpl extends ServiceImpl<StorageaDao, StorageaEntity
 	
 	@Autowired
 	private StoragebService storagebService;
+	@Autowired
+	private CodeService codeService;
 	
     @Override
     public Page<StorageaEntity> queryPage(Map<String, Object> params) {
@@ -63,6 +66,32 @@ public class StorageaServiceImpl extends ServiceImpl<StorageaDao, StorageaEntity
 		
     	//第三步 批量新增 入库B表数据
     	storagebService.insertBatchStoragebEntity(storagebVoList, storageaEntity.getId());
+	}
+
+	@Override
+	public String getCode(String date, int type) {
+    	String code = "";
+		CodeEntity codeEntity = codeService.queryCodeEntityByDate(date);
+		if (codeEntity.getCode() >= 100) {
+			if(type == 0){
+				code = "WIN000" + codeEntity.getCode();
+			}else{
+				code = "XOUT000" + codeEntity.getCode();
+			}
+		} else if (codeEntity.getCode() >= 10 && codeEntity.getCode() < 100) {
+			if(type == 0){
+				code = "WIN0000" + codeEntity.getCode();
+			}else{
+				code = "XOUT0000" + codeEntity.getCode();
+			}
+		} else {
+			if(type == 0){
+				code = "WIN00000" + codeEntity.getCode();
+			}else{
+				code = "XOUT00000" + codeEntity.getCode();
+			}
+		}
+		return code;
 	}
 
 	@Override
