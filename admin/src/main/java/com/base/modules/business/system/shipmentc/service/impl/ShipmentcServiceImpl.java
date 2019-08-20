@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.base.common.utils.Query;
+import com.base.modules.business.system.shipmentb.entity.ShipmentbEntity;
 import com.base.modules.business.system.shipmentc.dao.ShipmentcDao;
 import com.base.modules.business.system.shipmentc.entity.ShipmentcEntity;
 import com.base.modules.business.system.shipmentc.service.ShipmentcService;
@@ -60,6 +61,16 @@ public class ShipmentcServiceImpl extends ServiceImpl<ShipmentcDao, ShipmentcEnt
 		EntityWrapper<ShipmentcEntity> entityWrapper = new EntityWrapper<ShipmentcEntity>();
 		entityWrapper.in("shipment_id", shipmentAIdList);
 		this.delete(entityWrapper);
+	}
+
+	@Override
+	public List<ShipmentcEntity> exportShipmentCList(String shipmentAId) {
+		if(StringUtils.isBlank(shipmentAId)){
+			return null;
+		}
+		EntityWrapper<ShipmentcEntity> entityWrapper = new EntityWrapper<ShipmentcEntity>();
+		entityWrapper.eq("shipment_id", shipmentAId);
+		return this.selectList(entityWrapper);
 	}
 
 }

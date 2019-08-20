@@ -62,4 +62,14 @@ public class ShipmentbServiceImpl extends ServiceImpl<ShipmentbDao, ShipmentbEnt
 		this.delete(entityWrapper);
 	}
 
+	@Override
+	public List<ShipmentbEntity> exportShipmentBList(String shipmentAId) {
+		if(StringUtils.isBlank(shipmentAId)) {
+			return null;
+		}
+		EntityWrapper<ShipmentbEntity> entityWrapper = new EntityWrapper<ShipmentbEntity>();
+		entityWrapper.eq("shipment_id", shipmentAId);
+		return this.selectList(entityWrapper);
+	}
+
 }

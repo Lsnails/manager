@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
+import com.base.modules.business.system.shipmentb.entity.ShipmentbEntity;
 import com.base.modules.business.system.shipmentc.entity.ShipmentcEntity;
 
 /**
@@ -34,5 +35,11 @@ public interface ShipmentcService extends IService<ShipmentcEntity> {
      * @param shipmentAIdList
      */
     void  deleteBatchShipmentCVoByShipmentAIds(List<String> shipmentAIdList);
+    /**
+     * 导出出库C的数据
+     * @param shipmentAId
+     * @return
+     */
+    List<ShipmentcEntity> exportShipmentCList(String shipmentAId);
 }
 
