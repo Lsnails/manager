@@ -18,7 +18,6 @@ import com.base.utils.UUIDUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,16 +88,15 @@ public class ShipmentaController extends AbstractController{
                         list = getTMList(lists,date);
                         break;
                     case TB:
-                        list = getTBList(lists);
+                        list = getTBList(lists,date);
                         break;
                     case PDD:
-                        list = getPDDList(lists);
+                        list = getPDDList(lists,date);
                         break;
                 }
                 //处理数据
                 List<ShipmentbEntity> shipaList = (List<ShipmentbEntity>)list.get(0);
                 List<ShipmentcEntity> shipbList = (List<ShipmentcEntity>)list.get(1);
-//                System.out.println(list);
                 ShipmentaEntity a = new ShipmentaEntity();
                 a.setImpDate(date);
                 a.setImpName(originalFilename);
@@ -146,27 +144,16 @@ public class ShipmentaController extends AbstractController{
             if(null == list.get(5)){
                 continue;
             }
-            if(null!=list.get(5) && !list.get(5).toString().contains(d)){
+            if(null!=list.get(5) && !list.get(5).contains(d)){
                 continue;
             }
-            ShipmentbEntity b = new ShipmentbEntity();
-            b.setDate(date);
+            ShipmentbEntity b = initData(list,date);
             b.setShopUnit(ShipmentShopType.JD.getDesc());
-            b.setSaleType(SaleType.T1.getCode());
-            b.setShip("XX");
-            b.setStorage("XX");
-            b.setSaleBussinessType("XX");
-            b.setNumber(storageaService.getCode(d,1));
             b.setProductCode("001");
             b.setProductName("001");
-            b.setUnit("台");
+            b.setSaleBussinessType("XX");
             b.setAmount(Integer.valueOf(list.get(3)));
-            BigDecimal unitCost = new BigDecimal(0.00000);
-            b.setUnitCost(unitCost);
-            BigDecimal cost = new BigDecimal(0.00);
-            b.setCost(cost);
             b.setRemark(list.get(0)+"_"+list.get(14));
-            b.setShipWarehouse("新飞一等品");
             BigDecimal unitPrice = new BigDecimal(list.get(7));
             b.setPrice(unitPrice);
             b.setType(ShipmentType.JD.getCode());
@@ -174,6 +161,7 @@ public class ShipmentaController extends AbstractController{
             ShipmentcEntity c = new ShipmentcEntity();
             c.setOrderId(list.get(0));
             c.setOrderName(list.get(14));
+            c.setOrderAddress(list.get(15));
             c.setOrderPhone(list.get(16));
             c.setPayType("月结");
             c.setProductName(list.get(2));
@@ -198,24 +186,13 @@ public class ShipmentaController extends AbstractController{
             if(!dateToString.contains(d)){
                 continue;
             }
-            ShipmentbEntity b = new ShipmentbEntity();
-            b.setDate(date);
+            ShipmentbEntity b = initData(list,date);
             b.setShopUnit(ShipmentShopType.TM.getDesc());
-            b.setSaleType(SaleType.T1.getCode());
-            b.setShip("XX");
-            b.setStorage("XX");
-            b.setSaleBussinessType("XX");
-            b.setNumber(storageaService.getCode(d,1));
             b.setProductCode("001");
             b.setProductName("001");
-            b.setUnit("台");
+            b.setSaleBussinessType("XX");
             b.setAmount(Integer.valueOf(list.get(26)));
-            BigDecimal unitCost = new BigDecimal(0.00000);
-            b.setUnitCost(unitCost);
-            BigDecimal cost = new BigDecimal(0.00);
-            b.setCost(cost);
             b.setRemark(list.get(0)+"_"+list.get(14));
-            b.setShipWarehouse("新飞一等品");
             BigDecimal unitPrice = new BigDecimal(list.get(8));
             b.setPrice(unitPrice);
             b.setType(ShipmentType.TM.getCode());
@@ -223,10 +200,12 @@ public class ShipmentaController extends AbstractController{
             ShipmentcEntity c = new ShipmentcEntity();
             c.setOrderId(list.get(0));
             c.setOrderName(list.get(14));
+            c.setOrderAddress(list.get(15));
             c.setOrderPhone(list.get(18));
             c.setPayType("月结");
             c.setProductName(list.get(21));
             c.setPrice(unitPrice);
+            c.setNumber(Integer.valueOf(list.get(26)));
             entityC.add(c);
         }
         reList.add(entityB);
@@ -234,12 +213,103 @@ public class ShipmentaController extends AbstractController{
         return reList;
     }
 
-    public static List<T> getTBList(List<List<String>> lists){
-        return null;
+    public List<List> getTBList(List<List<String>> lists,Date date){
+        List<List> reList = new ArrayList<>();
+        List<ShipmentbEntity> entityB = new ArrayList<>();
+        List<ShipmentcEntity> entityC = new ArrayList<>();
+        String d = ContentUtils.getDateToString(date,"yyyy-MM-dd");
+        for (List<String> list : lists) {
+            if(StringUtils.isBlank(list.get(20))){
+                continue;
+            }
+            Date stringToDate = ContentUtils.getStringToDate(list.get(20).replace("/", "-"));
+            String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
+            if(!dateToString.contains(d)){
+                continue;
+            }
+            ShipmentbEntity b = initData(list,date);
+            b.setShopUnit(ShipmentShopType.TB.getDesc());
+            b.setProductCode("001");
+            b.setProductName("001");
+            b.setSaleBussinessType("XX");
+            b.setAmount(Integer.valueOf(list.get(26)));
+            b.setRemark(list.get(0)+"_"+list.get(14));
+            BigDecimal unitPrice = new BigDecimal(list.get(8));
+            b.setPrice(unitPrice);
+            b.setType(ShipmentType.TB.getCode());
+            entityB.add(b);
+            ShipmentcEntity c = new ShipmentcEntity();
+            c.setOrderId(list.get(0));
+            c.setOrderName(list.get(14));
+            c.setOrderAddress(list.get(15));
+            c.setOrderPhone(list.get(18));
+            c.setPayType("月结");
+            c.setProductName(list.get(21));
+            c.setPrice(unitPrice);
+            c.setNumber(Integer.valueOf(list.get(26)));
+            entityC.add(c);
+        }
+        reList.add(entityB);
+        reList.add(entityC);
+        return reList;
     }
 
-    public static List<T> getPDDList(List<List<String>> lists){
-        return null;
+    public List<List> getPDDList(List<List<String>> lists,Date date){
+        List<List> reList = new ArrayList<>();
+        List<ShipmentbEntity> entityB = new ArrayList<>();
+        List<ShipmentcEntity> entityC = new ArrayList<>();
+        String d = ContentUtils.getDateToString(date,"yyyy-MM-dd");
+        for (List<String> list : lists) {
+            if(StringUtils.isBlank(list.get(22))){
+                continue;
+            }
+            Date stringToDate = ContentUtils.getStringToDate(list.get(22).replace("/", "-"));
+            String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
+            if(!dateToString.contains(d)){
+                continue;
+            }
+            ShipmentbEntity b = initData(list,date);
+            b.setShopUnit(ShipmentShopType.PDD.getDesc());
+            b.setSaleBussinessType("XX");
+            b.setProductCode("001");
+            b.setProductName("001");
+            b.setAmount(Integer.valueOf(list.get(11).toString().trim()));
+            b.setRemark(list.get(1)+"_"+list.get(14));
+            BigDecimal unitPrice = new BigDecimal(list.get(10).replace("\t",""));
+            b.setPrice(unitPrice);
+            b.setType(ShipmentType.PDD.getCode());
+            entityB.add(b);
+            ShipmentcEntity c = new ShipmentcEntity();
+            c.setOrderId(list.get(1));
+            c.setOrderName(list.get(14));
+            c.setOrderAddress(list.get(17)+list.get(18)+list.get(19)+list.get(20));
+            c.setOrderPhone(list.get(15));
+            c.setProductName(list.get(0));
+            c.setPayType("月结");
+            c.setPrice(unitPrice);
+            c.setNumber(Integer.valueOf(list.get(11).trim()));
+            entityC.add(c);
+        }
+        reList.add(entityB);
+        reList.add(entityC);
+        return reList;
+    }
+
+    private ShipmentbEntity initData(List list,Date date){
+        String d = ContentUtils.getDateToString(date,"yyyy-MM-dd");
+        ShipmentbEntity b = new ShipmentbEntity();
+        b.setDate(date);
+        b.setSaleType(SaleType.T1.getCode());
+        b.setShip("XX");
+        b.setStorage("XX");
+        b.setNumber(storageaService.getCode(d,1));
+        b.setUnit("台");
+        BigDecimal unitCost = new BigDecimal(0.00000);
+        b.setUnitCost(unitCost);
+        BigDecimal cost = new BigDecimal(0.00);
+        b.setCost(cost);
+        b.setShipWarehouse("新飞一等品");
+        return b;
     }
 
     /**
