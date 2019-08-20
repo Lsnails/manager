@@ -52,4 +52,14 @@ public class ShipmentbServiceImpl extends ServiceImpl<ShipmentbDao, ShipmentbEnt
 		this.delete(entityWrapper);
 	}
 
+	@Override
+	public void deleteBatchShipmentbVoByShipmentAIds(List<String> shipmentAIdList) {
+		if(shipmentAIdList == null || shipmentAIdList.isEmpty()) {
+			return ;
+		}
+		EntityWrapper<ShipmentbEntity> entityWrapper = new EntityWrapper<ShipmentbEntity>();
+		entityWrapper.in("shipment_id", shipmentAIdList);
+		this.delete(entityWrapper);
+	}
+
 }

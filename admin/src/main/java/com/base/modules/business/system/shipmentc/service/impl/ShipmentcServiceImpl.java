@@ -52,4 +52,14 @@ public class ShipmentcServiceImpl extends ServiceImpl<ShipmentcDao, ShipmentcEnt
 		this.delete(entityWrapper);
 	}
 
+	@Override
+	public void deleteBatchShipmentCVoByShipmentAIds(List<String> shipmentAIdList) {
+		if(shipmentAIdList == null || shipmentAIdList.isEmpty()){
+			return;
+		}
+		EntityWrapper<ShipmentcEntity> entityWrapper = new EntityWrapper<ShipmentcEntity>();
+		entityWrapper.in("shipment_id", shipmentAIdList);
+		this.delete(entityWrapper);
+	}
+
 }

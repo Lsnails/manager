@@ -152,7 +152,7 @@ var vm = new Vue({
 			}
 			vm.showList = false;
             vm.title = "修改";
-            vm.getInfo(objs.data[0].shipmentaId);
+            vm.getInfo(objs.data[0].id);
 
 		},
         saveOrUpdate: function (flag) {
@@ -211,9 +211,9 @@ var vm = new Vue({
 			}
 			var ids = [];
 			for(var key in objs.data){
-				ids.push(objs.data[key].shipmentaId)
+				ids.push(objs.data[key].id)
 			}
-			layer.confirm('确定删除？', function(){
+			layer.confirm('确定删除？删除数据不可恢复，请慎重！', function(){
 				$.ajax({
 					type: "DELETE",
 				    url: ctx + "cms/shipmenta/delete",

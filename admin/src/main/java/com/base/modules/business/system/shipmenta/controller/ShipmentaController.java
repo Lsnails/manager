@@ -1,5 +1,22 @@
 package com.base.modules.business.system.shipmenta.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
@@ -9,18 +26,9 @@ import com.base.modules.business.system.shipmenta.entity.ShipmentaEntity;
 import com.base.modules.business.system.shipmenta.service.ShipmentaService;
 import com.base.modules.sys.controller.AbstractController;
 import com.base.utils.UUIDUtils;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 
 
@@ -161,15 +169,14 @@ public class ShipmentaController extends AbstractController{
 //        return R.ok();
 //    }
 //
-//    /**
-//     * 删除
-//     */
-//    @DeleteMapping("/delete")
-//    @ApiOperation("删除XX")
-//    public R delete(@RequestBody String[] ids){
-//        shipmentaService.deleteBatchIds(Arrays.asList(ids));
-//
-//        return R.ok();
-//    }
+    /**
+     * 删除
+     */
+    @DeleteMapping("/delete")
+    @ApiOperation("删除导出A表信息")
+    public R delete(@RequestBody String[] ids){
+        shipmentaService.deleteBatchShipmentAandBAndCInfo(Arrays.asList(ids));
+        return R.ok();
+    }
 
 }

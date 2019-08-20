@@ -121,4 +121,14 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
 		return this.selectOne(entityWrapper);
 	}
 
+	@Override
+	public void deleteBatchShipmentAandBAndCInfo(List<String> shipmentAIdList) {
+		//第一步  批量删除出库A表信息
+		this.deleteBatchIds(shipmentAIdList);
+		//第二步 批量删除出库B表信息
+		shipmentbService.deleteBatchShipmentbVoByShipmentAIds(shipmentAIdList);
+		//第三步 批量删除出库C表信息
+		shipmentcService.deleteBatchShipmentCVoByShipmentAIds(shipmentAIdList);
+	}
+
 }
