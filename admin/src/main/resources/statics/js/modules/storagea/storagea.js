@@ -157,8 +157,7 @@ var vm = new Vue({
 			for(var key in objs.data){
 				storageAId = objs.data[key].id;
 			}
-			debugger;
-			window.location.href=ctx + "cms/storagea/exportB?storageAId="+storageAId;
+			window.open(ctx + "cms/storagea/exportB?storageAId="+storageAId);
 		},
 		del: function (event) {
 

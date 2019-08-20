@@ -112,6 +112,16 @@ public class StorageaServiceImpl extends ServiceImpl<StorageaDao, StorageaEntity
 	}
 
 	@Override
+	public StorageaEntity queryStorageaById(String id) {
+    	if(StringUtils.isNotBlank(id)){
+			//EntityWrapper<StorageaEntity> entityWrapper = new EntityWrapper<StorageaEntity>();
+			//entityWrapper.eq("id", id);
+			return this.selectById(id);
+		}
+		return null;
+	}
+
+	@Override
 	public void deleteStorageAandBInfo(String applyDate) {
 		//第一步  查询该日期的数据是否已经导入过
 		StorageaEntity storageaEntity = this.queryStorageaEntityByapplyDate(applyDate);

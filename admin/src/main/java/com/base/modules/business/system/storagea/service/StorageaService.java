@@ -31,6 +31,8 @@ public interface StorageaService extends IService<StorageaEntity> {
      * @return
      */
     StorageaEntity queryStorageaEntityByapplyDate(String applyDate);
+
+    StorageaEntity queryStorageaById(String id);
 //    /**
 //     * 通过applyDate日期查询导入A表信息，是否 第一次导入
 //     * 返回  true 表示  

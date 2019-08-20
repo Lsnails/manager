@@ -12,6 +12,13 @@ public enum UnitType {
         this.desc = desc;
     }
 
+    public static String getDesc(int code){
+        if(code == T1.getCode()){
+            return T1.getDesc();
+        }
+        return null;
+    }
+
     public int getCode() {
         return code;
     }

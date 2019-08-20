@@ -1,21 +1,5 @@
 package com.base.modules.business.system.storagea.controller;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
@@ -28,38 +12,50 @@ import com.base.modules.business.system.storagea.UnitType;
 import com.base.modules.business.system.storagea.entity.StorageaEntity;
 import com.base.modules.business.system.storagea.service.StorageaService;
 import com.base.modules.business.system.storageb.entity.StoragebEntity;
+import com.base.modules.business.system.storageb.service.StoragebService;
 import com.base.modules.customizesys.helper.ContentUtils;
 import com.base.modules.sys.controller.AbstractController;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 /**
  * 入库A表存储
  *
  * @author huanw
- * @email 
+ * @email
  * @date 2019-08-18 20:43:16
  */
 @RestController
 @RequestMapping("cms/storagea")
-@Api(tags="a入库A表存储管理")
-public class StorageaController extends AbstractController{
+@Api(tags = "a入库A表存储管理")
+public class StorageaController extends AbstractController {
     @Autowired
     private StorageaService storageaService;
     @Autowired
     private CodeService codeService;
     @Autowired
     private CodeNameRelationService codeNameRelationService;
+    @Autowired
+    private StoragebService storagebService;
 
     /**
      * 列表
      */
     @PostMapping("/list")
     @ApiOperation("入库导入A信息列表")
-    public R list(@RequestParam Map<String, Object> params,StorageaEntity storagea){
+    public R list(@RequestParam Map<String, Object> params, StorageaEntity storagea) {
         Page<StorageaEntity> page = storageaService.queryPage(params);
 
         return PageUtils.convertFrom(page);
@@ -77,23 +73,23 @@ public class StorageaController extends AbstractController{
 //        return R.ok().put("storagea", storagea);
 //    }
 
-//    /**
+    //    /**
 //     * 保存
 //     */
     @PostMapping("/save")
     @ApiOperation("(没调试，调试参数总是报错)保存入库A表导入信息 和 入库B表信息")
-    public R save(@RequestBody StorageaEntity storagea,@RequestBody List<StoragebEntity>  storagebVoList,@RequestBody String applyDate){
-    	storagea.setApplyDate(ContentUtils.getStringToDate("2019-08-19"));
+    public R save(@RequestBody StorageaEntity storagea, @RequestBody List<StoragebEntity> storagebVoList, @RequestBody String applyDate) {
+        storagea.setApplyDate(ContentUtils.getStringToDate("2019-08-19"));
         storageaService.insertStorageaVoAndStoragebList(storagea, storagebVoList, applyDate);
         return R.ok();
     }
-    
+
     @RequestMapping("/uploadFile")
-	@ApiOperation("上传方法")
-	public R uploadFile(@RequestParam("file") MultipartFile file) {
-		String originalFilename = file.getOriginalFilename();
-		long size = file.getSize();
-		if(size>0){
+    @ApiOperation("上传方法")
+    public R uploadFile(@RequestParam("file") MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        long size = file.getSize();
+        if (size > 0) {
             try {
                 List<List<String>> readList = ExcelReaderUtil.readExcel(file.getInputStream());
                 String date = ExcelReaderUtil.getStorageDate(readList);
@@ -103,15 +99,15 @@ public class StorageaController extends AbstractController{
                 storageaEntity.setApplyDate(ContentUtils.getStringToDate(date));
                 storageaEntity.setApplyName(originalFilename);
                 storageaEntity.setOutCode(list.get(0).getNumber());
-                storageaService.insertStorageaVoAndStoragebList(storageaEntity,list,date);
+                storageaService.insertStorageaVoAndStoragebList(storageaEntity, list, date);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-		return R.ok();
+        return R.ok();
     }
 
-    private List<StoragebEntity> getList(List<List<String>> list,String date){
+    private List<StoragebEntity> getList(List<List<String>> list, String date) {
         List<StoragebEntity> rList = new ArrayList<>();
         CodeEntity codeEntity = codeService.queryCodeEntityByDate(date);
         for (List<String> strings : list) {
@@ -150,10 +146,40 @@ public class StorageaController extends AbstractController{
     }
 
     @RequestMapping("/exportB")
-	@ApiOperation("上传方法")
-    public void exportB(String storageAId) {
-    	
-    	System.out.println(storageAId);
+    @ApiOperation("上传方法")
+    public void exportB(String storageAId, HttpServletResponse response) {
+        /*String[] title = new String[]{"日期","购货单位","编号","销售方式","发货","保管","销售业务类型","产品代码","产品名称",
+        "单位","实发数量","单位成本","成本","备注","发货仓位","仓位","销售单价","销售金额"};*/
+        String[] title = new String[]{"日期", "供应商", "编号", "验收", "保管", "采购方式", "物料编码", "物料名称", "单位", "实收数量", "单价", "金额", "收料仓库", "仓位"};
+        StorageaEntity storageaEntity = storageaService.queryStorageaById(storageAId);
+        String date = ContentUtils.getDateToString(storageaEntity.getApplyDate(), "yyyy-MM-dd");
+        String fileName = storageaEntity.getApplyName().replace(".xlsx", "") + "_" + date + ".xlsx";
+        List<StoragebEntity> storagebEntities = storagebService.exportStorageBList(storageAId);
+        ExcelReaderUtil.exportExcelObj(fileName, title, getData(storagebEntities), response);
+//        System.out.println(storageAId);
+    }
+
+    private List<Object[]> getData(List<StoragebEntity> storagebEntities) {
+        List<Object[]> list = new ArrayList<>();
+        for (StoragebEntity storagebEntity : storagebEntities) {
+            Object[] b = new Object[15];
+            b[0] = ContentUtils.getDateToString(storagebEntity.getDate(), "yyyy-MM-dd");
+            b[1] = storagebEntity.getSupplier();
+            b[2] = storagebEntity.getNumber();
+            b[3] = storagebEntity.getAccept();
+            b[4] = storagebEntity.getStorage();
+            b[5] = BuyType.getDesc(storagebEntity.getBuyType());
+            b[6] = storagebEntity.getMaterNumber();
+            b[7] = storagebEntity.getMaterName();
+            b[8] = UnitType.getDesc(storagebEntity.getUnit());
+            b[9] = storagebEntity.getAmount();
+            b[10] = storagebEntity.getUnitPrice();
+            b[11] = storagebEntity.getPrice();
+            b[12] = storagebEntity.getWarehouse();
+            b[13] = "";
+            list.add(b);
+        }
+        return list;
     }
 
 //    /**
@@ -173,7 +199,7 @@ public class StorageaController extends AbstractController{
      */
     @DeleteMapping("/delete")
     @ApiOperation("删除入库数据")
-    public R delete(@RequestBody String[] ids){
+    public R delete(@RequestBody String[] ids) {
         storageaService.deleteStorageAandBInfo(Arrays.asList(ids));
         return R.ok();
     }
