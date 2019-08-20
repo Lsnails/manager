@@ -1,11 +1,11 @@
 package com.base.modules.business.system.shipmenta;
 
 public enum ShipmentShopType {
-    JD(1,"新飞冰洗旗舰店"),
-    TM(2,"大豫电器商城"),
-    TB(3,"新飞大豫云商专卖店"),
-    PDD(4,"大豫电器商城")
-    ;
+    JD(11, "新飞冰洗旗舰店"),
+    JD1(12, "星诺电器专营店"),
+    TM(21, "新飞大豫云商专卖店"),
+    TB(31, "大豫电器商城 "),
+    PDD(41, "大豫电器商城");
 
     ShipmentShopType() {
     }
@@ -13,6 +13,25 @@ public enum ShipmentShopType {
     ShipmentShopType(int code, String desc) {
         this.code = code;
         this.desc = desc;
+    }
+
+    public static ShipmentShopType getShopUnit(int code) {
+        if (code == JD.getCode()) {
+            return JD;
+        }
+        if (code == JD1.getCode()) {
+            return JD1;
+        }
+        if (code == TM.getCode()) {
+            return TM;
+        }
+        if (code == TB.getCode()) {
+            return TB;
+        }
+        if (code == PDD.getCode()) {
+            return PDD;
+        }
+        return null;
     }
 
     private int code;
