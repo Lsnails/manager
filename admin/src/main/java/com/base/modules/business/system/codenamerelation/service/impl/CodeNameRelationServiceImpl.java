@@ -19,6 +19,9 @@ import java.util.Map;
 @Service("codeNameRelationService")
 public class CodeNameRelationServiceImpl extends ServiceImpl<CodeNameRelationDao, CodeNameRelationEntity> implements CodeNameRelationService {
 
+    private volatile List<CodeNameRelationEntity> relationListDw; //处理过的数据缓存
+    private volatile Map<String,Object> map; //缓存 处理过的name 对应的code和名称
+
     @Override
     public Page<CodeNameRelationEntity> queryPage(Map<String, Object> params) {
     	String code = (String)params.get("code");
@@ -66,7 +69,39 @@ public class CodeNameRelationServiceImpl extends ServiceImpl<CodeNameRelationDao
     	    entityWrapper.like("name",name);
         }
         entityWrapper.orderBy("code asc");
-		return this.selectList(entityWrapper);
+        List<CodeNameRelationEntity> codeNameRelationEntities = this.selectList(entityWrapper);
+        return codeNameRelationEntities;
 	}
+
+    @Override
+    public Map<String,Object> getRalationData() {
+        if(null!=this.map && this.map.size()>0){
+            return this.map;
+        }
+        List<CodeNameRelationEntity> codeNameRelationEntities = this.selectList(null);
+        if(null == codeNameRelationEntities){
+            return null;
+        }
+        this.map  = new HashMap<>();
+        this.relationListDw = codeNameRelationEntities;
+        this.relationListDw.forEach(i->{
+            if(i.getType() == 1){
+                String code = i.getName().replace("新飞冰箱","");
+                String codeAndName = i.getCode()+"#"+i.getName();
+                this.map.put(code,codeAndName);
+            }
+            if(i.getType() == 2){
+                String code = i.getName().replace("新飞冷柜","");
+                String codeAndName = i.getCode()+"#"+i.getName();
+                this.map.put(code,codeAndName);
+            }
+            if(i.getType() == 3){
+                String code = i.getName().replace("新飞洗衣机","");
+                String codeAndName = i.getCode()+"#"+i.getName();
+                this.map.put(code,codeAndName);
+            }
+        });
+        return this.map;
+    }
 
 }

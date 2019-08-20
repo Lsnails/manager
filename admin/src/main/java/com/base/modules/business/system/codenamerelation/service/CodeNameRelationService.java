@@ -21,5 +21,7 @@ public interface CodeNameRelationService extends IService<CodeNameRelationEntity
     List<String> getRelationNameAndCode(String name);
      
     List<CodeNameRelationEntity> getList(Map<String, Object> params);
+
+    Map<String,Object> getRalationData();
 }
 
