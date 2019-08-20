@@ -56,6 +56,11 @@ public interface StorageaService extends IService<StorageaEntity> {
       * @param applyDate  格式yyyy-MM-dd
       */
      void insertStorageaVoAndStoragebList (StorageaEntity storageaEntity,List<StoragebEntity> storagebVoList,String applyDate);
+     /**
+      * 通过入库A表Ids删除 入库A and 入库B
+      * @param asList
+      */
+     void  deleteStorageAandBInfo(List<String> asList);
 
     /**
      * 获取编号,根据不同的类型获取不同的编号

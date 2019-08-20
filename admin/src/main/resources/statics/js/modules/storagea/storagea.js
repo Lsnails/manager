@@ -171,7 +171,7 @@ var vm = new Vue({
 			for(var key in objs.data){
 				ids.push(objs.data[key].id)
 			}
-			layer.confirm('确定删除？', function(){
+			layer.confirm('确定删除？删除数据不可恢复，请慎重！', function(){
 				$.ajax({
 					type: "DELETE",
 				    url: ctx + "cms/storagea/delete",

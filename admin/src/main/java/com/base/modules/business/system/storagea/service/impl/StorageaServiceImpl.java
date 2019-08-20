@@ -135,4 +135,14 @@ public class StorageaServiceImpl extends ServiceImpl<StorageaDao, StorageaEntity
 	}
 
 
+	@Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public void deleteStorageAandBInfo(List<String> idList) {
+		//第一 批量删除入库A表
+		this.deleteBatchIds(idList);
+		//第二 批量删除入库B表信息
+		storagebService.deleteStorageAandBInfoBystoragaIds(idList);
+	}
+
+
 }

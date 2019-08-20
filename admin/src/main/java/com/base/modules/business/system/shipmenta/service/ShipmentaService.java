@@ -53,5 +53,11 @@ public interface ShipmentaService extends IService<ShipmentaEntity> {
      * @return
      */
     ShipmentaEntity queryShipmentaVo(String impDate,Integer impType);
+    
+    /**
+     * 批量删除出库AandBandC的数据
+     * @param shipmentAIdList
+     */
+    void deleteBatchShipmentAandBAndCInfo(List<String> shipmentAIdList);
 }
 

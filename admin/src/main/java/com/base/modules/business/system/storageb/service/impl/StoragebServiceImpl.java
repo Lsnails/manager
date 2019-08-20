@@ -53,4 +53,14 @@ public class StoragebServiceImpl extends ServiceImpl<StoragebDao, StoragebEntity
 		this.insertBatch(storagebVoList);
 	}
 
+	@Override
+	public void deleteStorageAandBInfoBystoragaIds(List<String> storagaIdList) {
+		if(storagaIdList== null || storagaIdList.isEmpty()){
+			return ;
+		}
+		EntityWrapper<StoragebEntity> entityWrapper = new EntityWrapper<StoragebEntity>();
+		entityWrapper.in("storage_id", storagaIdList);
+		this.delete(entityWrapper);
+	}
+
 }

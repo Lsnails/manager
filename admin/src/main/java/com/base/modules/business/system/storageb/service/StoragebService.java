@@ -31,5 +31,10 @@ public interface StoragebService extends IService<StoragebEntity> {
      * @param storagebVoList
      */
     void insertBatchStoragebEntity(List<StoragebEntity> storagebVoList,String storagaId);
+    /**
+     * 通过入库A表的id集合删除 入库B表信息
+     * @param storagaIdList
+     */
+    void deleteStorageAandBInfoBystoragaIds(List<String> storagaIdList);
 }
 

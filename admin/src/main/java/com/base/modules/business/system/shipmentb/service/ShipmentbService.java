@@ -29,5 +29,10 @@ public interface ShipmentbService extends IService<ShipmentbEntity> {
      * @param shipmentAId
      */
     void  deleteShipmentbVoByShipmentAId(String shipmentAId);
+    /**
+     * 按照shipmentAIdList 批量删除出库B表数据
+     * @param shipmentAIdList
+     */
+    void  deleteBatchShipmentbVoByShipmentAIds(List<String> shipmentAIdList);
 }
 

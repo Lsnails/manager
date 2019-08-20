@@ -1,5 +1,22 @@
 package com.base.modules.business.system.shipmenta.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
@@ -15,6 +32,7 @@ import com.base.modules.business.system.storagea.service.StorageaService;
 import com.base.modules.customizesys.helper.ContentUtils;
 import com.base.modules.sys.controller.AbstractController;
 import com.base.utils.UUIDUtils;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.poi.ss.formula.functions.T;
@@ -106,6 +124,20 @@ public class ShipmentaController extends AbstractController{
         }
         return R.ok();
     }
+
+	@RequestMapping("/exportB")
+	@ApiOperation("下载出库B表信息")
+	public void exportB(String shipmentAId) {
+
+		System.out.println(shipmentAId);
+	}
+
+	@RequestMapping("/exportC")
+	@ApiOperation("下载出库C表信息")
+	public void exportC(String shipmentAId) {
+
+		System.out.println(shipmentAId);
+	}
 
     public static List getJDList(List<List<String>> lists){
         List<List> reList = new ArrayList<>();
