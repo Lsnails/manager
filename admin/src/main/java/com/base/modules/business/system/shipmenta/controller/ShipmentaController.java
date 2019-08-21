@@ -4,28 +4,24 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
 import com.base.common.utils.R;
-import com.base.modules.business.system.codenamerelation.service.CodeNameRelationService;
-import com.base.modules.business.system.shipmenta.ShipmentShopType;
-import com.base.modules.business.system.shipmenta.ShipmentType;
 import com.base.modules.business.system.shipmenta.entity.ShipmentaEntity;
 import com.base.modules.business.system.shipmenta.service.ShipmentaService;
-import com.base.modules.business.system.shipmentb.SaleType;
-import com.base.modules.business.system.shipmentb.entity.ShipmentbEntity;
-import com.base.modules.business.system.shipmentc.entity.ShipmentcEntity;
-import com.base.modules.business.system.storagea.service.StorageaService;
+import com.base.modules.business.system.shipmentb.service.ShipmentbService;
+import com.base.modules.business.system.shipmentc.service.ShipmentcService;
 import com.base.modules.customizesys.helper.ContentUtils;
 import com.base.modules.sys.controller.AbstractController;
 import com.base.utils.UUIDUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -42,9 +38,9 @@ public class ShipmentaController extends AbstractController {
     @Autowired
     private ShipmentaService shipmentaService;
     @Autowired
-    private StorageaService storageaService;
+    private ShipmentbService shipmentbService;
     @Autowired
-    private CodeNameRelationService codeNameRelationService;
+    private ShipmentcService shipmentcService;
 
     /**
      * 列表
@@ -75,41 +71,12 @@ public class ShipmentaController extends AbstractController {
     @RequestMapping("/uploadFile")
     @ApiOperation("上传方法")
     public R uploadFile(@RequestParam("file") MultipartFile file, String impType, String shopUnit) {
-        String originalFilename = file.getOriginalFilename();
         long size = file.getSize();
         Integer su = Integer.valueOf(shopUnit);
         if (size > 0) {
             try {
-                List list = new ArrayList<>();
-                List<List<String>> lists = ExcelReaderUtil.readCsv(file.getInputStream());
-                ShipmentType shipmentType = ShipmentType.getShipmentType(Integer.valueOf(impType));
-                ShipmentShopType shipmentShopUnit = ShipmentShopType.getShopUnit(Integer.valueOf(shopUnit));
-                Date date = getDate(shipmentType.getCode(), lists);
-                //根据不同类型 得到不同数据
-                switch (shipmentType) {
-                    case JD:
-                        list = getJDList(lists, date, shipmentShopUnit);
-                        break;
-                    case TM:
-                        list = getTMList(lists, date, shipmentShopUnit);
-                        break;
-                    case TB:
-                        list = getTBList(lists, date, shipmentShopUnit);
-                        break;
-                    case PDD:
-                        list = getPDDList(lists, date, shipmentShopUnit);
-                        break;
-                }
-                //处理数据
-                List<ShipmentbEntity> shipaList = (List<ShipmentbEntity>) list.get(0);
-                List<ShipmentcEntity> shipbList = (List<ShipmentcEntity>) list.get(1);
-                ShipmentaEntity a = new ShipmentaEntity();
-                a.setImpDate(date);
-                a.setImpName(originalFilename);
-                a.setOutCode(shipaList.get(0).getNumber());
-                a.setImpType(shipmentType.getCode());
-                shipmentaService.insertShipmentAandBAndC(a, shipaList, shipbList);
-            } catch (IOException e) {
+                shipmentaService.importData(file, impType, shopUnit);
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         } else {
@@ -120,259 +87,28 @@ public class ShipmentaController extends AbstractController {
 
     @RequestMapping("/exportB")
     @ApiOperation("下载出库B表信息")
-    public void exportB(String shipmentAId) {
-
+    public void exportB(String shipmentAId, HttpServletResponse response) {
+        String[] title = new String[]{"日期", "购货单位", "编号", "销售方式", "发货", "保管", "销售业务类型", "产品代码", "产品名称",
+                "单位", "实发数量", "单位成本", "成本", "备注", "发货仓位", "仓位", "销售单价", "销售金额"};
+        ShipmentaEntity shipmentaEntity = shipmentaService.queryEntityById(shipmentAId);
+        String date = ContentUtils.getDateToString(shipmentaEntity.getImpDate(), "yyyy-MM-dd");
+        String fileName = shipmentaEntity.getImpName().replace(".csv", "") + "_B_" + date + ".xlsx";
+        List<Object[]> list = shipmentbService.exportListB(shipmentAId);
+        ExcelReaderUtil.exportExcelObj(fileName, title, list, response);
         System.out.println(shipmentAId);
     }
 
     @RequestMapping("/exportC")
     @ApiOperation("下载出库C表信息")
-    public void exportC(String shipmentAId) {
-
+    public void exportC(String shipmentAId, HttpServletResponse response) {
+        String[] title = new String[]{"序号 ", "用户/平台订单号", "物流单号", "收件人姓名 *", "收件人手机", "收货详细地址 *", "运输性质 *", "运费付款方式 *", "送货方式",
+                "货物名称 *", "数量", "金额", "货物重量", "货物体积", "其他费用", "保价金额", "备注信息"};
+        ShipmentaEntity shipmentaEntity = shipmentaService.queryEntityById(shipmentAId);
+        String date = ContentUtils.getDateToString(shipmentaEntity.getImpDate(), "yyyy-MM-dd");
+        String fileName = shipmentaEntity.getImpName().replace(".csv", "") + "_C_" + date + ".xlsx";
+        List<Object[]> list = shipmentcService.exportListC(shipmentAId);
+        ExcelReaderUtil.exportExcelObj(fileName, title, list, response);
         System.out.println(shipmentAId);
-    }
-
-    /**
-     * 获取JD数据
-     *
-     * @param lists
-     * @param date
-     * @return
-     */
-    public List<List> getJDList(List<List<String>> lists, Date date, ShipmentShopType shopUnit) {
-        List<List> reList = new ArrayList<>();
-        List<ShipmentbEntity> entityB = new ArrayList<>();
-        List<ShipmentcEntity> entityC = new ArrayList<>();
-        String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
-        for (List<String> list : lists) {
-            if (list.get(2).contains("评价")) {
-                continue;
-            }
-            if (null == list.get(5)) {
-                continue;
-            }
-            if (null != list.get(5) && !list.get(5).contains(d)) {
-                continue;
-            }
-            String codeAndName = getCodeAndName(list.get(2));
-            ShipmentbEntity b = initData(date, shopUnit, codeAndName);
-            if(StringUtils.isBlank(codeAndName)){
-                b.setProductName(list.get(2));
-            }
-            b.setAmount(Integer.valueOf(list.get(3)));
-            b.setRemark(list.get(0) + "_" + list.get(14));
-            BigDecimal price = new BigDecimal(list.get(8)); // 结算金额
-            b.setPrice(price);
-            b.setType(ShipmentType.JD.getCode());
-            BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue()/b.getAmount());
-            b.setUnitPrice(unitPrice);
-            entityB.add(b);
-            ShipmentcEntity c = new ShipmentcEntity();
-            c.setOrderId(list.get(0));
-            c.setOrderName(list.get(14));
-            c.setOrderAddress(list.get(15));
-            c.setOrderPhone(list.get(16));
-            c.setPayType("月结");
-            c.setProductName(list.get(2));
-            c.setPrice(price);
-            entityC.add(c);
-        }
-        reList.add(entityB);
-        reList.add(entityC);
-        return reList;
-    }
-
-    public List<List> getTMList(List<List<String>> lists, Date date, ShipmentShopType shopUnit) {
-        List<List> reList = new ArrayList<>();
-        List<ShipmentbEntity> entityB = new ArrayList<>();
-        List<ShipmentcEntity> entityC = new ArrayList<>();
-        String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
-        for (List<String> list : lists) {
-            if (StringUtils.isBlank(list.get(20))) {
-                continue;
-            }
-            Date stringToDate = ContentUtils.getStringToDate(list.get(20).replace("/", "-"));
-            String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
-            if (!dateToString.contains(d)) {
-                continue;
-            }
-            String codeAndName = getCodeAndName(list.get(21));
-            ShipmentbEntity b = initData(date, shopUnit, codeAndName);
-            if(StringUtils.isBlank(codeAndName)){
-                b.setProductName(list.get(21));
-            }
-            b.setAmount(Integer.valueOf(list.get(26)));
-            b.setRemark(list.get(0) + "_" + list.get(14));
-            BigDecimal price = new BigDecimal(list.get(10)); // 实付金额
-            b.setPrice(price);
-            BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue()/b.getAmount());
-            b.setUnitPrice(unitPrice);
-            b.setType(ShipmentType.TM.getCode());
-            entityB.add(b);
-            ShipmentcEntity c = new ShipmentcEntity();
-            c.setOrderId(list.get(0));
-            c.setOrderName(list.get(14));
-            c.setOrderAddress(list.get(15));
-            c.setOrderPhone(list.get(18));
-            c.setPayType("月结");
-            c.setProductName(list.get(21));
-            c.setPrice(price);
-            c.setNumber(Integer.valueOf(list.get(26)));
-            entityC.add(c);
-        }
-        reList.add(entityB);
-        reList.add(entityC);
-        return reList;
-    }
-
-    public List<List> getTBList(List<List<String>> lists, Date date, ShipmentShopType shopUnit) {
-        List<List> reList = new ArrayList<>();
-        List<ShipmentbEntity> entityB = new ArrayList<>();
-        List<ShipmentcEntity> entityC = new ArrayList<>();
-        String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
-        for (List<String> list : lists) {
-            if (StringUtils.isBlank(list.get(20))) {
-                continue;
-            }
-            Date stringToDate = ContentUtils.getStringToDate(list.get(20).replace("/", "-"));
-            String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
-            if (!dateToString.contains(d)) {
-                continue;
-            }
-            String codeAndName = getCodeAndName(list.get(21));
-            ShipmentbEntity b = initData(date, shopUnit, codeAndName);
-            if(StringUtils.isBlank(codeAndName)){
-                b.setProductName(list.get(21));
-            }
-            b.setAmount(Integer.valueOf(list.get(26)));
-            b.setRemark(list.get(0) + "_" + list.get(14));
-            BigDecimal price = new BigDecimal(list.get(10)); // 实付金额
-            b.setPrice(price);
-            BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue()/b.getAmount());
-            b.setUnitPrice(unitPrice);
-            b.setType(ShipmentType.TB.getCode());
-            entityB.add(b);
-            ShipmentcEntity c = new ShipmentcEntity();
-            c.setOrderId(list.get(0));
-            c.setOrderName(list.get(14));
-            c.setOrderAddress(list.get(15));
-            c.setOrderPhone(list.get(18));
-            c.setPayType("月结");
-            c.setProductName(list.get(21));
-            c.setPrice(unitPrice);
-            c.setNumber(Integer.valueOf(list.get(26)));
-            entityC.add(c);
-        }
-        reList.add(entityB);
-        reList.add(entityC);
-        return reList;
-    }
-
-    public List<List> getPDDList(List<List<String>> lists, Date date, ShipmentShopType shopUnit) {
-        List<List> reList = new ArrayList<>();
-        List<ShipmentbEntity> entityB = new ArrayList<>();
-        List<ShipmentcEntity> entityC = new ArrayList<>();
-        String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
-        for (List<String> list : lists) {
-            if (StringUtils.isBlank(list.get(22))) {
-                continue;
-            }
-            Date stringToDate = ContentUtils.getStringToDate(list.get(22).replace("/", "-"));
-            String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
-            if (!dateToString.contains(d)) {
-                continue;
-            }
-            String codeAndName = getCodeAndName(list.get(0));
-            ShipmentbEntity b = initData(date, shopUnit, codeAndName);
-            if(StringUtils.isBlank(codeAndName)){
-                b.setProductName(list.get(0));
-            }
-            b.setAmount(Integer.valueOf(list.get(11).toString().trim()));
-            b.setRemark(list.get(1) + "_" + list.get(14));
-            BigDecimal price = new BigDecimal(list.get(10).replace("\t", "")); //实收金额
-            b.setPrice(price);
-            BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue()/b.getAmount());
-            b.setUnitPrice(unitPrice);
-            b.setType(ShipmentType.PDD.getCode());
-            entityB.add(b);
-            ShipmentcEntity c = new ShipmentcEntity();
-            c.setOrderId(list.get(1));
-            c.setOrderName(list.get(14));
-            c.setOrderAddress(list.get(17) + list.get(18) + list.get(19) + list.get(20));
-            c.setOrderPhone(list.get(15));
-            c.setProductName(list.get(0));
-            c.setPayType("月结");
-            c.setPrice(unitPrice);
-            c.setNumber(Integer.valueOf(list.get(11).trim()));
-            entityC.add(c);
-        }
-        reList.add(entityB);
-        reList.add(entityC);
-        return reList;
-    }
-
-    private ShipmentbEntity initData(Date date, ShipmentShopType shopUnit, String codeAndName) {
-        String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
-        ShipmentbEntity b = new ShipmentbEntity();
-        b.setDate(date);
-        b.setShopUnit(shopUnit.getDesc());
-        b.setSaleType(SaleType.T1.getCode());
-        b.setShip("XX");
-        b.setStorage("XX");
-        if (StringUtils.isNotBlank(codeAndName)) {
-            b.setProductCode(codeAndName.split("#")[0]);
-            b.setProductName(codeAndName.split("#")[1]);
-        } else {
-            b.setProductCode("未知");
-            b.setProductName("未知");
-        }
-        b.setNumber(storageaService.getCode(d, 1));
-        b.setSaleBussinessType("销售出库类型");
-        b.setUnit("台");
-        BigDecimal unitCost = new BigDecimal(0.00000);
-        b.setUnitCost(unitCost);
-        BigDecimal cost = new BigDecimal(0.00);
-        b.setCost(cost);
-        b.setShipWarehouse("新飞一等品");
-        return b;
-    }
-
-    /**
-     * 获取日期
-     *
-     * @return
-     */
-    public static Date getDate(int type, List<List<String>> lists) {
-        Date date = null;
-        ShipmentType shipmentType = ShipmentType.getShipmentType(type);
-        switch (shipmentType) {
-            case JD:
-                date = ContentUtils.getStringToDate(lists.get(0).get(24));
-                break;
-            case TM:
-                date = ContentUtils.getStringToDate(lists.get(0).get(20).replace("/", "-"));
-                break;
-            case TB:
-                date = ContentUtils.getStringToDate(lists.get(0).get(20).replace("/", "-"));
-                break;
-            case PDD:
-                date = ContentUtils.getStringToDate(lists.get(0).get(22).replace("/", "-"));
-                break;
-        }
-        return date;
-    }
-
-    private String getCodeAndName(String name) {
-        Map<String, Object> relationData = codeNameRelationService.getRalationData();// 初始化
-        if (null == relationData) {
-            return null;
-        }
-        for (String string : relationData.keySet()) {
-            if (name.contains(string)) {
-                return relationData.get(string).toString();
-            }
-        }
-        return null;
     }
 
     public static void main(String[] args) {

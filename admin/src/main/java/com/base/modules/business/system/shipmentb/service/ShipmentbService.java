@@ -1,11 +1,11 @@
 package com.base.modules.business.system.shipmentb.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.base.modules.business.system.shipmentb.entity.ShipmentbEntity;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 出库B表数据
@@ -40,5 +40,7 @@ public interface ShipmentbService extends IService<ShipmentbEntity> {
      * @return
      */
     List<ShipmentbEntity> exportShipmentBList(String shipmentAId);
+
+    List<Object[]> exportListB(String id);
 }
 

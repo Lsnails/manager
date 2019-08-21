@@ -4,11 +4,6 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
 import com.base.common.utils.R;
-import com.base.modules.business.system.codenamerelation.service.CodeNameRelationService;
-import com.base.modules.business.system.config.entity.CodeEntity;
-import com.base.modules.business.system.config.service.CodeService;
-import com.base.modules.business.system.storagea.BuyType;
-import com.base.modules.business.system.storagea.UnitType;
 import com.base.modules.business.system.storagea.entity.StorageaEntity;
 import com.base.modules.business.system.storagea.service.StorageaService;
 import com.base.modules.business.system.storageb.entity.StoragebEntity;
@@ -22,9 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +35,6 @@ import java.util.Map;
 public class StorageaController extends AbstractController {
     @Autowired
     private StorageaService storageaService;
-    @Autowired
-    private CodeService codeService;
-    @Autowired
-    private CodeNameRelationService codeNameRelationService;
     @Autowired
     private StoragebService storagebService;
 
@@ -91,95 +79,23 @@ public class StorageaController extends AbstractController {
         long size = file.getSize();
         if (size > 0) {
             try {
-                List<List<String>> readList = ExcelReaderUtil.readExcel(file.getInputStream());
-                String date = ExcelReaderUtil.getStorageDate(readList);
-                List<List<String>> storageBData = ExcelReaderUtil.getStorageData(readList);
-                List<StoragebEntity> list = getList(storageBData, date);
-                StorageaEntity storageaEntity = new StorageaEntity();
-                storageaEntity.setApplyDate(ContentUtils.getStringToDate(date));
-                storageaEntity.setApplyName(originalFilename);
-                storageaEntity.setOutCode(list.get(0).getNumber());
-                storageaService.insertStorageaVoAndStoragebList(storageaEntity, list, date);
-            } catch (IOException e) {
+                storageaService.importData(file);
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
         return R.ok();
     }
 
-    private List<StoragebEntity> getList(List<List<String>> list, String date) {
-        List<StoragebEntity> rList = new ArrayList<>();
-        CodeEntity codeEntity = codeService.queryCodeEntityByDate(date);
-        for (List<String> strings : list) {
-            StoragebEntity entity = new StoragebEntity();
-            entity.setDate(ContentUtils.getStringToDate(date));
-            entity.setSupplier("新飞制冷器具有限公司");
-            if (codeEntity.getCode() >= 100) {
-                entity.setNumber("WIN000" + codeEntity.getCode());
-            } else if (codeEntity.getCode() >= 10 && codeEntity.getCode() < 100) {
-                entity.setNumber("WIN0000" + codeEntity.getCode());
-            } else {
-                entity.setNumber("WIN00000" + codeEntity.getCode());
-            }
-            entity.setAccept("XX");
-            entity.setStorage("XX");
-            entity.setBuyType(BuyType.T1.getCode());
-            List<String> relationNameAndCode = codeNameRelationService.getRelationNameAndCode(strings.get(1));
-            if (null != relationNameAndCode && relationNameAndCode.size() > 0) {
-                entity.setMaterNumber(relationNameAndCode.get(0));
-                entity.setMaterName(relationNameAndCode.get(1));
-            } else {
-                entity.setMaterNumber("未知");
-                entity.setMaterName("未知");
-            }
-            entity.setUnit(UnitType.T1.getCode());
-            Integer number = Integer.valueOf(strings.get(2)).intValue();
-            Double unitPrice = Double.valueOf(strings.get(3)).doubleValue();
-            BigDecimal price = new BigDecimal(number * unitPrice);
-            entity.setAmount(Integer.valueOf(strings.get(2)));
-            entity.setUnitPrice(new BigDecimal(unitPrice));
-            entity.setPrice(price);
-            entity.setWarehouse("新飞一等品");
-            rList.add(entity);
-        }
-        return rList;
-    }
-
     @RequestMapping("/exportB")
     @ApiOperation("上传方法")
     public void exportB(String storageAId, HttpServletResponse response) {
-        /*String[] title = new String[]{"日期","购货单位","编号","销售方式","发货","保管","销售业务类型","产品代码","产品名称",
-        "单位","实发数量","单位成本","成本","备注","发货仓位","仓位","销售单价","销售金额"};*/
         String[] title = new String[]{"日期", "供应商", "编号", "验收", "保管", "采购方式", "物料编码", "物料名称", "单位", "实收数量", "单价", "金额", "收料仓库", "仓位"};
         StorageaEntity storageaEntity = storageaService.queryStorageaById(storageAId);
         String date = ContentUtils.getDateToString(storageaEntity.getApplyDate(), "yyyy-MM-dd");
-        String fileName = storageaEntity.getApplyName().replace(".xlsx", "") + "_" + date + ".xlsx";
-        List<StoragebEntity> storagebEntities = storagebService.exportStorageBList(storageAId);
-        ExcelReaderUtil.exportExcelObj(fileName, title, getData(storagebEntities), response);
-//        System.out.println(storageAId);
-    }
-
-    private List<Object[]> getData(List<StoragebEntity> storagebEntities) {
-        List<Object[]> list = new ArrayList<>();
-        for (StoragebEntity storagebEntity : storagebEntities) {
-            Object[] b = new Object[15];
-            b[0] = ContentUtils.getDateToString(storagebEntity.getDate(), "yyyy-MM-dd");
-            b[1] = storagebEntity.getSupplier();
-            b[2] = storagebEntity.getNumber();
-            b[3] = storagebEntity.getAccept();
-            b[4] = storagebEntity.getStorage();
-            b[5] = BuyType.getDesc(storagebEntity.getBuyType());
-            b[6] = storagebEntity.getMaterNumber();
-            b[7] = storagebEntity.getMaterName();
-            b[8] = UnitType.getDesc(storagebEntity.getUnit());
-            b[9] = storagebEntity.getAmount();
-            b[10] = storagebEntity.getUnitPrice();
-            b[11] = storagebEntity.getPrice();
-            b[12] = storagebEntity.getWarehouse();
-            b[13] = "";
-            list.add(b);
-        }
-        return list;
+        String fileName = storageaEntity.getApplyName().replace(".xlsx", "") + "_B_" + date + ".xlsx";
+        List<Object[]> objects = storagebService.exportListB(storageAId);
+        ExcelReaderUtil.exportExcelObj(fileName, title, objects, response);
     }
 
 //    /**

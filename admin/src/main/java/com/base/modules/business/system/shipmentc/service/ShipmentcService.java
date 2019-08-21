@@ -41,5 +41,7 @@ public interface ShipmentcService extends IService<ShipmentcEntity> {
      * @return
      */
     List<ShipmentcEntity> exportShipmentCList(String shipmentAId);
+
+    List<Object[]> exportListC(String id);
 }
 

@@ -7,6 +7,13 @@ public enum SaleType {
     SaleType() {
     }
 
+    public static String getDesc(int code){
+        if(code == T1.getCode()){
+            return T1.getDesc();
+        }
+        return null;
+    }
+
 
     private int code;
     private String desc;
