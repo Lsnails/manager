@@ -9,6 +9,7 @@
         <result property="impDate" column="imp_date"/>
         <result property="impName" column="imp_name"/>
         <result property="impType" column="imp_type"/>
+        <result property="shopType" column="shop_type"/>
         <result property="outCode" column="out_code"/>
         <result property="createDate" column="create_date"/>
     </resultMap>

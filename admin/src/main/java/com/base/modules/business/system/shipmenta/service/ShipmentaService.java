@@ -43,7 +43,7 @@ public interface ShipmentaService extends IService<ShipmentaEntity> {
      * @param impDate
      * @param impType
      */
-    void deleteShipmentaVo(String impDate, Integer impType);
+    void deleteShipmentaVo(String impDate, Integer impType,Integer shopType);
 
     /**
      * 删除出库AandBandC的数据
@@ -51,16 +51,16 @@ public interface ShipmentaService extends IService<ShipmentaEntity> {
      * @param impDate
      * @param impType
      */
-    void deleteShipmentAandBAndCInfo(String impDate, Integer impType);
+    void deleteShipmentAandBAndCInfo(String impDate, Integer impType,Integer shopType);
 
     /**
-     * 按照导入日期和类型（天猫、淘宝等）查询出库A是否存在
+     * 按照导入日期和类型和购货单位（天猫、淘宝等）查询出库A是否存在
      *
      * @param impDate
      * @param impType
      * @return
      */
-    ShipmentaEntity queryShipmentaVo(String impDate, Integer impType);
+    ShipmentaEntity queryShipmentaVo(String impDate, Integer impType,Integer shopType);
 
     /**
      * 批量删除出库AandBandC的数据

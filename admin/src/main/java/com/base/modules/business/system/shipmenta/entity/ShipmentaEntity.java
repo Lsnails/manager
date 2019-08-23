@@ -39,6 +39,10 @@ public class ShipmentaEntity implements Serializable {
 	 */
 	private Integer impType;
 	/**
+	 * 购货单位 11 新飞冰洗旗舰店   12 星诺电器专营店  21 新飞大豫云商专卖店  31 大豫电器商城   41 大豫电器商城
+	 */
+	private Integer shopType;
+	/**
 	 * 输出编码
 	 */
 	private String outCode;
@@ -120,4 +124,19 @@ public class ShipmentaEntity implements Serializable {
 	public Date getCreateDate() {
 		return createDate;
 	}
+	/**
+	 * 获取：购货单位 11 新飞冰洗旗舰店   12 星诺电器专营店  21 新飞大豫云商专卖店  31 大豫电器商城   41 大豫电器商城
+	 * @return
+	 */
+	public Integer getShopType() {
+		return shopType;
+	}
+	/**
+	 * 设置： 购货单位 11 新飞冰洗旗舰店   12 星诺电器专营店  21 新飞大豫云商专卖店  31 大豫电器商城   41 大豫电器商城
+	 * @param shopType
+	 */
+	public void setShopType(Integer shopType) {
+		this.shopType = shopType;
+	}
+	
 }

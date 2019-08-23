@@ -48,6 +48,27 @@ layui.use(['form','laydate','element','table','upload','layer',],function(){
 					}
 					
 				}}, 
+				{ title: '购货单位',field: 'shopType',minWidth: 70,templet: function(item){
+//					购货单位 11 新飞冰洗旗舰店   12 星诺电器专营店  21 新飞大豫云商专卖店  31 大豫电器商城   41 大豫电器商城
+					if (item.shopType == 11) {
+						return '<span class="x-text-normal">新飞冰洗旗舰店</span>';
+					}
+					if (item.shopType == 12) {
+						return '<span class="x-text-normal"> 星诺电器专营店</span>';
+					}
+					if (item.shopType == 21) {
+						return '<span class="x-text-green">新飞大豫云商专卖店</span>';
+					}
+					if (item.shopType == 31) {
+						return '<span class="x-text-orange2">大豫电器商城 </span>';
+					}
+					if (item.shopType == 41) {
+						return '<span class="x-text-orange">大豫电器商城</span>';
+					}else{
+						return '其他';
+					}
+					
+				}},
 				{ title: '输出编码',field: 'outCode',minWidth: 70}, 
 				{ title: '创建时间',field: 'createDate',minWidth: 70}
 //				{ title:"操作",fixed:'right',toolbar: "#operationBar",width:100}
@@ -134,7 +155,7 @@ var vm = new Vue({
 			layui.layer.open({
 	            title :"出库导入",
 	            type : 2,
-	            area: ['50%', '50%'],
+	            area: ['60%', '60%'],
 	            shade:0,//不要遮罩
 	            content :ctx+"modules/shipmenta/importPage.html",
 	            yes: function(index, layero){

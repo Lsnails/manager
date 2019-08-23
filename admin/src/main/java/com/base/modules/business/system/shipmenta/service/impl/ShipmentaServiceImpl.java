@@ -71,8 +71,9 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
                                         List<ShipmentcEntity> shipmentCVoList) {
         Date impDate = shipmentAVo.getImpDate();
         Integer impType = shipmentAVo.getImpType();
+        Integer shopType = shipmentAVo.getShopType();
         //第一步删除 相同日期和相同类型已经导入过的数据
-        this.deleteShipmentAandBAndCInfo(ContentUtils.getDateToString(impDate, "yyyy-MM-dd"), impType);
+        this.deleteShipmentAandBAndCInfo(ContentUtils.getDateToString(impDate, "yyyy-MM-dd"), impType,shopType);
         //第二步 插入出库A表数据 、出库B表数据 、出库C表数据
         //1.插入出库A表数据
         String uuId = UUIDUtils.getRandomUUID();
@@ -96,26 +97,27 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
     }
 
     @Override
-    public void deleteShipmentaVo(String impDate, Integer impType) {
+    public void deleteShipmentaVo(String impDate, Integer impType,Integer shopType) {
         EntityWrapper<ShipmentaEntity> entityWrapper = new EntityWrapper<ShipmentaEntity>();
-        if (StringUtils.isBlank(impDate) || impType == null) {
+        if (StringUtils.isBlank(impDate) || impType == null || shopType==null) {
             return;
         }
         entityWrapper.eq("imp_date", impDate);
         entityWrapper.eq("imp_type", impType);
+        entityWrapper.eq("shop_type", shopType);
         this.delete(entityWrapper);
     }
 
     @Override
-    public void deleteShipmentAandBAndCInfo(String impDate, Integer impType) {
+    public void deleteShipmentAandBAndCInfo(String impDate, Integer impType,Integer shopType) {
         //第一步：查询此数据是否已经导入过
-        ShipmentaEntity queryShipmentaVo = this.queryShipmentaVo(impDate, impType);
+        ShipmentaEntity queryShipmentaVo = this.queryShipmentaVo(impDate, impType,shopType);
         if (queryShipmentaVo == null) {
             return;
         }
         //第二步  删除出库A表 、B表、C表信息
         //1，删除出库A表信息
-        this.deleteShipmentaVo(impDate, impType);
+        this.deleteShipmentaVo(impDate, impType,shopType);
         //2，删除出库B表信息
         String shipmentAId = queryShipmentaVo.getId();
         shipmentbService.deleteShipmentbVoByShipmentAId(shipmentAId);
@@ -124,13 +126,14 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
     }
 
     @Override
-    public ShipmentaEntity queryShipmentaVo(String impDate, Integer impType) {
+    public ShipmentaEntity queryShipmentaVo(String impDate, Integer impType,Integer shopType) {
         EntityWrapper<ShipmentaEntity> entityWrapper = new EntityWrapper<ShipmentaEntity>();
-        if (StringUtils.isBlank(impDate) || impType == null) {
+        if (StringUtils.isBlank(impDate) || impType == null || shopType ==null) {
             return null;
         }
         entityWrapper.eq("imp_date", impDate);
         entityWrapper.eq("imp_type", impType);
+        entityWrapper.eq("shop_type", shopType);
         return this.selectOne(entityWrapper);
     }
 
@@ -183,6 +186,7 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
             a.setImpName(file.getOriginalFilename());
             a.setOutCode(shipaList.get(0).getNumber());
             a.setImpType(shipmentType.getCode());
+            a.setShopType(Integer.valueOf(shopUnit));
             this.insertShipmentAandBAndC(a, shipaList, shipbList);
         } catch (IOException e) {
             e.printStackTrace();
