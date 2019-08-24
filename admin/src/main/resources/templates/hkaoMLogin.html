@@ -72,9 +72,9 @@
         <p></p>
       </div>
       <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
-      	<div v-if="error" class="error-info">
+      	<!-- <div v-if="error" class="error-info">
 			<h4><i class="fa fa-exclamation-triangle"></i> {{errorMsg}}</h4>
-		</div>
+		</div> -->
         <div class="layui-form-item">
           <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
           <input type="text" name="username" v-model="username" d="LAY-user-login-username" lay-verify="required" placeholder="账号" class="layui-input">
@@ -97,7 +97,14 @@
   
 <script src="${request.contextPath}/statics/libs/jquery.min.js"></script>
 <script src="${request.contextPath}/statics/libs/vue.min.js"></script>
+<script type="text/javascript" src="${request.contextPath}/statics/plugins/layui/layui.js"></script>
 <script type="text/javascript">
+var layer,localLayer;
+layui.use(['layer'],function(){
+    layer = top.layer;//在最外层弹出
+    localLayer = layui.layer;//在内容区弹出
+
+});
 var vm = new Vue({
 	el:'#rrapp',
 	data:{
@@ -129,9 +136,9 @@ var vm = new Vue({
 						parent.location.href ='index.html';
 					}else{
 						vm.error = true;
-						vm.errorMsg = result.msg;
-						
-						vm.refreshCode();
+						//vm.errorMsg = result.msg;
+						localLayer.msg(result.msg, {icon: 2});
+						//vm.refreshCode();
 					}
 				}
 			});

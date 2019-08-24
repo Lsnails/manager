@@ -137,13 +137,14 @@ public class StorageaServiceImpl extends ServiceImpl<StorageaDao, StorageaEntity
             entity.setAccept("XX");
             entity.setStorage("XX");
             entity.setBuyType(BuyType.T1.getCode());
-            List<String> relationNameAndCode = codeNameRelationService.getRelationNameAndCode(strings.get(1));
-            if (null != relationNameAndCode && relationNameAndCode.size() > 0) {
-                entity.setMaterNumber(relationNameAndCode.get(0));
-                entity.setMaterName(relationNameAndCode.get(1));
-            } else {
+            //List<String> relationNameAndCode = codeNameRelationService.getRelationNameAndCode(strings.get(1));
+            String codeAndName = getCodeAndName(strings.get(1));
+            if(StringUtils.isNotBlank(codeAndName)) {
+            	entity.setMaterNumber(codeAndName.split("#")[0]);
+            	entity.setMaterName(codeAndName.split("#")[1]);
+            }else {
                 entity.setMaterNumber("未知");
-                entity.setMaterName("未知");
+                entity.setMaterName(strings.get(1));
             }
             entity.setUnit(UnitType.T1.getCode());
             Integer number = Integer.valueOf(strings.get(2)).intValue();
@@ -156,6 +157,19 @@ public class StorageaServiceImpl extends ServiceImpl<StorageaDao, StorageaEntity
             rList.add(entity);
         }
         return rList;
+    }
+    
+    private String getCodeAndName(String name) {
+        Map<String, Object> relationData = codeNameRelationService.getRalationData();// 初始化
+        if (null == relationData) {
+            return null;
+        }
+        for (String string : relationData.keySet()) {
+            if (name.contains(string)) {
+                return relationData.get(string).toString();
+            }
+        }
+        return null;
     }
 
     @Override

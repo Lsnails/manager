@@ -1,6 +1,7 @@
 package com.base.modules.business.system.codenamerelation.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.base.common.utils.Query;
@@ -21,6 +22,19 @@ public class CodeNameRelationServiceImpl extends ServiceImpl<CodeNameRelationDao
 
     private volatile List<CodeNameRelationEntity> relationListDw; //处理过的数据缓存
     private volatile Map<String,Object> map; //缓存 处理过的name 对应的code和名称
+    
+    @Override
+    public boolean insert(CodeNameRelationEntity entity) {
+    	this.map = null;
+    	return super.insert(entity);
+    }
+  
+    @Override
+    public boolean updateAllColumnById(CodeNameRelationEntity entity) {
+    	// TODO Auto-generated method stub
+    	this.map = null;
+    	return super.updateAllColumnById(entity);
+    }
 
     @Override
     public Page<CodeNameRelationEntity> queryPage(Map<String, Object> params) {
@@ -87,17 +101,17 @@ public class CodeNameRelationServiceImpl extends ServiceImpl<CodeNameRelationDao
         this.relationListDw.forEach(i->{
             if(i.getType() == 1){
                 String code = i.getName().replace("新飞冰箱","");
-                String codeAndName = i.getCode()+"#"+i.getName();
+                String codeAndName = i.getCode()+"#"+i.getFullName();
                 this.map.put(code,codeAndName);
             }
             if(i.getType() == 2){
                 String code = i.getName().replace("新飞冷柜","");
-                String codeAndName = i.getCode()+"#"+i.getName();
+                String codeAndName = i.getCode()+"#"+i.getFullName();
                 this.map.put(code,codeAndName);
             }
             if(i.getType() == 3){
                 String code = i.getName().replace("新飞洗衣机","");
-                String codeAndName = i.getCode()+"#"+i.getName();
+                String codeAndName = i.getCode()+"#"+i.getFullName();
                 this.map.put(code,codeAndName);
             }
         });

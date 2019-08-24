@@ -13,6 +13,11 @@ import org.springframework.context.annotation.ComponentScan;
 @MapperScan(basePackages = {"com.base.modules.**.dao"})
 @ComponentScan(basePackages = {"com.base.*"})
 @EnableCaching //开启缓存支持
+/**
+ * <!--dA+Pm$O -->
+ * @author Administrator
+ *
+ */
 public class AdminApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
