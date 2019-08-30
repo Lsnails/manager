@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +50,20 @@ public class ExcelReaderUtil {
             HSSFRow rowTmp = sheet1.createRow(rowNum);
             cellNum = 0;
             for (Object s : a) {
-                if (s == null)
-                    rowTmp.createCell(cellNum).setCellValue("");
-                else
-                    rowTmp.createCell(cellNum).setCellValue(s.toString());
+                    if (s == null){
+                        rowTmp.createCell(cellNum).setCellValue("");
+                    }
+                    else{
+                        if(s instanceof BigDecimal){
+                            rowTmp.createCell(cellNum).setCellType(Cell.CELL_TYPE_NUMERIC);
+                            rowTmp.createCell(cellNum).setCellValue((((BigDecimal) s).setScale(4)).doubleValue());
+                        }else if(s instanceof Integer){
+                            rowTmp.createCell(cellNum).setCellType(Cell.CELL_TYPE_NUMERIC);
+                            rowTmp.createCell(cellNum).setCellValue(((Integer) s).intValue());
+                        } else{
+                            rowTmp.createCell(cellNum).setCellValue(s.toString());
+                        }
+                    }
                 cellNum++;
             }
             rowNum++;
