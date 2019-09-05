@@ -71,6 +71,7 @@ public class ShipmentbServiceImpl extends ServiceImpl<ShipmentbDao, ShipmentbEnt
         }
         EntityWrapper<ShipmentbEntity> entityWrapper = new EntityWrapper<ShipmentbEntity>();
         entityWrapper.eq("shipment_id", shipmentAId);
+        entityWrapper.orderBy("date", true);
         return this.selectList(entityWrapper);
     }
 
@@ -83,6 +84,7 @@ public class ShipmentbServiceImpl extends ServiceImpl<ShipmentbDao, ShipmentbEnt
 
     /**
      * 拼装导出数据
+     *
      * @param listEntitys
      * @return
      */

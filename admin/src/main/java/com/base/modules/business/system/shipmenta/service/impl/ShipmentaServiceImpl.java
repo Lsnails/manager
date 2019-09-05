@@ -28,10 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service("shipmentaService")
@@ -73,7 +70,7 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
         Integer impType = shipmentAVo.getImpType();
         Integer shopType = shipmentAVo.getShopType();
         //第一步删除 相同日期和相同类型已经导入过的数据
-        this.deleteShipmentAandBAndCInfo(ContentUtils.getDateToString(impDate, "yyyy-MM-dd"), impType,shopType);
+        this.deleteShipmentAandBAndCInfo(ContentUtils.getDateToString(impDate, "yyyy-MM-dd"), impType, shopType);
         //第二步 插入出库A表数据 、出库B表数据 、出库C表数据
         //1.插入出库A表数据
         String uuId = UUIDUtils.getRandomUUID();
@@ -97,9 +94,9 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
     }
 
     @Override
-    public void deleteShipmentaVo(String impDate, Integer impType,Integer shopType) {
+    public void deleteShipmentaVo(String impDate, Integer impType, Integer shopType) {
         EntityWrapper<ShipmentaEntity> entityWrapper = new EntityWrapper<ShipmentaEntity>();
-        if (StringUtils.isBlank(impDate) || impType == null || shopType==null) {
+        if (StringUtils.isBlank(impDate) || impType == null || shopType == null) {
             return;
         }
         entityWrapper.eq("imp_date", impDate);
@@ -109,15 +106,15 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
     }
 
     @Override
-    public void deleteShipmentAandBAndCInfo(String impDate, Integer impType,Integer shopType) {
+    public void deleteShipmentAandBAndCInfo(String impDate, Integer impType, Integer shopType) {
         //第一步：查询此数据是否已经导入过
-        ShipmentaEntity queryShipmentaVo = this.queryShipmentaVo(impDate, impType,shopType);
+        ShipmentaEntity queryShipmentaVo = this.queryShipmentaVo(impDate, impType, shopType);
         if (queryShipmentaVo == null) {
             return;
         }
         //第二步  删除出库A表 、B表、C表信息
         //1，删除出库A表信息
-        this.deleteShipmentaVo(impDate, impType,shopType);
+        this.deleteShipmentaVo(impDate, impType, shopType);
         //2，删除出库B表信息
         String shipmentAId = queryShipmentaVo.getId();
         shipmentbService.deleteShipmentbVoByShipmentAId(shipmentAId);
@@ -126,9 +123,9 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
     }
 
     @Override
-    public ShipmentaEntity queryShipmentaVo(String impDate, Integer impType,Integer shopType) {
+    public ShipmentaEntity queryShipmentaVo(String impDate, Integer impType, Integer shopType) {
         EntityWrapper<ShipmentaEntity> entityWrapper = new EntityWrapper<ShipmentaEntity>();
-        if (StringUtils.isBlank(impDate) || impType == null || shopType ==null) {
+        if (StringUtils.isBlank(impDate) || impType == null || shopType == null) {
             return null;
         }
         entityWrapper.eq("imp_date", impDate);
@@ -160,36 +157,41 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
         try {
             List list = new ArrayList<>();
             List<List<String>> lists = ExcelReaderUtil.readCsv(file.getInputStream());
+            if (null == lists) {
+                return;
+            }
             ShipmentType shipmentType = ShipmentType.getShipmentType(Integer.valueOf(impType));
             ShipmentShopType shipmentShopUnit = ShipmentShopType.getShopUnit(Integer.valueOf(shopUnit));
-            Date date = getDate(shipmentType.getCode(), lists);
+//            Date date = getDate(shipmentType.getCode(), lists);
+            List<List> reList = new ArrayList<>();
+            List<String> dates = getDate(shipmentType.getCode(), lists);
             //根据不同类型 得到不同数据
             switch (shipmentType) {
                 case JD:
-                    list = getJDList(lists, date, shipmentShopUnit);
+                    list = getJDList(reList, lists, shipmentShopUnit, dates);
                     break;
                 case TM:
-                    list = getTMList(lists, date, shipmentShopUnit);
+                    list = getTMList(reList, lists, shipmentShopUnit, dates);
                     break;
                 case TB:
-                    list = getTBList(lists, date, shipmentShopUnit);
+                    list = getTBList(reList, lists, shipmentShopUnit, dates);
                     break;
                 case PDD:
-                    list = getPDDList(lists, date, shipmentShopUnit);
+                    list = getPDDList(reList, lists, shipmentShopUnit, dates);
                     break;
             }
             //处理数据
             List<ShipmentbEntity> shipaList = (List<ShipmentbEntity>) list.get(0);
             List<ShipmentcEntity> shipbList = (List<ShipmentcEntity>) list.get(1);
             ShipmentaEntity a = new ShipmentaEntity();
-            a.setImpDate(date);
+            a.setImpDate(new Date());
             a.setImpName(file.getOriginalFilename());
-            a.setOutCode(shipaList.get(0).getNumber());
+//            a.setOutCode(shipaList.get(0).getNumber());
             a.setImpType(shipmentType.getCode());
             a.setShopType(Integer.valueOf(shopUnit));
             this.insertShipmentAandBAndC(a, shipaList, shipbList);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("导入失败", e);
         }
     }
 
@@ -200,173 +202,185 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
      * @param date
      * @return
      */
-    public List<List> getJDList(List<List<String>> lists, Date date, ShipmentShopType shopUnit) {
-        List<List> reList = new ArrayList<>();
+    public List<List> getJDList(List<List> reList, List<List<String>> lists, ShipmentShopType shopUnit, List<String> dates) {
         List<ShipmentbEntity> entityB = new ArrayList<>();
         List<ShipmentcEntity> entityC = new ArrayList<>();
-        String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
-        for (List<String> list : lists) {
-            if (list.get(2).contains("评价")) {
-                continue;
+        for (String s : dates) {
+            //根据不同类型 得到不同数据
+            Date date = ContentUtils.getStringToDate(s);
+            String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
+            for (List<String> list : lists) {
+                if (list.get(2).contains("评价")) {
+                    continue;
+                }
+                if (null == list.get(5)) {
+                    continue;
+                }
+                if (null != list.get(5) && !list.get(5).contains(d)) {
+                    continue;
+                }
+                String codeAndName = getCodeAndName(list.get(2));
+                ShipmentbEntity b = initData(date, shopUnit, codeAndName);
+                if (StringUtils.isBlank(codeAndName)) {
+                    b.setProductName(list.get(2));
+                }
+                b.setAmount(Integer.valueOf(list.get(3)));
+                b.setRemark(list.get(0) + "_" + list.get(14));
+                BigDecimal price = new BigDecimal(list.get(8)); // 结算金额
+                b.setPrice(price);
+                b.setType(ShipmentType.JD.getCode());
+                BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue() / b.getAmount());
+                b.setUnitPrice(unitPrice);
+                entityB.add(b);
+                ShipmentcEntity c = new ShipmentcEntity();
+                c.setOrderId(list.get(0));
+                c.setOrderName(list.get(14));
+                c.setOrderAddress(list.get(15));
+                c.setOrderPhone(list.get(16).replace("'", ""));
+                c.setPayType("月结");
+                c.setProductName(list.get(2));
+                c.setNumber(b.getAmount());
+                c.setPrice(price);
+                entityC.add(c);
             }
-            if (null == list.get(5)) {
-                continue;
-            }
-            if (null != list.get(5) && !list.get(5).contains(d)) {
-                continue;
-            }
-            String codeAndName = getCodeAndName(list.get(2));
-            ShipmentbEntity b = initData(date, shopUnit, codeAndName);
-            if (StringUtils.isBlank(codeAndName)) {
-                b.setProductName(list.get(2));
-            }
-            b.setAmount(Integer.valueOf(list.get(3)));
-            b.setRemark(list.get(0) + "_" + list.get(14));
-            BigDecimal price = new BigDecimal(list.get(8)); // 结算金额
-            b.setPrice(price);
-            b.setType(ShipmentType.JD.getCode());
-            BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue() / b.getAmount());
-            b.setUnitPrice(unitPrice);
-            entityB.add(b);
-            ShipmentcEntity c = new ShipmentcEntity();
-            c.setOrderId(list.get(0));
-            c.setOrderName(list.get(14));
-            c.setOrderAddress(list.get(15));
-            c.setOrderPhone(list.get(16).replace("'",""));
-            c.setPayType("月结");
-            c.setProductName(list.get(2));
-            c.setNumber(b.getAmount());
-            c.setPrice(price);
-            entityC.add(c);
         }
         reList.add(entityB);
         reList.add(entityC);
         return reList;
     }
 
-    public List<List> getTMList(List<List<String>> lists, Date date, ShipmentShopType shopUnit) {
-        List<List> reList = new ArrayList<>();
+    public List<List> getTMList(List<List> reList, List<List<String>> lists, ShipmentShopType shopUnit, List<String> dates) {
         List<ShipmentbEntity> entityB = new ArrayList<>();
         List<ShipmentcEntity> entityC = new ArrayList<>();
-        String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
-        for (List<String> list : lists) {
-            if (StringUtils.isBlank(list.get(20))) {
-                continue;
+        for (String s : dates) {
+            //根据不同类型 得到不同数据
+            Date date = ContentUtils.getStringToDate(s);
+            String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
+            for (List<String> list : lists) {
+                if (StringUtils.isBlank(list.get(20))) {
+                    continue;
+                }
+                Date stringToDate = ContentUtils.getStringToDate(list.get(20).replace("/", "-"));
+                String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
+                if (!dateToString.contains(d)) {
+                    continue;
+                }
+                String codeAndName = getCodeAndName(list.get(21));
+                ShipmentbEntity b = initData(date, shopUnit, codeAndName);
+                if (StringUtils.isBlank(codeAndName)) {
+                    b.setProductName(list.get(21));
+                }
+                b.setAmount(Integer.valueOf(list.get(26)));
+                b.setRemark(list.get(0) + "_" + list.get(14));
+                BigDecimal price = new BigDecimal(list.get(10)); // 实付金额
+                b.setPrice(price);
+                BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue() / b.getAmount());
+                b.setUnitPrice(unitPrice);
+                b.setType(ShipmentType.TM.getCode());
+                entityB.add(b);
+                ShipmentcEntity c = new ShipmentcEntity();
+                c.setOrderId(list.get(0));
+                c.setOrderName(list.get(14));
+                c.setOrderAddress(list.get(15));
+                c.setOrderPhone(list.get(18).replace("'", ""));
+                c.setPayType("月结");
+                c.setProductName(list.get(21));
+                c.setPrice(price);
+                c.setNumber(Integer.valueOf(list.get(26)));
+                entityC.add(c);
             }
-            Date stringToDate = ContentUtils.getStringToDate(list.get(20).replace("/", "-"));
-            String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
-            if (!dateToString.contains(d)) {
-                continue;
-            }
-            String codeAndName = getCodeAndName(list.get(21));
-            ShipmentbEntity b = initData(date, shopUnit, codeAndName);
-            if (StringUtils.isBlank(codeAndName)) {
-                b.setProductName(list.get(21));
-            }
-            b.setAmount(Integer.valueOf(list.get(26)));
-            b.setRemark(list.get(0) + "_" + list.get(14));
-            BigDecimal price = new BigDecimal(list.get(10)); // 实付金额
-            b.setPrice(price);
-            BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue() / b.getAmount());
-            b.setUnitPrice(unitPrice);
-            b.setType(ShipmentType.TM.getCode());
-            entityB.add(b);
-            ShipmentcEntity c = new ShipmentcEntity();
-            c.setOrderId(list.get(0));
-            c.setOrderName(list.get(14));
-            c.setOrderAddress(list.get(15));
-            c.setOrderPhone(list.get(18).replace("'",""));
-            c.setPayType("月结");
-            c.setProductName(list.get(21));
-            c.setPrice(price);
-            c.setNumber(Integer.valueOf(list.get(26)));
-            entityC.add(c);
         }
         reList.add(entityB);
         reList.add(entityC);
         return reList;
     }
 
-    public List<List> getTBList(List<List<String>> lists, Date date, ShipmentShopType shopUnit) {
-        List<List> reList = new ArrayList<>();
+    public List<List> getTBList(List<List> reList, List<List<String>> lists, ShipmentShopType shopUnit, List<String> dates) {
         List<ShipmentbEntity> entityB = new ArrayList<>();
         List<ShipmentcEntity> entityC = new ArrayList<>();
-        String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
-        for (List<String> list : lists) {
-            if (StringUtils.isBlank(list.get(20))) {
-                continue;
+        for (String s : dates) {
+            //根据不同类型 得到不同数据
+            Date date = ContentUtils.getStringToDate(s);
+            String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
+            for (List<String> list : lists) {
+                if (StringUtils.isBlank(list.get(20))) {
+                    continue;
+                }
+                Date stringToDate = ContentUtils.getStringToDate(list.get(20).replace("/", "-"));
+                String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
+                if (!dateToString.contains(d)) {
+                    continue;
+                }
+                String codeAndName = getCodeAndName(list.get(21));
+                ShipmentbEntity b = initData(date, shopUnit, codeAndName);
+                if (StringUtils.isBlank(codeAndName)) {
+                    b.setProductName(list.get(21));
+                }
+                b.setAmount(Integer.valueOf(list.get(26)));
+                b.setRemark(list.get(0) + "_" + list.get(14));
+                BigDecimal price = new BigDecimal(list.get(10)); // 实付金额
+                b.setPrice(price);
+                BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue() / b.getAmount());
+                b.setUnitPrice(unitPrice);
+                b.setType(ShipmentType.TB.getCode());
+                entityB.add(b);
+                ShipmentcEntity c = new ShipmentcEntity();
+                c.setOrderId(list.get(0));
+                c.setOrderName(list.get(14));
+                c.setOrderAddress(list.get(15));
+                c.setOrderPhone(list.get(18).replace("'", ""));
+                c.setPayType("月结");
+                c.setProductName(list.get(21));
+                c.setPrice(unitPrice);
+                c.setNumber(Integer.valueOf(list.get(26)));
+                entityC.add(c);
             }
-            Date stringToDate = ContentUtils.getStringToDate(list.get(20).replace("/", "-"));
-            String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
-            if (!dateToString.contains(d)) {
-                continue;
-            }
-            String codeAndName = getCodeAndName(list.get(21));
-            ShipmentbEntity b = initData(date, shopUnit, codeAndName);
-            if (StringUtils.isBlank(codeAndName)) {
-                b.setProductName(list.get(21));
-            }
-            b.setAmount(Integer.valueOf(list.get(26)));
-            b.setRemark(list.get(0) + "_" + list.get(14));
-            BigDecimal price = new BigDecimal(list.get(10)); // 实付金额
-            b.setPrice(price);
-            BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue() / b.getAmount());
-            b.setUnitPrice(unitPrice);
-            b.setType(ShipmentType.TB.getCode());
-            entityB.add(b);
-            ShipmentcEntity c = new ShipmentcEntity();
-            c.setOrderId(list.get(0));
-            c.setOrderName(list.get(14));
-            c.setOrderAddress(list.get(15));
-            c.setOrderPhone(list.get(18).replace("'",""));
-            c.setPayType("月结");
-            c.setProductName(list.get(21));
-            c.setPrice(unitPrice);
-            c.setNumber(Integer.valueOf(list.get(26)));
-            entityC.add(c);
         }
         reList.add(entityB);
         reList.add(entityC);
         return reList;
     }
 
-    public List<List> getPDDList(List<List<String>> lists, Date date, ShipmentShopType shopUnit) {
-        List<List> reList = new ArrayList<>();
+    public List<List> getPDDList(List<List> reList, List<List<String>> lists, ShipmentShopType shopUnit, List<String> dates) {
         List<ShipmentbEntity> entityB = new ArrayList<>();
         List<ShipmentcEntity> entityC = new ArrayList<>();
-        String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
-        for (List<String> list : lists) {
-            if (StringUtils.isBlank(list.get(22))) {
-                continue;
+        for (String s : dates) {
+            //根据不同类型 得到不同数据
+            Date date = ContentUtils.getStringToDate(s);
+            String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
+            for (List<String> list : lists) {
+                if (StringUtils.isBlank(list.get(22))) {
+                    continue;
+                }
+                Date stringToDate = ContentUtils.getStringToDate(list.get(22).replace("/", "-"));
+                String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
+                if (!dateToString.contains(d)) {
+                    continue;
+                }
+                String codeAndName = getCodeAndName(list.get(0));
+                ShipmentbEntity b = initData(date, shopUnit, codeAndName);
+                if (StringUtils.isBlank(codeAndName)) {
+                    b.setProductName(list.get(0));
+                }
+                b.setAmount(Integer.valueOf(list.get(11).toString().trim()));
+                b.setRemark(list.get(1) + "_" + list.get(14));
+                BigDecimal price = new BigDecimal(list.get(10).replace("\t", "")); //实收金额
+                b.setPrice(price);
+                BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue() / b.getAmount());
+                b.setUnitPrice(unitPrice);
+                b.setType(ShipmentType.PDD.getCode());
+                entityB.add(b);
+                ShipmentcEntity c = new ShipmentcEntity();
+                c.setOrderId(list.get(1));
+                c.setOrderName(list.get(14));
+                c.setOrderAddress(list.get(17) + list.get(18) + list.get(19) + list.get(20));
+                c.setOrderPhone(list.get(15).replace("'", ""));
+                c.setProductName(list.get(0));
+                c.setPayType("月结");
+                c.setPrice(unitPrice);
+                c.setNumber(Integer.valueOf(list.get(11).trim()));
+                entityC.add(c);
             }
-            Date stringToDate = ContentUtils.getStringToDate(list.get(22).replace("/", "-"));
-            String dateToString = ContentUtils.getDateToString(stringToDate, "yyyy-MM-dd");
-            if (!dateToString.contains(d)) {
-                continue;
-            }
-            String codeAndName = getCodeAndName(list.get(0));
-            ShipmentbEntity b = initData(date, shopUnit, codeAndName);
-            if (StringUtils.isBlank(codeAndName)) {
-                b.setProductName(list.get(0));
-            }
-            b.setAmount(Integer.valueOf(list.get(11).toString().trim()));
-            b.setRemark(list.get(1) + "_" + list.get(14));
-            BigDecimal price = new BigDecimal(list.get(10).replace("\t", "")); //实收金额
-            b.setPrice(price);
-            BigDecimal unitPrice = new BigDecimal(b.getPrice().doubleValue() / b.getAmount());
-            b.setUnitPrice(unitPrice);
-            b.setType(ShipmentType.PDD.getCode());
-            entityB.add(b);
-            ShipmentcEntity c = new ShipmentcEntity();
-            c.setOrderId(list.get(1));
-            c.setOrderName(list.get(14));
-            c.setOrderAddress(list.get(17) + list.get(18) + list.get(19) + list.get(20));
-            c.setOrderPhone(list.get(15).replace("'",""));
-            c.setProductName(list.get(0));
-            c.setPayType("月结");
-            c.setPrice(unitPrice);
-            c.setNumber(Integer.valueOf(list.get(11).trim()));
-            entityC.add(c);
         }
         reList.add(entityB);
         reList.add(entityC);
@@ -404,24 +418,58 @@ public class ShipmentaServiceImpl extends ServiceImpl<ShipmentaDao, ShipmentaEnt
      *
      * @return
      */
-    public static Date getDate(int type, List<List<String>> lists) {
-        Date date = null;
+    public List<String> getDate(int type, List<List<String>> lists) {
+        List<String> dates = new ArrayList<>();
         ShipmentType shipmentType = ShipmentType.getShipmentType(type);
         switch (shipmentType) {
             case JD:
-                date = ContentUtils.getStringToDate(lists.get(0).get(24));
+                dates = getDates(type, lists, 5);
                 break;
             case TM:
-                date = ContentUtils.getStringToDate(lists.get(0).get(20).replace("/", "-"));
+                dates = getDates(type, lists, 20);
                 break;
             case TB:
-                date = ContentUtils.getStringToDate(lists.get(0).get(20).replace("/", "-"));
+                dates = getDates(type, lists, 20);
                 break;
             case PDD:
-                date = ContentUtils.getStringToDate(lists.get(0).get(22).replace("/", "-"));
+                dates = getDates(type, lists, 22);
                 break;
         }
-        return date;
+        return dates;
+    }
+
+    /**
+     * 获取excel 里所有的日期
+     * 重复不取,按升序排列
+     *
+     * @return
+     */
+    private List<String> getDates(int type, List<List<String>> lists, int index) {
+        List<String> list = new ArrayList<>();
+        Date date = null;
+        for (int i = 0; i < lists.size(); i++) {
+            ShipmentType shipmentType = ShipmentType.getShipmentType(type);
+            switch (shipmentType) {
+                case JD:
+                    date = ContentUtils.getStringToDate(lists.get(i).get(index));
+                    break;
+                case TM:
+                    date = ContentUtils.getStringToDate(lists.get(i).get(index).replace("/", "-"));
+                    break;
+                case TB:
+                    date = ContentUtils.getStringToDate(lists.get(i).get(index).replace("/", "-"));
+                    break;
+                case PDD:
+                    date = ContentUtils.getStringToDate(lists.get(i).get(index).replace("/", "-"));
+                    break;
+            }
+            String d = ContentUtils.getDateToString(date, "yyyy-MM-dd");
+            if (!list.contains(d)) {
+                list.add(d);
+            }
+        }
+        Collections.sort(list);
+        return list;
     }
 
     private String getCodeAndName(String name) {
