@@ -40,8 +40,15 @@ public class ShipmentbServiceImpl extends ServiceImpl<ShipmentbDao, ShipmentbEnt
             shipmentbEntity.setCreateDate(new Date());
             shipmentbEntity.setShipmentId(shipmentAId);
             shipmentbEntity.setUpdateDate(shipmentbEntity.getCreateDate());
+            this.insert(shipmentbEntity);
+            try {
+                //睡眠5秒,保证数据不会乱序
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("",e);
+            }
         }
-        this.insertBatch(shipmentBVoList);
+//        this.insertBatch(shipmentBVoList);
     }
 
     @Override
@@ -71,7 +78,7 @@ public class ShipmentbServiceImpl extends ServiceImpl<ShipmentbDao, ShipmentbEnt
         }
         EntityWrapper<ShipmentbEntity> entityWrapper = new EntityWrapper<ShipmentbEntity>();
         entityWrapper.eq("shipment_id", shipmentAId);
-        entityWrapper.orderBy("date", true);
+        entityWrapper.orderBy("create_date", true);
         return this.selectList(entityWrapper);
     }
 
