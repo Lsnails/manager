@@ -55,8 +55,7 @@ public class WxController {
      * @param code Code
      * @return
      */
-    @RequestMapping(value = "/getcode")
-    @ResponseBody
+    @GetMapping(value = "/getcode")
     public String getCode(String code) {
         // 根据Code获取Openid
         String openidUrl = wx_openid_url + "appid=" + wx_appid + "&secret=" + wx_secret + "&code=" + code + "&grant_type=authorization_code";
