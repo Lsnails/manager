@@ -4,10 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.base.utils.HttpUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.io.IOException;
  * @Date 2019/10/8 15:38
  * @Version 1.0
  **/
-@RestController
+@Controller
 @RequestMapping("/wx")
 public class WxController {
 
@@ -39,14 +39,15 @@ public class WxController {
     }
 
     @GetMapping(value = "/wxLogin")
-    public void get(String scope, HttpServletResponse response) throws IOException {
+    public String get(String scope, HttpServletResponse response) throws IOException {
         if(StringUtils.isBlank(scope)){
             scope = "snsapi_userinfo"; //完全授权
         }else{
             scope = "snsapi_base"; // 静默授权
         }
         String url = wx_token_url + "appid=" + wx_appid + "&redirect_uri=" + wx_redirect_url + "&response_type=code&scope=" + scope + "&state=123#wechat_redirect";
-        response.sendRedirect(url);
+//        response.sendRedirect(url);
+        return "redirect:" + url;
     }
 
     /**
@@ -91,7 +92,7 @@ public class WxController {
         System.err.println("头像:" + userInfo.getString("headimgurl"));
         System.err.println("特权:" + userInfo.getString("privilege"));
         System.err.println("unionid:" + userInfo.getString("unionid"));
-        return code;
+        return "redirect:close.html";
     }
 
 }
