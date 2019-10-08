@@ -1,8 +1,6 @@
 package com.base.common.config;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import com.base.modules.sys.shiro.UserRealm;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -17,7 +15,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.base.modules.sys.shiro.UserRealm;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Shiro的配置文件
@@ -100,6 +99,8 @@ public class ShiroConfig {
 //        filterMap.put("/mywebsite/**", "anon");//网站前端需要登录的方法请求
         filterMap.put("/websiteLogin", "anon");//拦截器重定向方法
         filterMap.put("/404.html", "anon");//404页面
+
+        filterMap.put("/wx/**", "anon");// wx授权不需要登录
         
         //过滤链定义，从上向下顺序执行，一般将放在最为下边 :这是一个坑呢，一不小心代码就不好使了;
 	    //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
