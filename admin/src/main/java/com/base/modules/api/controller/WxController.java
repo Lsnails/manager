@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 /**
  * @ClassName WxController
  * @Author zc
@@ -36,14 +39,14 @@ public class WxController {
     }
 
     @GetMapping(value = "/wxLogin")
-    public String get(String scope) {
+    public void get(String scope, HttpServletResponse response) throws IOException {
         if(StringUtils.isBlank(scope)){
             scope = "snsapi_userinfo"; //完全授权
         }else{
             scope = "snsapi_base"; // 静默授权
         }
         String url = wx_token_url + "appid=" + wx_appid + "&redirect_uri=" + wx_redirect_url + "&response_type=code&scope=" + scope + "&state=123#wechat_redirect";
-        return "redirect:" + url;
+        response.sendRedirect(url);
     }
 
     /**
