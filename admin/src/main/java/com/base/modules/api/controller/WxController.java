@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.base.utils.HttpUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,18 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/wx")
 public class WxController {
 
-    @Value("XF.wx_token_url")
-    private String wx_token_url;
-    @Value("XF.wx_appid")
-    private String wx_appid;
-    @Value("XF.wx_redirect_url")
-    private String wx_redirect_url;
-    @Value("XF.wx_openid_url")
-    private String wx_openid_url;
-    @Value("XF.wx_secret")
-    private String wx_secret;
-    @Value("XF.wx_userinfo_url")
-    private String wx_userinfo_url;
+    public static final String wx_token_url = "https://open.weixin.qq.com/connect/oauth2/authorize?";
+    public static final String wx_appid = "wx01fc3b985a70091e";
+    public static final String wx_redirect_url  = "http://wx.ffhigh.com/admin/wx/getcode";
+    public static final String wx_openid_url = "https://api.weixin.qq.com/sns/oauth2/access_token?";
+    public static final String wx_secret = "ab086069a568f7311f6fc9a35f7bc970";
+    public static final String wx_userinfo_url = "https://api.weixin.qq.com/sns/userinfo?";
 
     /**
      * 配置微信文件
