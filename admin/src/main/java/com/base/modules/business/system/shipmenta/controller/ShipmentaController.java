@@ -1,5 +1,6 @@
 package com.base.modules.business.system.shipmenta.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.PageUtils;
@@ -13,6 +14,9 @@ import com.base.modules.sys.controller.AbstractController;
 import com.base.utils.UUIDUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.hyperic.sigar.Mem;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -108,14 +112,11 @@ public class ShipmentaController extends AbstractController {
         String fileName = shipmentaEntity.getImpName().replace(".csv", "") + "_C_" + date + ".xlsx";
         List<Object[]> list = shipmentcService.exportListC(shipmentAId);
         ExcelReaderUtil.exportExcelObj(fileName, title, list, response);
-        System.out.println(shipmentAId);
     }
 
     public static void main(String[] args) {
         String s1 = "新飞（Frestec）276升 家用商用一级能效冷柜 节能单温柜 BC/BD-276HJ1EW";
         String s2 = "BC/BD-276HJ1EW";
-        System.out.println(s1.contains(s2));
-        System.out.println(s1.contentEquals(s2));
     }
 
 
@@ -130,6 +131,40 @@ public class ShipmentaController extends AbstractController {
 //
 //        return R.ok().put("shipmenta", shipmenta);
 //    }
+
+    /**
+     * 信息
+     */
+    @GetMapping("/info")
+    @ApiOperation("XX信息")
+    public R info() throws SigarException {
+        JSONObject ob = new JSONObject();
+        Sigar sigar = new Sigar();
+        // 物理内存信息
+        Mem mem = sigar.getMem();
+        long total = mem.getTotal() / 1024L / 1024;
+        ob.put("total",mem.getTotal() / 1024L / 1024);
+        // 内存总量
+        System.out.println("Total = " + mem.getTotal() / 1024L / 1024 + "M av");
+        // 当前内存使用量
+        long used = mem.getUsed() / 1024L / 1024;
+        System.out.println("Used = " + mem.getUsed() / 1024L / 1024 + "M used");
+        ob.put("used",mem.getUsed() / 1024L / 1024);
+        // 当前内存剩余量
+        System.out.println("Free = " + mem.getFree() / 1024L / 1024 + "M free");
+        ob.put("Free",mem.getFree() / 1024L / 1024);
+
+        ob.put("ActualUsed",mem.getActualUsed() / 1024L / 1024);
+        System.out.println("ActualUsed = " + mem.getActualUsed() / 1024L / 1024 + "M free");
+
+        ob.put("Per",mem.getUsedPercent());
+
+        System.out.println("Percent = " + mem.getUsedPercent());
+
+        System.out.println("Ram = "+mem.getRam());
+        ob.put("Ram",mem.getRam());
+       return R.ok().put("object", ob);
+    }
 
 
 //    /**

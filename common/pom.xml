@@ -17,12 +17,12 @@
 		<finalName>${project.artifactId}</finalName>
 	</build>
 
-	<distributionManagement>
+	<!--<distributionManagement>
 		<repository>
 			<id>nexus</id>
 			<name>internal nexus repository</name>
 			<url>http://1.85.38.103:12402/nexus/content/groups/public</url>
 		</repository>
-	</distributionManagement>
+	</distributionManagement>-->
 	
 </project>

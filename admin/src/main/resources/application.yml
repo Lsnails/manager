@@ -115,3 +115,18 @@ ossConfig: #阿里oss的配置
   endpointNotWithHttp: oss-cn-hongkong.aliyuncs.com  # 去除endpoint的http://   例如endpoint=http://oss-cn-beijing.aliyuncs.com  那么endpointNotWithHttp=oss-cn-beijing.aliyuncs.com
   bucketName:  hkaom-oss # 存储空间名称   为了提高速度，建议先在网站创建bucketName，权限为公共读
   objectName: files # 相当于存储空间下的文件夹
+# 项目相关配置
+XF:
+  # 微信授权登录配置
+  # 凭证获取GET
+  wx_token_url: https://open.weixin.qq.com/connect/oauth2/authorize?
+  # 用户同意授权,回调url----你的域名后面再加上/getcode
+  wx_redirect_url: wx.ffhigh.com/admin/wx/getcode
+  # 获取openid
+  wx_openid_url: https://api.weixin.qq.com/sns/oauth2/access_token?
+  # 拉取用户信息
+  wx_userinfo_url: https://api.weixin.qq.com/sns/userinfo?
+  # 微信appid-----换成自己的
+  wx_appid: wx01fc3b985a70091e
+  # 微信appSecret-----换成自己的
+  wx_secret: XXXX
