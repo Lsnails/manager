@@ -60,8 +60,9 @@ public class WxController {
         // 根据Code获取Openid
         String openidUrl = wx_openid_url + "appid=" + wx_appid + "&secret=" + wx_secret + "&code=" + code + "&grant_type=authorization_code";
         String openidMsg = HttpUtils.doPost(openidUrl, "", "UTF-8");
+        System.out.println("返回结果: -->     "+openidMsg);
         // 解析返回信息
-        JSONObject result = JSON.parseObject(openidUrl);
+        JSONObject result = JSON.parseObject(openidMsg);
         // 网页授权接口调用凭证
         String access_token = result.getString("access_token");
         // 用户刷新access_token
