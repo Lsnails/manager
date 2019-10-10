@@ -101,6 +101,7 @@ public class ShiroConfig {
         filterMap.put("/404.html", "anon");//404页面
 
         filterMap.put("/wx/**", "anon");// wx授权不需要登录
+        filterMap.put("/close.html", "anon");//wx关闭页面 不需要登录
         
         //过滤链定义，从上向下顺序执行，一般将放在最为下边 :这是一个坑呢，一不小心代码就不好使了;
 	    //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
