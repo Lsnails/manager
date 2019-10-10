@@ -91,7 +91,7 @@ public class WxController {
         System.err.println("头像:" + userInfo.getString("headimgurl"));
         System.err.println("特权:" + userInfo.getString("privilege"));
         System.err.println("unionid:" + userInfo.getString("unionid"));
-        return "redirect:/close.html";
+        return "redirect:/wx/close.html";
     }
 
 }
