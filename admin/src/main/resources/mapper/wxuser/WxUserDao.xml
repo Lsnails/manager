@@ -13,6 +13,11 @@
         <result property="state" column="state"/>
         <result property="phone" column="phone"/>
         <result property="userCode" column="user_code"/>
+        <result property="remark" column="remark"/>
+        <result property="remark2" column="remark2"/>
+        <result property="remark3" column="remark3"/>
+        <result property="remark4" column="remark4"/>
+        <result property="remark5" column="remark5"/>
         <result property="createDate" column="create_date"/>
         <result property="updateDate" column="update_date"/>
     </resultMap>
