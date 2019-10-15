@@ -67,7 +67,12 @@
                         </div>
                     </div>
                     
-                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"><i class="layui-bg-red">*</i>字典code：</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" v-model="dictionary.code" name="code"  id="code" placeholder="必填項，1~30個字符" lay-verify="required"/>
+                        </div>
+                    </div>
 					<div class="layui-form-item">
                         <label class="layui-form-label"><i class="layui-bg-red">*</i>字典名称：</label>
                         <div class="layui-input-block">

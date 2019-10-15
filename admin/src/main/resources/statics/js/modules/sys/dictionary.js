@@ -16,7 +16,7 @@ layui.use(['layTreeTable','form','element'],function(){
 		parent_key: 'parentId',
 		is_checkbox: true,
 		cols: [
-
+			{title: '字典code',key: 'code',minWidth: '100px',align: 'center'},
 			{title: '字典名称',key: 'name',minWidth: '100px',align: 'center'},
 			{title: '字典Id',key: 'dictId',width: '0px',align: 'center',hide:true},
 			{title: '上级分类',key: 'parentName',minWidth: '100px',align: 'center',template: function(item){
