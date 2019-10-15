@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.PageUtils;
 import com.base.common.utils.R;
@@ -92,8 +93,15 @@ public class ActivityinfoController extends AbstractController{
         ValidatorUtils.validateEntity(activityinfo);
         activityinfo.setLastmodifyby(this.getUsername());
     	activityinfo.setLastmodifytime(new Date());
+        String status = activityinfo.getStatus();
+        //修改状态为1启动时候，将其他的活动置为0（关闭）
+        if("1".equals(status)) {
+        	EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper<ActivityinfoEntity>();
+        	ActivityinfoEntity entity =new ActivityinfoEntity();
+        	entity.setStatus("0");
+        	activityinfoService.update(entity, entityWrapper);
+        }
         activityinfoService.updateAllColumnById(activityinfo);//全部更新
-        
         return R.ok();
     }
     /**
@@ -106,6 +114,13 @@ public class ActivityinfoController extends AbstractController{
         activityinfo.setLastmodifyby(this.getUsername());
         activityinfo.setStatus(status);
     	activityinfo.setLastmodifytime(new Date());
+        //修改状态为1启动时候，将其他的活动置为0（关闭）
+        if("1".equals(status)) {
+        	EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper<ActivityinfoEntity>();
+        	ActivityinfoEntity entity =new ActivityinfoEntity();
+        	entity.setStatus("0");
+        	activityinfoService.update(entity, entityWrapper);
+        }
         activityinfoService.updateAllColumnById(activityinfo);//全部更新
         return R.ok();
     }
