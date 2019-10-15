@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body  class="sub-content">
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+		<form class="layui-form searchForm" lay-filter="searchForm" action="">
+			<div class="layui-inline">
+				<input type="text" class="layui-input"   placeholder="">
+			</div>
+
+			<button type="button" class="layui-btn"  @click="query">查询</button>
+		</form>
+		<div class="layui-btn-group">
+			<button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i></button>
+			<button class="layui-btn  " @click="update" title="修改"><i class="layui-icon layui-icon-edit"></i></button>
+			<button class="layui-btn  " @click="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+		</div>
+		<table id="listData" lay-filter="listData"></table>
+    </div>
+
+    <div v-show="!showList"  class="layui-card">
+		<div class="layui-card-header"><h3 class="x-card-title">{{title}}</h3><span @click="reload" class="x-pull-right"><i class="layui-icon layui-icon-close-fill x-closeCard"></i></span></div>
+		<div class="layui-card-body" >
+			<form class="layui-form"  lay-filter="myForm">
+				<div class="layui-form-item">
+					<label class="layui-form-label">wx openId唯一标识</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" v-model="wxUser.openId" placeholder="wx openId唯一标识"/>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">活动id</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" v-model="wxUser.activityId" placeholder="活动id"/>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">网点id</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" v-model="wxUser.networkId" placeholder="网点id"/>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">网点名称</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" v-model="wxUser.networkName" placeholder="网点名称"/>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">是否核销</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" v-model="wxUser.state" placeholder="是否核销"/>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">手机号</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" v-model="wxUser.phone" placeholder="手机号"/>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">用户唯一编码,自动生成</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" v-model="wxUser.userCode" placeholder="用户唯一编码,自动生成"/>
+					</div>
+				</div>
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">创建时间</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" v-model="wxUser.createDate" placeholder=""/>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">修改时间</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" v-model="wxUser.updateDate" placeholder=""/>
+					</div>
+				</div> -->
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button class="layui-btn" lay-submit lay-filter="*" >确定</button>
+						<button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
+					</div>
+				</div>
+        	</form>
+		</div>
+    </div>
+</div>
+<script type="text/html" id="toptoolbar"></script>
+<script type="text/html" id="operationBar">
+    <a class="layui-btn layui-btn-sm"  lay-event="look" title="查看"><i class="layui-icon layui-icon-search"></i></a>
+</script>
+<script src="${request.contextPath}/statics/js/modules/wxuser/wxuser.js?_${.now?long}"></script>
+</body>
+</html>
