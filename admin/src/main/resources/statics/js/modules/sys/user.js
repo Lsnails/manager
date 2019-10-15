@@ -26,8 +26,8 @@ layui.use(['form','laydate','element','table',],function(){
             { type: "checkbox", fixed:"left", width:50},
             { title: '用户ID', field: 'userId', minWidth: 70},
             { title: '用户名', field: 'username', minWidth: 50 },
-            { title: '所属部门Id', field: 'deptId', minWidth: 70,hide:true },
-            { title: '所属部门', field: 'deptName', minWidth: 70 },
+            { title: '所属网点Id', field: 'deptId', minWidth: 70,hide:true },
+            { title: '所属网点', field: 'deptName', minWidth: 70 },
             { title: '邮箱', field: 'email', minWidth: 150 },
             { title: '手机号', field: 'mobile', minWidth: 150 },
             { title: '状态', field: 'status', minWidth: 150,templet:function(d){
@@ -105,7 +105,7 @@ var vm = new Vue({
         },
         showList: true,
         deptFlag:false,
-        deptTip:'请先选择部门',
+        deptTip:'请先选择网点',
         title:null,
         roleList:{},
         user:{
@@ -127,7 +127,7 @@ var vm = new Vue({
             vm.getDept();
         },
         getDept: function(){
-            //加载部门树
+            //加载网点树
             $.get(ctx + "sys/dept/list", function(r){
                 ztree = $.fn.zTree.init($("#deptTree"), setting, r);
                 var node = ztree.getNodeByParam("deptId", vm.user.deptId);
@@ -228,7 +228,7 @@ var vm = new Vue({
                 type: 1,
                 offset: '50px',
                 skin: 'layui-layer-molv',
-                title: "选择部门",
+                title: "选择网点",
                 area: ['300px', '450px'],
                 shade: 0,
                 shadeClose: false,
@@ -236,7 +236,7 @@ var vm = new Vue({
                 btn: ['确定', '取消'],
                 btn1: function (index) {
                     var node = ztree.getSelectedNodes();
-                    //选择上级部门
+                    //选择上级网点
                     vm.user.deptId = node[0].deptId;
                     vm.user.deptName = node[0].name;
                     //获取角色信息
@@ -246,7 +246,7 @@ var vm = new Vue({
                             if(vm.roleList.length>0){
                                 vm.deptFlag = true;
                             }else{
-                                vm.deptTip = '当前部门下没有角色'
+                                vm.deptTip = '当前网点下没有角色'
                             }
                         })
                     },100)

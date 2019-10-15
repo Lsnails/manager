@@ -18,9 +18,9 @@ layui.use(['layTreeTable','form','element'],function(){
         is_checkbox: true,
         cols: [
 
-            {title: '部门ID',key: 'deptId',minWidth: '100px',align: 'center'},
-            {title: '部门名称',key: 'name',minWidth: '100px',align: 'center'},
-            {title: '上级部门',key: 'parentName',minWidth: '100px',align: 'center'},
+            {title: '网点ID',key: 'deptId',minWidth: '100px',align: 'center'},
+            {title: '网点名称',key: 'name',minWidth: '100px',align: 'center'},
+            {title: '上级网点',key: 'parentName',minWidth: '100px',align: 'center'},
             {title: '排序号',key: 'orderNum',minWidth: '100px',align: 'center'}
 
 
@@ -65,7 +65,7 @@ var vm = new Vue({
     },
     methods: {
         getDept: function(){
-            //加载部门树
+            //加载网点树
             $.get(ctx + "sys/dept/select", function(r){
                 ztree = $.fn.zTree.init($("#deptTree"), setting, r.deptList);
                 var node = ztree.getNodeByParam("deptId", vm.dept.parentId);
@@ -139,7 +139,7 @@ var vm = new Vue({
                 type: 1,
                 offset: '50px',
                 skin: 'layui-layer-molv',
-                title: "选择部门",
+                title: "选择网点",
                 area: ['300px', '450px'],
                 shade: 0,
                 shadeClose: false,
@@ -147,7 +147,7 @@ var vm = new Vue({
                 btn: ['确定', '取消'],
                 btn1: function (index) {
                     var node = ztree.getSelectedNodes();
-                    //选择上级部门
+                    //选择上级网点
                     vm.dept.parentId = node[0].deptId;
                     vm.dept.parentName = node[0].name;
 

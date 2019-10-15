@@ -25,7 +25,7 @@ layui.use(['form','laydate','element','table',],function(){
             { type: "checkbox", fixed:"left", width:50},
             { title: '角色ID', field: 'roleId', minWidth: 70},
             { title: '角色名称', field: 'roleName', minWidth: 50 },
-            { title: '所属部门', field: 'deptName', minWidth: 70 },
+            { title: '所属网点', field: 'deptName', minWidth: 70 },
             { title: '备注', field: 'remark' },
             { title: '创建时间', field: 'createTime'}
 
@@ -65,7 +65,7 @@ var menu_setting = {
     }
 };
 
-//部门结构树
+//网点结构树
 var dept_ztree;
 var dept_setting = {
     data: {
@@ -182,7 +182,7 @@ var vm = new Vue({
                     menu_ztree.checkNode(node, true, false);
                 }
 
-               /* //勾选角色所拥有的部门数据权限
+               /* //勾选角色所拥有的网点数据权限
                 var deptIds = vm.role.deptIdList;
                 for(var i=0; i<deptIds.length; i++) {
                     var node = data_ztree.getNodeByParam("deptId", deptIds[i]);
@@ -248,7 +248,7 @@ var vm = new Vue({
 
         },
         getDept: function(){
-            //加载部门树
+            //加载网点树
             $.get(ctx + "sys/dept/list", function(r){
                 dept_ztree = $.fn.zTree.init($("#deptTree"), dept_setting, r);
                 var node = dept_ztree.getNodeByParam("deptId", vm.role.deptId);
@@ -263,7 +263,7 @@ var vm = new Vue({
                 type: 1,
                 offset: '30px',
                 skin: 'layui-layer-molv',
-                title: "选择部门",
+                title: "选择网点",
                 area: ['300px', '450px'],
                 shade: 0,
                 shadeClose: false,
@@ -271,7 +271,7 @@ var vm = new Vue({
                 btn: ['确定', '取消'],
                 btn1: function (index) {
                     var node = dept_ztree.getSelectedNodes();
-                    //选择上级部门
+                    //选择上级网点
                     vm.role.deptId = node[0].deptId;
                     vm.role.deptName = node[0].name;
 

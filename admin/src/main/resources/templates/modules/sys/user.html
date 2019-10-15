@@ -40,9 +40,9 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label">所属部门</label>
+				<label class="layui-form-label">所属网点</label>
 				<div class="layui-input-block">
-					<input type="text" class="layui-input" style="cursor:pointer;" v-model="user.deptName" @click="deptTree" readonly="readonly" placeholder="所属部门" lay-verify="required"/>
+					<input type="text" class="layui-input" style="cursor:pointer;" v-model="user.deptName" @click="deptTree" readonly="readonly" placeholder="所属网点" lay-verify="required"/>
 				</div>
 			</div>
 
@@ -95,7 +95,7 @@
 	</div>
 </div>
 </div>
-<!-- 选择部门 -->
+<!-- 选择网点 -->
 <div id="deptLayer" style="display: none;padding:10px;">
 	<ul id="deptTree" class="ztree"></ul>
 </div>

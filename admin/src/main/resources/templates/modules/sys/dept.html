@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>部门管理</title>
+<title>网点管理</title>
 <#include "/header.html">
 	<link rel="stylesheet" href="${request.contextPath}/statics/plugins/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
 	<script src="${request.contextPath}/statics/plugins/ztree/js/jquery.ztree.all.min.js"></script>
@@ -28,13 +28,13 @@
 		<div class="layui-card-body" >
 			<form class="layui-form"  lay-filter="myForm">
 			<div class="layui-form-item">
-				<label class="layui-form-label">部门名称</label>
+				<label class="layui-form-label">网点名称</label>
 				<div class="layui-input-block">
 					<input type="text" class="layui-input" v-model="dept.name"  lay-verify="required"/>
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<label class="layui-form-label">上级部门</label>
+				<label class="layui-form-label">上级网点</label>
 				<div class="layui-input-block">
 					<input type="text" class="layui-input" style="cursor:pointer;" v-model="dept.parentName" @click="deptTree" lay-verify="required" readonly="readonly" />
 				</div>
@@ -56,7 +56,7 @@
 	</div>
 </div>
 
-<!-- 选择部门 -->
+<!-- 选择网点 -->
 <div id="deptLayer" style="display: none;padding:10px;">
 	<ul id="deptTree" class="ztree"></ul>
 </div>
