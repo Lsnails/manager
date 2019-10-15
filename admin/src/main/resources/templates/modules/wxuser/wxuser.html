@@ -9,10 +9,19 @@
     <div v-show="showList">
 		<form class="layui-form searchForm" lay-filter="searchForm" action="">
 			<div class="layui-inline">
-				<input type="text" class="layui-input"   placeholder="">
+				<input type="text" class="layui-input" v-model="q.activityId" @keyup.enter="query" placeholder="活动id">
 			</div>
-
+			<div class="layui-inline">
+				<input type="text" class="layui-input" v-model="q.networkName" @keyup.enter="query" placeholder="网点名称">
+			</div>
+			<div class="layui-inline">
+				<input type="text" class="layui-input" v-model="q.phone" @keyup.enter="query" placeholder="手机号">
+			</div>
+			<div class="layui-inline">
+				<input type="text" class="layui-input" v-model="q.userCode" @keyup.enter="query" placeholder="用户唯一编码">
+			</div>
 			<button type="button" class="layui-btn"  @click="query">查询</button>
+			<button type="reset" class="layui-btn"  @click="clearQuery">重置</button>
 		</form>
 		<div class="layui-btn-group">
 			<button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i></button>

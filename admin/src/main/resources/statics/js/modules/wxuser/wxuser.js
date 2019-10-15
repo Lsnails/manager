@@ -21,8 +21,8 @@ layui.use(['form','laydate','element','table',],function(){
 		limit : 20,
 		limits : [10,15,20,25,50,100],
 		id : "listTable",
-		toolbar: '#toptoolbar',
-		defaultToolbar: ['filter'],
+//		toolbar: '#toptoolbar',
+//		defaultToolbar: ['filter'],
 		cols : [[
 			{ type: "checkbox", fixed:"left", width:50},
 			{ title: 'id',field: 'id',hide:true },
@@ -73,11 +73,23 @@ var vm = new Vue({
 	data:{
 		showList: true,
 		title: null,
-		q:{},
+		q:{
+			activityId: null,
+			networkName: null,
+			phone: null,
+			userCode: null
+		},
 		wxUser: {},
 	},
 	methods: {
 		query: function () {
+			vm.reload();
+		},
+		clearQuery: function () {
+			vm.q.activityId = ''
+			vm.q.networkName = ''
+			vm.q.phone = ''
+			vm.q.userCode = ''
 			vm.reload();
 		},
 		add: function(){
@@ -166,6 +178,10 @@ var vm = new Vue({
 				},
 				where: {
 					//name: vm.q,
+					activityId: vm.q.activityId,
+					networkName: vm.q.networkName,
+					phone: vm.q.phone,
+					userCode: vm.q.userCode
 
 				}
 			})

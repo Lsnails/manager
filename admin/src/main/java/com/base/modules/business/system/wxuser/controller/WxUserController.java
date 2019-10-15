@@ -51,7 +51,7 @@ public class WxUserController extends AbstractController{
     @ApiOperation("微信user列表")
 //    @RequiresPermissions("wxuser:wxuser:list")
     public R list(@RequestParam Map<String, Object> params,WxUserEntity wxUser){
-        Page<WxUserEntity> page = wxUserService.queryPage(params);
+        Page<WxUserEntity> page = wxUserService.queryPage(params,wxUser);
 
         return PageUtils.convertFrom(page);
     }

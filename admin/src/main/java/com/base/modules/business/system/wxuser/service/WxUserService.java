@@ -15,6 +15,6 @@ import java.util.Map;
  */
 public interface WxUserService extends IService<WxUserEntity> {
 
-    Page<WxUserEntity> queryPage(Map<String, Object> params);
+    Page<WxUserEntity> queryPage(Map<String, Object> params,WxUserEntity wxUser);
 }
 
