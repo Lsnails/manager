@@ -132,6 +132,7 @@ public class UploadController {
 					}
 					uploadVo.setFileServerPath(serverDirFile + newFileName);
 					uploadVo.setViewFilePathAndHttp(nginxServerip+":"+nginxServerport+dirPath+"/" + newFileName);//访问服务器的路径
+					uploadVo.setWuHttpFilePath(dirPath+"/" + newFileName);
 					logger.info("文件上传成功,上传服务器路径为 ："+ serverDirFile + newFileName);
 					try {
 						if(UploadUtils.makeDirs(localTempdir)){

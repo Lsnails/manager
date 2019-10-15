@@ -6,6 +6,7 @@ import com.base.modules.sys.entity.SysDeptEntity;
 import com.base.modules.sys.service.SysDeptService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,14 @@ import java.util.List;
 public class SysDeptController extends AbstractController {
 	@Autowired
 	private SysDeptService sysDeptService;
+	
+	/** nginx代理ip */
+	@Value("${nginx.serverip}")
+	private String nginxServerip;
+	
+	/** nginx代理端口 */
+	@Value("${nginx.serverport}")
+	private String nginxServerport;
 	
 	/**
 	 * 列表
@@ -91,7 +100,7 @@ public class SysDeptController extends AbstractController {
 	@RequiresPermissions("sys:dept:info")
 	public R info(@PathVariable("deptId") Long deptId){
 		SysDeptEntity dept = sysDeptService.selectById(deptId);
-		
+		dept.setImagesHttp(nginxServerip+":"+nginxServerport);
 		return R.ok().put("dept", dept);
 	}
 	

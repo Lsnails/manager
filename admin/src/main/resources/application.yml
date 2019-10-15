@@ -91,17 +91,17 @@ logging:
 #上传文件到服务器
 upload: 
   ftp-enabled : false  #是否启用ftp上传，1.如果没有单独的图片服务器，设置为false，即不走ftp上传，需要配置“本地临时文件dir，并且使用nginx转发 2.有单独的图片服务器，需要配置ftp相关信息，并且做nginx转发”
-  dir: c:/upload/tmp  #本地临时文件，后面不带斜杠
+  dir: C:/Users/huanw/Desktop/apache-tomcat-8.0.36/webapps   #本地临时文件，后面不带斜杠eg c:/upload/tmp
   ip: 192.168.100.51   #ftp地址
   port: 22             #ftp端口
   username: root       #ftp用户名
   password: 123456        #ftp密码
   remotePath: /usr/etc/upload  #远程服务器上传服务器路径
-  dirPath:  /files #nginx转发文件，下的子目录 nginx转发后的访问地址 eg：http://192.168.100.228//html/upload/images/78c5007815624d0abd6ac28ed63f2128.png
+  dirPath:  /images #nginx转发文件，下的子目录 nginx转发后的访问地址 eg：http://192.168.100.228//html/upload/images/78c5007815624d0abd6ac28ed63f2128.png
   uploadFileType: .doc|.docx|.xls|.xlsx|.zip|.tar|.rar|.7z|.jpg|.png|.gif|.jpeg|.swf|.mp4|.mp3|.txt|.ipa  #可上传文件类型
 nginx:
   serverip: 127.0.0.1  #nginx代理ip
-  serverport: 8088          #nginx代理端口
+  serverport: 8090          #nginx代理端口
   
 oss:
   alioss-enabled: true     # 是否启用阿里oss服务  true表示启用   false 默认上传到本地

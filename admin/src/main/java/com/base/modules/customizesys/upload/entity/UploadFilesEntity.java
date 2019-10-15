@@ -55,6 +55,10 @@ public class UploadFilesEntity implements Serializable {
 	 */
 	private String viewFilePath;
 	/**
+	 * 无http ip加端口号的文件路径
+	 */
+	private String wuHttpFilePath;
+	/**
 	 * 状态（0：新增 1：使用 2：临时）
 	 */
     private String fileStatus;
@@ -208,4 +212,14 @@ public class UploadFilesEntity implements Serializable {
 	public Date getLastmodifytime() {
 		return lastmodifytime;
 	}
+
+	public String getWuHttpFilePath() {
+		return wuHttpFilePath;
+	}
+
+	public void setWuHttpFilePath(String wuHttpFilePath) {
+		this.wuHttpFilePath = wuHttpFilePath;
+	}
+	
+	
 }

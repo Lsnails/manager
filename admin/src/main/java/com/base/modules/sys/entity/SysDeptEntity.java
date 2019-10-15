@@ -32,7 +32,15 @@ public class SysDeptEntity implements Serializable {
 	private String parentName;
 	//排序
 	private Integer orderNum;
-
+	//网点二维码图片路径
+	private String qrcodeurl;
+	//网点二维码图片名称
+	private String qrcodetitle;
+	/**
+	 * 图片服务器地址
+	 */
+	@TableField(exist=false)
+	private String imagesHttp;
 	@TableLogic
 	private Integer delFlag;
 	/**
@@ -111,6 +119,37 @@ public class SysDeptEntity implements Serializable {
 	public void setOpen(Boolean open) {
 		this.open = open;
 	}
+	
+	
+	/**
+	 * 网点二维码图片路径
+	 * @return
+	 */
+	public String getQrcodeurl() {
+		return qrcodeurl;
+	}
+	/**
+	 * 网点二维码图片路径
+	 * @param qrcodeurl
+	 */
+	public void setQrcodeurl(String qrcodeurl) {
+		this.qrcodeurl = qrcodeurl;
+	}
+
+	/**
+	 * 网点二维码图片名称
+	 * @return
+	 */
+	public String getQrcodetitle() {
+		return qrcodetitle;
+	}
+	/**
+	 * 网点二维码图片名称
+	 * @param qrcodetitle
+	 */
+	public void setQrcodetitle(String qrcodetitle) {
+		this.qrcodetitle = qrcodetitle;
+	}
 
 	public List<?> getList() {
 		return list;
@@ -119,4 +158,14 @@ public class SysDeptEntity implements Serializable {
 	public void setList(List<?> list) {
 		this.list = list;
 	}
+
+	public String getImagesHttp() {
+		return imagesHttp;
+	}
+
+	public void setImagesHttp(String imagesHttp) {
+		this.imagesHttp ="http://"+imagesHttp;
+	}
+	
+	
 }

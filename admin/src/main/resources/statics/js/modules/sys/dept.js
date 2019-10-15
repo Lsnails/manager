@@ -4,9 +4,10 @@ layui.config({
     "layTreeTable" : "layTreeTable"
 })
 var	re;
-layui.use(['layTreeTable','form','element'],function(){
+layui.use(['layTreeTable','form','element','upload'],function(){
     var form = layui.form,
         treeTable = layui.layTreeTable;
+       upload = layui.upload;
     var user = JSON.parse(sessionStorage.getItem('x-user'));
     re = treeTable.render({
         elem: '#tree-table',
@@ -33,6 +34,40 @@ layui.use(['layTreeTable','form','element'],function(){
     form.on('submit(*)', function(data){
         vm.saveOrUpdate()
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    });
+    
+  //普通图片上传
+    var uploadInst = upload.render({
+      elem: '#qrcodeupload'
+//      ,url: '/upload/'
+    	  
+      ,url:ctx + "oldupload/uploadFile"
+      ,before: function(obj){
+        //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+          $('#qrcodeimg').attr('src', result); //图片链接（base64）
+        });
+      }
+      ,accept: 'file' //普通文件
+      ,done: function(res){
+        //如果上传失败
+        if(res.code > 0){
+          return layer.msg('上传失败');
+        }
+        //上传成功
+        if(res.code == 0 ){
+        	vm.dept.qrcodetitle = res.data.oldName;
+			vm.dept.qrcodeurl = res.data.wuHttpFilePath;
+        }
+      }
+      ,error: function(){
+        //演示失败状态，并实现重传
+        var demoText = $('#demoText');
+        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+        demoText.find('.demo-reload').on('click', function(){
+          uploadInst.upload();
+        });
+      }
     });
 
 })
@@ -61,7 +96,8 @@ var vm = new Vue({
             parentName:null,
             parentId:0,
             orderNum:0
-        }
+        },
+        image:''
     },
     methods: {
         getDept: function(){
@@ -76,7 +112,9 @@ var vm = new Vue({
         add: function(){
             vm.showList = false;
             vm.title = "新增";
-            vm.dept = {parentName:'',parentId:"",orderNum:0};
+            vm.image = "";
+            $('#qrcodeimg').removeAttr("src");
+            vm.dept = {parentName:'',parentId:"0",orderNum:0,qrcodetitle:'',qrcodeurl:''};
             vm.getDept();
         },
         update: function () {
@@ -89,6 +127,9 @@ var vm = new Vue({
             $.get(ctx + "sys/dept/info/"+ids[0], function(r){
                 vm.showList = false;
                 vm.title = "修改";
+                if(r.dept.qrcodeurl != null && r.dept.qrcodeurl!=''){
+                	vm.image = r.dept.imagesHttp+r.dept.qrcodeurl;
+                }
                 vm.dept = r.dept;
                 vm.getDept();
             });
@@ -117,7 +158,7 @@ var vm = new Vue({
             });
         },
         saveOrUpdate: function (event) {
-
+        	debugger;
             var url = vm.dept.deptId == null ? "sys/dept/save" : "sys/dept/update";
             $.ajax({
                 type: "POST",
@@ -127,6 +168,7 @@ var vm = new Vue({
                 success: function(r){
                     if(r.code == 0){
                         layer.msg('操作成功');
+                        vm.image = "";
                         vm.reload();
                     }else{
                         layer.msg(r.msg);
