@@ -32,11 +32,11 @@
     </div>
 
     <div v-show="!showList"  class="layui-card">
-		<div class="layui-card-header"><h3 class="x-card-title">{{title}}</h3><span @click="reload" class="x-pull-right"><i class="layui-icon layui-icon-close-fill x-closeCard"></i></span></div>
+     <div class="layui-card-header">{{title}}</div>
 		<div class="layui-card-body" >
 			<form class="layui-form"  lay-filter="myForm">
 				<div class="layui-form-item">
-					<label class="layui-form-label">wx openId唯一标识</label>
+					<label class="layui-form-label">wxopenId</label>
 					<div class="layui-input-block">
 						<input type="text" class="layui-input" v-model="wxUser.openId" placeholder="wx openId唯一标识"/>
 					</div>
@@ -72,9 +72,9 @@
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<label class="layui-form-label">用户唯一编码,自动生成</label>
+					<label class="layui-form-label">用户唯一编码</label>
 					<div class="layui-input-block">
-						<input type="text" class="layui-input" v-model="wxUser.userCode" placeholder="用户唯一编码,自动生成"/>
+						<input type="text" class="layui-input" v-model="wxUser.userCode" placeholder="用户唯一编码"/>
 					</div>
 				</div>
 				<!-- <div class="layui-form-item">
