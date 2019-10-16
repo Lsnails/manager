@@ -23,8 +23,11 @@ layui.use(['layTreeTable','form','element','upload','laydate'],function(){
             {title: '网点ID',key: 'deptId',minWidth: '100px',align: 'center'},
             {title: '网点名称',key: 'name',minWidth: '100px',align: 'center'},
             {title: '上级网点',key: 'parentName',minWidth: '100px',align: 'center'},
+            {title: '二维码',key: 'qrcodeurl',minWidth: '100px',align: 'center',template: function(item){
+				return item.qrcodeurl == null ?'无':'<img class="layui-upload-img" style="width: 50px;height: 50px;" src="'+item.imagesHttp+item.qrcodeurl+'">';
+            }},
             {title: '展示时间',key: 'showTime',minWidth: '100px',align: 'center',template: function(item){
-				return item.showTime == null ?'无':item.showTime
+				return item.showTime == null ?'无':item.showTime;
             }},
             {title: '排序号',key: 'orderNum',minWidth: '100px',align: 'center'}
 

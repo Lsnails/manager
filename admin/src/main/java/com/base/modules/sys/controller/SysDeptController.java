@@ -4,6 +4,8 @@ import com.base.common.utils.Constant;
 import com.base.common.utils.R;
 import com.base.modules.sys.entity.SysDeptEntity;
 import com.base.modules.sys.service.SysDeptService;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +44,15 @@ public class SysDeptController extends AbstractController {
 	@RequiresPermissions("sys:dept:list")
 	public List<SysDeptEntity> list(){
 		List<SysDeptEntity> deptList = sysDeptService.queryList(new HashMap<String, Object>());
-
+		for (SysDeptEntity sysDeptEntity : deptList) {
+			if(StringUtils.isNotBlank(sysDeptEntity.getQrcodeurl())) {
+				String httpString =nginxServerip;
+				if(StringUtils.isNotBlank(nginxServerport)) {
+					httpString =nginxServerip+":"+nginxServerport;
+				}
+				sysDeptEntity.setImagesHttp(httpString);
+			}
+		}
 		return deptList;
 	}
 
@@ -100,7 +110,11 @@ public class SysDeptController extends AbstractController {
 	@RequiresPermissions("sys:dept:info")
 	public R info(@PathVariable("deptId") Long deptId){
 		SysDeptEntity dept = sysDeptService.selectById(deptId);
-		dept.setImagesHttp(nginxServerip+":"+nginxServerport);
+		String httpString =nginxServerip;
+		if(StringUtils.isNotBlank(nginxServerport)) {
+			httpString =nginxServerip+":"+nginxServerport;
+		}
+		dept.setImagesHttp(httpString);
 		return R.ok().put("dept", dept);
 	}
 	
