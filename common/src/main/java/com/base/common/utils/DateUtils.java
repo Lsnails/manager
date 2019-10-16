@@ -6,6 +6,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -54,6 +55,29 @@ public class DateUtils {
 
         DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern);
         return fmt.parseLocalDateTime(strDate).toDate();
+    }
+
+    public static long dateToLong(Date date,String pattern){
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        String format = sdf.format(date);
+        try {
+            Date parse = sdf.parse(format);
+            return parse.getTime();
+        } catch (ParseException e) {
+            System.out.println("转换异常");
+        }
+        return 0;
+    }
+
+    public static long strToLong(String date,String pattern){
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        try {
+            Date parse = sdf.parse(date);
+            return parse.getTime();
+        } catch (ParseException e) {
+            System.out.println("转换异常");
+        }
+        return 0;
     }
 
     /**

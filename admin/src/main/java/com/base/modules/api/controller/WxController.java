@@ -3,10 +3,13 @@ package com.base.modules.api.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.base.common.utils.DateUtils;
 import com.base.modules.business.system.activityinfo.entity.ActivityinfoEntity;
 import com.base.modules.business.system.activityinfo.service.ActivityinfoService;
 import com.base.modules.business.system.wxuser.entity.WxUserEntity;
 import com.base.modules.business.system.wxuser.service.WxUserService;
+import com.base.modules.sys.entity.SysDeptEntity;
+import com.base.modules.sys.service.SysDeptService;
 import com.base.utils.HttpUtils;
 import com.base.utils.UUIDUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName WxController
@@ -32,7 +36,7 @@ public class WxController {
 
     public static final String wx_token_url = "https://open.weixin.qq.com/connect/oauth2/authorize?";
     public static final String wx_appid = "wx01fc3b985a70091e";
-    public static final String wx_redirect_url  = "http://wx.ffhigh.com/admin/wx/getcode";
+    public static final String wx_redirect_url = "http://wx.ffhigh.com/admin/wx/getcode";
     public static final String wx_openid_url = "https://api.weixin.qq.com/sns/oauth2/access_token?";
     public static final String wx_secret = "ab086069a568f7311f6fc9a35f7bc970";
     public static final String wx_userinfo_url = "https://api.weixin.qq.com/sns/userinfo?";
@@ -41,6 +45,8 @@ public class WxController {
     private ActivityinfoService activityinfoService;
     @Autowired
     private WxUserService wxUserService;
+    @Autowired
+    private SysDeptService sysDeptService;
 
     /**
      * 配置微信文件
@@ -53,9 +59,9 @@ public class WxController {
 
     @GetMapping(value = "/wxLogin")
     public String get(String scope, HttpServletResponse response) throws IOException {
-        if(StringUtils.isBlank(scope)){
+        if (StringUtils.isBlank(scope)) {
             scope = "snsapi_base"; //静默授权
-        }else{
+        } else {
             scope = "snsapi_userinfo"; // 完全授权
         }
         String url = wx_token_url + "appid=" + wx_appid + "&redirect_uri=" + wx_redirect_url + "&response_type=code&scope=" + scope + "&state=123#wechat_redirect";
@@ -65,6 +71,7 @@ public class WxController {
 
     /**
      * 获取Code
+     *
      * @param code Code
      * @return
      */
@@ -73,7 +80,7 @@ public class WxController {
         // 根据Code获取Openid
         String openidUrl = wx_openid_url + "appid=" + wx_appid + "&secret=" + wx_secret + "&code=" + code + "&grant_type=authorization_code";
         String openidMsg = HttpUtils.doPost(openidUrl, "", "UTF-8");
-        System.out.println("返回结果: -->     "+openidMsg);
+        System.out.println("返回结果: -->     " + openidMsg);
         // 解析返回信息
         JSONObject result = JSON.parseObject(openidMsg);
         // 网页授权接口调用凭证
@@ -105,33 +112,53 @@ public class WxController {
         System.err.println("特权:" + userInfo.getString("privilege"));
         System.err.println("unionid:" + userInfo.getString("unionid"));
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
-        entityWrapper.eq("status",1);
+        entityWrapper.eq("status", 1);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
-        if(null !=activityinfoEntity){
-            setWxUser(userInfo.getString("openid"),activityinfoEntity.getActivityinfoId(),activityinfoEntity.getName());
+        if (null != activityinfoEntity) {
+            setWxUser(userInfo.getString("openid"), activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
         }
         return "redirect:/wx/close.html";
     }
 
-    private void setWxUser(String openId,String activityId,String activityName){
+    private void setWxUser(String openId, String activityId, String activityName) {
         EntityWrapper<WxUserEntity> entityWrapper = new EntityWrapper();
-        entityWrapper.eq("open_id",openId);
-        entityWrapper.eq("activity_id",activityId);
+        entityWrapper.eq("open_id", openId);
+        entityWrapper.eq("activity_id", activityId);
         WxUserEntity wxUserEntity = wxUserService.selectOne(entityWrapper);
+        SysDeptEntity qrCode = getQrCode();
         //只有当用户不存在的时候,才存入用户数据
-        if(wxUserEntity==null){
+        if (wxUserEntity == null) {
             wxUserEntity = new WxUserEntity();
             wxUserEntity.setOpenId(openId);
             wxUserEntity.setActivityId(activityId);
             wxUserEntity.setActivityName(activityName);
             wxUserEntity.setCreateDate(new Date());
             wxUserEntity.setUserCode(UUIDUtils.getId().toUpperCase());
-            wxUserEntity.setNetworkId("");
-            wxUserEntity.setNetworkName("");
+            wxUserEntity.setNetworkId(qrCode.getDeptId().toString());
+            wxUserEntity.setNetworkName(qrCode.getName());
             wxUserEntity.setId(UUIDUtils.getRandomUUID());
             wxUserEntity.setState(0);
             wxUserService.insert(wxUserEntity);
         }
+    }
+
+    private SysDeptEntity getQrCode() {
+        long now = DateUtils.dateToLong(new Date(), "HH:mm:ss");//取当前的时分秒
+        List<SysDeptEntity> list = sysDeptService.queryList(null);
+        SysDeptEntity rBean = null;
+        for (SysDeptEntity entity : list) {
+            String showTime = entity.getShowTime();
+            if (StringUtils.isNotBlank(showTime)) {
+                String[] split = showTime.split(" - ");
+                long start = DateUtils.strToLong(split[0], "HH:mm:ss");
+                long end = DateUtils.strToLong(split[1], "HH:mm:ss");
+                if (now >= start && now <= end) {
+                    rBean = entity;
+                    break;
+                }
+            }
+        }
+        return rBean;
     }
 
 }
