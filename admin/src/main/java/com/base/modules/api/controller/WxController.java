@@ -115,7 +115,7 @@ public class WxController {
 
     private void setWxUser(String openId,String activityId,String activityName){
         EntityWrapper<WxUserEntity> entityWrapper = new EntityWrapper();
-        entityWrapper.eq("openId",openId);
+        entityWrapper.eq("open_id",openId);
         entityWrapper.eq("activity_id",activityId);
         WxUserEntity wxUserEntity = wxUserService.selectOne(entityWrapper);
         //只有当用户不存在的时候,才存入用户数据
