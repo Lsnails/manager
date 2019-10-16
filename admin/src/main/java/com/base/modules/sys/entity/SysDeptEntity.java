@@ -36,6 +36,8 @@ public class SysDeptEntity implements Serializable {
 	private String qrcodeurl;
 	//网点二维码图片名称
 	private String qrcodetitle;
+	//二维码展示时间
+	private String showTime;
 	/**
 	 * 图片服务器地址
 	 */
@@ -165,6 +167,21 @@ public class SysDeptEntity implements Serializable {
 
 	public void setImagesHttp(String imagesHttp) {
 		this.imagesHttp ="http://"+imagesHttp;
+	}
+
+	/**
+	 * 二维码展示时间
+	 * @return
+	 */
+	public String getShowTime() {
+		return showTime;
+	}
+	/**
+	 * 二维码展示时间
+	 * @param showTime
+	 */
+	public void setShowTime(String showTime) {
+		this.showTime = showTime;
 	}
 	
 	

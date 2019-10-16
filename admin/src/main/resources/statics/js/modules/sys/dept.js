@@ -4,10 +4,11 @@ layui.config({
     "layTreeTable" : "layTreeTable"
 })
 var	re;
-layui.use(['layTreeTable','form','element','upload'],function(){
+layui.use(['layTreeTable','form','element','upload','laydate'],function(){
     var form = layui.form,
         treeTable = layui.layTreeTable;
-       upload = layui.upload;
+        upload = layui.upload;
+        laydate = layui.laydate;
     var user = JSON.parse(sessionStorage.getItem('x-user'));
     re = treeTable.render({
         elem: '#tree-table',
@@ -22,6 +23,9 @@ layui.use(['layTreeTable','form','element','upload'],function(){
             {title: '网点ID',key: 'deptId',minWidth: '100px',align: 'center'},
             {title: '网点名称',key: 'name',minWidth: '100px',align: 'center'},
             {title: '上级网点',key: 'parentName',minWidth: '100px',align: 'center'},
+            {title: '展示时间',key: 'showTime',minWidth: '100px',align: 'center',template: function(item){
+				return item.showTime == null ?'无':item.showTime
+            }},
             {title: '排序号',key: 'orderNum',minWidth: '100px',align: 'center'}
 
 
@@ -70,6 +74,19 @@ layui.use(['layTreeTable','form','element','upload'],function(){
         });
       }
     });
+    
+    //时间范围
+    laydate.render({
+      elem: '#showTime'
+      ,type: 'time'
+      ,range: true
+      ,done: function(value, date, endDate){
+    	    console.log(value); //得到日期生成的值，如：2017-08-18
+    	    console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+    	    console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+    	    vm.dept.showTime=value;
+    	  }
+    });
 
 })
 
@@ -96,7 +113,8 @@ var vm = new Vue({
         dept:{
             parentName:null,
             parentId:0,
-            orderNum:0
+            orderNum:0,
+            showTime:null
         },
         image:'',
         imgFlag:false
@@ -116,8 +134,10 @@ var vm = new Vue({
             vm.title = "新增";
             vm.image = "";
             vm.imgFlag =false;
+            vm.dept.showTime='';
+            $("#showTime").val("");
             $('#qrcodeimg').removeAttr("src");
-            vm.dept = {parentName:'',parentId:"0",orderNum:0,qrcodetitle:'',qrcodeurl:''};
+            vm.dept = {parentName:'',parentId:"0",orderNum:0,qrcodetitle:'',qrcodeurl:'',showTime:''};
             vm.getDept();
         },
         update: function () {
@@ -133,11 +153,14 @@ var vm = new Vue({
                 vm.title = "修改";
                 $('#qrcodeimg').removeAttr("src");
                 vm.imgFlag =false;
+                vm.dept.showTime='';
+                $("#showTime").attr("");
                 if(r.dept.qrcodeurl != null && r.dept.qrcodeurl!=''){
                 	vm.image = r.dept.imagesHttp+r.dept.qrcodeurl;
                 	vm.imgFlag =true;
                 	$('#qrcodeimg').attr('src', vm.image);
                 }
+                $("#showTime").val(r.dept.showTime);
                 vm.dept = r.dept;
                 vm.getDept();
             });
