@@ -1,17 +1,17 @@
 package com.base.modules.business.system.wxuser.service.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
-import java.util.Map;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.base.common.utils.PageUtils;
 import com.base.common.utils.Query;
-
 import com.base.modules.business.system.wxuser.dao.WxUserDao;
 import com.base.modules.business.system.wxuser.entity.WxUserEntity;
 import com.base.modules.business.system.wxuser.service.WxUserService;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 
 @Service("wxUserService")
@@ -42,4 +42,8 @@ public class WxUserServiceImpl extends ServiceImpl<WxUserDao, WxUserEntity> impl
         return page;
     }
 
+	@Override
+	public WxUserEntity selectOne(Wrapper<WxUserEntity> wrapper) {
+		return super.selectOne(wrapper);
+	}
 }

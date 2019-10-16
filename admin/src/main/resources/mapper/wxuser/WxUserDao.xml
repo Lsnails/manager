@@ -8,6 +8,7 @@
         <result property="id" column="id"/>
         <result property="openId" column="open_id"/>
         <result property="activityId" column="activity_id"/>
+        <result property="activityName" column="activity_name"/>
         <result property="networkId" column="network_id"/>
         <result property="networkName" column="network_name"/>
         <result property="state" column="state"/>

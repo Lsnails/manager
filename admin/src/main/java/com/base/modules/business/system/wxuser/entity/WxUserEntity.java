@@ -33,6 +33,10 @@ public class WxUserEntity implements Serializable {
 	 */
 	private String activityId;
 	/**
+	 * 活动名称
+	 */
+	private String activityName;
+	/**
 	 * 网点id
 	 */
 	private String networkId;
@@ -66,6 +70,9 @@ public class WxUserEntity implements Serializable {
 	private String remark3;
 	private String remark4;
 	private String remark5;
+
+	public WxUserEntity() {
+	}
 
 	/**
 	 * 设置：
@@ -181,6 +188,15 @@ public class WxUserEntity implements Serializable {
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
 	}
+
+	public String getActivityName() {
+		return activityName;
+	}
+
+	public void setActivityName(String activityName) {
+		this.activityName = activityName;
+	}
+
 	/**
 	 * 获取：
 	 */

@@ -2,8 +2,15 @@ package com.base.modules.api.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.base.modules.business.system.activityinfo.entity.ActivityinfoEntity;
+import com.base.modules.business.system.activityinfo.service.ActivityinfoService;
+import com.base.modules.business.system.wxuser.entity.WxUserEntity;
+import com.base.modules.business.system.wxuser.service.WxUserService;
 import com.base.utils.HttpUtils;
+import com.base.utils.UUIDUtils;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * @ClassName WxController
@@ -29,6 +37,11 @@ public class WxController {
     public static final String wx_secret = "ab086069a568f7311f6fc9a35f7bc970";
     public static final String wx_userinfo_url = "https://api.weixin.qq.com/sns/userinfo?";
 
+    @Autowired
+    private ActivityinfoService activityinfoService;
+    @Autowired
+    private WxUserService wxUserService;
+
     /**
      * 配置微信文件
      */
@@ -41,9 +54,9 @@ public class WxController {
     @GetMapping(value = "/wxLogin")
     public String get(String scope, HttpServletResponse response) throws IOException {
         if(StringUtils.isBlank(scope)){
-            scope = "snsapi_userinfo"; //完全授权
+            scope = "snsapi_base"; //静默授权
         }else{
-            scope = "snsapi_base"; // 静默授权
+            scope = "snsapi_userinfo"; // 完全授权
         }
         String url = wx_token_url + "appid=" + wx_appid + "&redirect_uri=" + wx_redirect_url + "&response_type=code&scope=" + scope + "&state=123#wechat_redirect";
 //        response.sendRedirect(url);
@@ -91,7 +104,33 @@ public class WxController {
         System.err.println("头像:" + userInfo.getString("headimgurl"));
         System.err.println("特权:" + userInfo.getString("privilege"));
         System.err.println("unionid:" + userInfo.getString("unionid"));
+        EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
+        entityWrapper.eq("status",1);
+        ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
+        if(null !=activityinfoEntity){
+            setWxUser(userInfo.getString("openid"),activityinfoEntity.getActivityinfoId(),activityinfoEntity.getName());
+        }
         return "redirect:/wx/close.html";
+    }
+
+    private void setWxUser(String openId,String activityId,String activityName){
+        EntityWrapper<WxUserEntity> entityWrapper = new EntityWrapper();
+        entityWrapper.eq("openId",openId);
+        entityWrapper.eq("activity_id",activityId);
+        WxUserEntity wxUserEntity = wxUserService.selectOne(entityWrapper);
+        //只有当用户不存在的时候,才存入用户数据
+        if(wxUserEntity==null){
+            wxUserEntity = new WxUserEntity();
+            wxUserEntity.setOpenId(openId);
+            wxUserEntity.setActivityId(activityId);
+            wxUserEntity.setActivityName(activityName);
+            wxUserEntity.setCreateDate(new Date());
+            wxUserEntity.setUserCode(UUIDUtils.getId().toUpperCase());
+            wxUserEntity.setNetworkId("");
+            wxUserEntity.setNetworkName("");
+            wxUserEntity.setId(UUIDUtils.getRandomUUID());
+            wxUserEntity.setState(0);
+        }
     }
 
 }
