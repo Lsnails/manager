@@ -58,6 +58,7 @@ layui.use(['layTreeTable','form','element','upload'],function(){
         if(res.code == 0 ){
         	vm.dept.qrcodetitle = res.data.oldName;
 			vm.dept.qrcodeurl = res.data.wuHttpFilePath;
+			vm.imgFlag =true;
         }
       }
       ,error: function(){
@@ -97,7 +98,8 @@ var vm = new Vue({
             parentId:0,
             orderNum:0
         },
-        image:''
+        image:'',
+        imgFlag:false
     },
     methods: {
         getDept: function(){
@@ -113,6 +115,7 @@ var vm = new Vue({
             vm.showList = false;
             vm.title = "新增";
             vm.image = "";
+            vm.imgFlag =false;
             $('#qrcodeimg').removeAttr("src");
             vm.dept = {parentName:'',parentId:"0",orderNum:0,qrcodetitle:'',qrcodeurl:''};
             vm.getDept();
@@ -125,10 +128,15 @@ var vm = new Vue({
             }
 
             $.get(ctx + "sys/dept/info/"+ids[0], function(r){
+            	debugger;
                 vm.showList = false;
                 vm.title = "修改";
+                $('#qrcodeimg').removeAttr("src");
+                vm.imgFlag =false;
                 if(r.dept.qrcodeurl != null && r.dept.qrcodeurl!=''){
                 	vm.image = r.dept.imagesHttp+r.dept.qrcodeurl;
+                	vm.imgFlag =true;
+                	$('#qrcodeimg').attr('src', vm.image);
                 }
                 vm.dept = r.dept;
                 vm.getDept();
@@ -158,7 +166,6 @@ var vm = new Vue({
             });
         },
         saveOrUpdate: function (event) {
-        	debugger;
             var url = vm.dept.deptId == null ? "sys/dept/save" : "sys/dept/update";
             $.ajax({
                 type: "POST",
