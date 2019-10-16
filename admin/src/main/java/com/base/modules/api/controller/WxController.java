@@ -130,6 +130,7 @@ public class WxController {
             wxUserEntity.setNetworkName("");
             wxUserEntity.setId(UUIDUtils.getRandomUUID());
             wxUserEntity.setState(0);
+            wxUserService.insert(wxUserEntity);
         }
     }
 
