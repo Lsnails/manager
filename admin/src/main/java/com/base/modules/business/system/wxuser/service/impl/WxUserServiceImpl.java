@@ -54,8 +54,7 @@ public class WxUserServiceImpl extends ServiceImpl<WxUserDao, WxUserEntity> impl
 	@Override
 	public WxUserEntity getUserByParam(String txt,String activityId) {
 		EntityWrapper<WxUserEntity> entityWrapper = new EntityWrapper();
-        entityWrapper.eq("activity_id",activityId);
-		entityWrapper.like("phone",txt).like("userCode",txt);
+        entityWrapper.eq("activity_id",activityId).like("phone",txt).or().like("user_code",txt);
 		return this.selectOne(entityWrapper);
 	}
 

@@ -183,6 +183,7 @@ public class WxController {
     }
 
     @PostMapping(value = "/getUser")
+    @ResponseBody
     public R getUser(String txt,String activityId) {
         WxUserEntity user = wxUserService.getUserByParam(txt,activityId);
         R r = new R();
@@ -191,7 +192,8 @@ public class WxController {
         return r;
     }
 
-    @PostMapping(value = "/getHdData")
+    @RequestMapping(value = "/getHdData")
+    @ResponseBody
     public R getHdData(){
         R r =new R();
         List<AcItem> acList = new ArrayList<AcItem>();
@@ -204,6 +206,13 @@ public class WxController {
         }
         r.put("acSize",acList.size());
         r.put("acList",acList);
+        return r;
+    }
+
+    @RequestMapping(value = "/hxUser")
+    @ResponseBody
+    public R hxUser(String openId){
+        R r =new R();
         return r;
     }
 

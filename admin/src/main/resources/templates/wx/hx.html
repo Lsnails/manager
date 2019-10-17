@@ -65,14 +65,16 @@ layui.use(['layer','form'],function(){
     layer = top.layer;//在最外层弹出
     localLayer = layui.layer;//在内容区弹出
     form = layui.form;
+    alert('${request.contextPath}');
     $.ajax({
         type: "POST",
-        url: "wx/getHdData",
+        url: "${request.contextPath}/wx/getHdData",
         dataType: "json",
         success: function(result){
+            debugger
             if(result.acSize > 0){
                 $.each(result.acList, function (index, item) {
-                    $('#hd').append(new Option(item.activityId, item.activityName));// 下拉菜单里添加元素
+                    $('#hd').append(new Option(item.activityName,item.activityId));// 下拉菜单里添加元素
                 });
                 selList = result.acList;
                 alert(selList);
@@ -86,7 +88,7 @@ var vm = new Vue({
 	data:{
 		txt: '',
         selList: '',
-
+        openId: ''
 	},
 	beforeCreate: function(){
 		if(self != top){
@@ -95,9 +97,10 @@ var vm = new Vue({
 	},
 	methods: {
         hxUser : function(){
+            var data = "openId="+vm.openId;
             $.ajax({
                 type: "POST",
-                url: "wx/getUser",
+                url: "${request.contextPath}/wx/hxUser",
                 data: data,
                 dataType: "json",
                 success: function(result){
@@ -118,10 +121,16 @@ var vm = new Vue({
             });
         },
         getUser : function(){
-            var data = "txt="+vm.txt+"&activityId = " + $("#hd").val();
+            $("#hxDiv").css('display','none');
+            var hd = $("#hd").val();
+            if(hd == ''){
+                alert("请选择活动!");
+                return;
+            }
+            var data = "txt="+vm.txt+"&activityId=" + hd;
             $.ajax({
                 type: "POST",
-                url: "wx/getUser",
+                url: "${request.contextPath}/wx/getUser",
                 data: data,
                 dataType: "json",
                 success: function(result){
@@ -132,36 +141,18 @@ var vm = new Vue({
                         if(data.state == 0){
                             html = "当前用户未被核销";
                             $("#hxDiv").css('display','block');
+                            vm.openId = data.openId;
                         }else{
                             html= "当前用户已被核销";
                         }
+                        $("#show").html(html);
                     }else{
                         //没数据
                         $("#show").html("没有查到相关信息,请检查输入是否正确!");
                     }
                 }
             });
-        },
-		login: function (event) {
-			var data = "txt="+vm.username+"&password="+vm.password+"&captcha="+vm.captcha;
-			$.ajax({
-				type: "POST",
-			    url: "sys/login",
-			    data: data,
-			    dataType: "json",
-			    success: function(result){
-					if(result.code == 0){//登錄成功
-					    alert(result.mobile);
-						parent.location.href ='index.html';
-					}else{
-						vm.error = true;
-						//vm.errorMsg = result.msg;
-						localLayer.msg(result.msg, {icon: 2});
-						//vm.refreshCode();
-					}
-				}
-			});
-		}
+        }
 	}
 });
 </script>
