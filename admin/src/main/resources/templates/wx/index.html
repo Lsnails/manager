@@ -14,16 +14,14 @@
     <link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/css/index.css">
 </head>
 <body>
-<div class="layui-layout layui-layout-admin" id="layui_layout">
+<div>
     <!-- 顶部区域 -->
-    <div class="layui-header  header">
-        <div class="layui-main">
-            {{param}}
-            恭喜参加活动成功!!! <br>
-            以下是您的个人信息,请注意保存: <br>
-            彩票识别码:{{wxEntity.wxUserEntity.userCode}} <br>
-            对应二维码:<img src="{{wxEntity.qrUrl}}">  {{wxEntity.qrUrl}}
-        </div>
+    <div align="center">
+        测试参数: ${param} <br>
+        恭喜参加活动成功!!! <br>
+        以下是您的个人信息,请注意保存: <br>
+        彩票识别码:${wxEntity.wxUserEntity.userCode} <br>
+        对应二维码:<img src="${wxEntity.qrUrl}">  ${wxEntity.qrUrl}
     </div>
 </div>
 
