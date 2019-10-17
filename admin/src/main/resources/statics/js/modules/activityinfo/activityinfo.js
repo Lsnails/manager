@@ -55,7 +55,6 @@ layui.use(['form','laydate','element','table',],function(){
 	});
 
 	form.on('select(status)', function(data){
-		debugger;
 		vm.activityinfo.status = data.value;
     });
 	form.on('tool(listData)', function(obj){

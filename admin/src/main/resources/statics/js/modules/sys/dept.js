@@ -191,23 +191,9 @@ var vm = new Vue({
                 });
             });
         },
-        test: function () {
-        	window.location.href=ctx + "wx/test?code=人人";
-//                $.ajax({
-//                    type: "POST",
-//                    url: ctx + "wx/test",
-//                    data: {code : '人人'},
-//                    success: function(r){
-//                    	console.log(r);
-////                        if(r.code == 0){
-////                            layer.msg('操作成功');
-////                            vm.reload();
-////                        }else{
-////                            layer.msg(r.msg);
-////                        }
-//                    }
-//                });
-        },
+//        test: function () {
+//        	window.location.href=ctx + "wx/test?code=人人";
+//        },
         saveOrUpdate: function (event) {
             var url = vm.dept.deptId == null ? "sys/dept/save" : "sys/dept/update";
             $.ajax({

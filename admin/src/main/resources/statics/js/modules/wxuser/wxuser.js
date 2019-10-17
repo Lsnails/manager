@@ -26,15 +26,26 @@ layui.use(['form','laydate','element','table',],function(){
 		cols : [[
 			{ type: "checkbox", fixed:"left", width:50},
 			{ title: 'id',field: 'id',hide:true },
-				{ title: 'wx openId唯一标识',field: 'openId',minWidth: 70}, 
-				{ title: '活动id',field: 'activityId',minWidth: 70}, 
-				{ title: '网点id',field: 'networkId',minWidth: 70}, 
+				{ title: 'wx openId唯一标识',field: 'openId',minWidth: 260}, 
+//				{ title: '活动id',field: 'activityId',minWidth: 70}, 
+				{ title: '活动名称',field: 'activityName',minWidth: 70}, 
+//				{ title: '网点id',field: 'networkId',minWidth: 70}, 
 				{ title: '网点名称',field: 'networkName',minWidth: 70}, 
-				{ title: '是否核销',field: 'state',minWidth: 70}, 
-				{ title: '手机号',field: 'phone',minWidth: 70}, 
-				{ title: '用户唯一编码,自动生成',field: 'userCode',minWidth: 70}, 
-				{ title: '创建时间',field: 'createDate',minWidth: 70}, 
-				{ title: '修改时间',field: 'updateDate',minWidth: 70}
+				{ title: '是否核销',field: 'state',minWidth: 60,templet: function(item){
+//					0 未核销 1已核销
+					if (item.state == 0) {
+						return '<span class="x-text-red">未核销</span>';
+					}
+					if (item.state == 1) {
+						return '<span class="x-text-green">已核销</span>';
+					}else{
+						return '其他';
+					}
+	            }}, 
+				{ title: '手机号',field: 'phone',minWidth: 50}, 
+				{ title: '用户唯一编码',field: 'userCode',minWidth: 70}, 
+				{ title: '创建时间',field: 'createDate',minWidth: 50}, 
+				{ title: '修改时间',field: 'updateDate',minWidth: 50}
 //				{ title:"操作",fixed:'right',toolbar: "#operationBar",width:100}
 		]]
 	});
@@ -62,8 +73,13 @@ layui.use(['form','laydate','element','table',],function(){
 		vm.saveOrUpdate()
 		return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
 	});
-
-
+	form.on('select(searchActivityList)', function(data){
+		debugger;
+		vm.q.activityId = data.value;
+    });
+	
+	layui.form.render('checkbox','myForm');
+	layui.form.render('radio','myForm');
 
 })
 
@@ -80,6 +96,7 @@ var vm = new Vue({
 			userCode: null
 		},
 		wxUser: {},
+		activityList:[]
 	},
 	methods: {
 		query: function () {
@@ -91,6 +108,20 @@ var vm = new Vue({
 			vm.q.phone = ''
 			vm.q.userCode = ''
 			vm.reload();
+		},
+        selectActivityList: function () {
+			$.ajax({
+				type: "post",
+				contentType: "application/json; charset=utf-8",
+				url: ctx + "cms/activityinfo/allList",
+				data: {},
+				success: function(r){
+					if(r.code == 0){
+						vm.activityList = r.data;
+						//layui.form.render('select','searchForm');
+					}
+				}
+			});
 		},
 		add: function(){
 			vm.showList = false;
@@ -112,7 +143,7 @@ var vm = new Vue({
         saveOrUpdate: function (flag) {
 			var url = vm.wxUser.id == null ? "cms/wxuser/save" : "cms/wxuser/update";
 			var type = vm.wxUser.id == null ? "post":"put";
-
+			debugger;
 			$.ajax({
 				type: type,
 				url: ctx + url,
@@ -171,6 +202,7 @@ var vm = new Vue({
 		},
 		
 		reload: function () {
+			debugger;
 			vm.showList = true;
 			layui.table.reload("listTable",{
 				page: {
@@ -188,8 +220,17 @@ var vm = new Vue({
 		}
 	},
 	updated:function(){
-		layui.form.render('select','myForm');
-		layui.form.render('checkbox','myForm');
-		layui.form.render('radio','myForm');
+		
+	},
+	mounted:function(){
+		this.selectActivityList();
+	},
+	watch:{
+		activityList:function(){
+//			this.$nextTrick(function(){
+				layui.form.render('select','searchForm');
+//			})
+			
+		}
 	}
 });
