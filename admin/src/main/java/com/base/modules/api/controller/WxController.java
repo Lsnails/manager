@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.base.common.utils.DateUtils;
+import com.base.common.utils.R;
+import com.base.modules.api.entity.AcItem;
 import com.base.modules.api.entity.WxEntityVo;
 import com.base.modules.business.system.activityinfo.entity.ActivityinfoEntity;
 import com.base.modules.business.system.activityinfo.service.ActivityinfoService;
@@ -17,12 +19,14 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -122,9 +126,9 @@ public class WxController {
         WxEntityVo wxEntityVo = new WxEntityVo();
         WxUserEntity wxUser = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
         wxEntityVo.setWxUserEntity(wxUser);
-        wxEntityVo.setQrUrl("http://wx.ffhigh.com"+sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
-        redirectAttributes.addFlashAttribute("wxEntity",wxEntityVo);
-        redirectAttributes.addFlashAttribute("param","param11111111");
+        wxEntityVo.setQrUrl("http://wx.ffhigh.com" + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
+        redirectAttributes.addFlashAttribute("wxEntity", wxEntityVo);
+        redirectAttributes.addFlashAttribute("param", "param11111111");
         return "redirect:/wx/index.html";
     }
 
@@ -168,13 +172,39 @@ public class WxController {
         }
         return rBean;
     }
+
     @GetMapping(value = "/test")
-    public String test(String code,RedirectAttributes attr) {
+    public String test(String code, RedirectAttributes attr) {
         // 根据Code获取Openid
-    	attr.addAttribute("att1", code);  
-        attr.addAttribute("att2", code+"5555");  
+        attr.addAttribute("att1", code);
+        attr.addAttribute("att2", code + "5555");
         attr.addFlashAttribute("msg", "添加出错!错误码为：");
         return "redirect:/wx/test.html";
+    }
+
+    @PostMapping(value = "/getUser")
+    public R getUser(String txt,String activityId) {
+        WxUserEntity user = wxUserService.getUserByParam(txt,activityId);
+        R r = new R();
+        r.put("isData", user == null ? false : true);
+        r.put("user", user);
+        return r;
+    }
+
+    @PostMapping(value = "/getHdData")
+    public R getHdData(){
+        R r =new R();
+        List<AcItem> acList = new ArrayList<AcItem>();
+        List<ActivityinfoEntity> listByStates = activityinfoService.getListByStates();
+        for (ActivityinfoEntity entity : listByStates) {
+            AcItem acItem = new AcItem();
+            acItem.setActivityId(entity.getActivityinfoId());
+            acItem.setActivityName(entity.getName());
+            acList.add(acItem);
+        }
+        r.put("acSize",acList.size());
+        r.put("acList",acList);
+        return r;
     }
 
 }

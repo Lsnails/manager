@@ -28,19 +28,27 @@
       	<!-- <div v-if="error" class="error-info">
 			<h4><i class="fa fa-exclamation-triangle"></i> {{errorMsg}}</h4>
 		</div> -->
+          <div class="layui-form-item">
+              <div class="layui-inline">
+                  <div class="layui-input-inline">
+                      <select name="hd" id="hd">
+                          <option value=""></option>
+                      </select>
+                  </div>
+              </div>
+          </div>
         <div class="layui-form-item">
-          <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
-          <input type="text" name="username" v-model="username" d="LAY-user-login-username" lay-verify="required" placeholder="账号" class="layui-input">
+            <input type="text" name="txt" v-model="txt" d="LAY-user-login-username" lay-verify="required" placeholder="彩票唯一编码 or 手机号" class="layui-input">
         </div>
         <div class="layui-form-item">
-          <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
-          <input type="password" name="password"  @keyup.enter="login" v-model="password" id="LAY-user-login-password" lay-verify="required" placeholder="密码" class="layui-input">
+          <button class="layui-btn layui-btn-fluid"  @click="getUser">点击查询用户数据</button>
         </div>
-        
-        <div class="layui-form-item">
-          <button class="layui-btn layui-btn-fluid"  @click="login">登 入</button>
-        </div>
-
+          <div class="layui-form-item">
+              <div id="show"></div>
+          </div>
+          <div class="layui-form-item" id="hxDiv" style="display: none">
+              <button class="layui-btn layui-btn-fluid"  @click="hxUser">点击核销数据</button>
+          </div>
       </div>
     </div>
     
@@ -52,20 +60,33 @@
 <script src="${request.contextPath}/statics/libs/vue.min.js"></script>
 <script type="text/javascript" src="${request.contextPath}/statics/plugins/layui/layui.js"></script>
 <script type="text/javascript">
-var layer,localLayer;
-layui.use(['layer'],function(){
+var layer,localLayer,form;
+layui.use(['layer','form'],function(){
     layer = top.layer;//在最外层弹出
     localLayer = layui.layer;//在内容区弹出
+    form = layui.form;
+    $.ajax({
+        type: "POST",
+        url: "wx/getHdData",
+        dataType: "json",
+        success: function(result){
+            if(result.acSize > 0){
+                $.each(result.acList, function (index, item) {
+                    $('#hd').append(new Option(item.activityId, item.activityName));// 下拉菜单里添加元素
+                });
+                selList = result.acList;
+                alert(selList);
+                layui.form.render("select");
+            }
+        }
+    });
 });
 var vm = new Vue({
 	el:'#rrapp',
 	data:{
-		username: '',
-		password: '',
-		captcha: '',
-		error: false,
-		errorMsg: '',
-		src: 'captcha.jpg'
+		txt: '',
+        selList: '',
+
 	},
 	beforeCreate: function(){
 		if(self != top){
@@ -73,8 +94,56 @@ var vm = new Vue({
 		}
 	},
 	methods: {
+        hxUser : function(){
+            $.ajax({
+                type: "POST",
+                url: "wx/getUser",
+                data: data,
+                dataType: "json",
+                success: function(result){
+                    if(result.isData){
+                        var data = result.user;
+                        var html = "";
+                        if(data.state == 0){
+                            html = "当前用户未被核销";
+                            $("#hxDiv").css('display','block');
+                        }else{
+                            html= "当前用户已被核销";
+                        }
+                    }else{
+                        //没数据
+                        $("#show").html("没有查到相关信息,请检查输入是否正确!");
+                    }
+                }
+            });
+        },
+        getUser : function(){
+            var data = "txt="+vm.txt+"&activityId = " + $("#hd").val();
+            $.ajax({
+                type: "POST",
+                url: "wx/getUser",
+                data: data,
+                dataType: "json",
+                success: function(result){
+                    if(result.isData){
+                        var data = result.user;
+                        alert(data);
+                        var html = "";
+                        if(data.state == 0){
+                            html = "当前用户未被核销";
+                            $("#hxDiv").css('display','block');
+                        }else{
+                            html= "当前用户已被核销";
+                        }
+                    }else{
+                        //没数据
+                        $("#show").html("没有查到相关信息,请检查输入是否正确!");
+                    }
+                }
+            });
+        },
 		login: function (event) {
-			var data = "username="+vm.username+"&password="+vm.password+"&captcha="+vm.captcha;
+			var data = "txt="+vm.username+"&password="+vm.password+"&captcha="+vm.captcha;
 			$.ajax({
 				type: "POST",
 			    url: "sys/login",

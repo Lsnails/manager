@@ -1,10 +1,11 @@
 package com.base.modules.business.system.activityinfo.service;
 
-import java.util.Map;
-
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.base.modules.business.system.activityinfo.entity.ActivityinfoEntity;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 活动管理表
@@ -16,5 +17,7 @@ import com.base.modules.business.system.activityinfo.entity.ActivityinfoEntity;
 public interface ActivityinfoService extends IService<ActivityinfoEntity> {
 
     Page<ActivityinfoEntity> queryPage(Map<String, Object> params,ActivityinfoEntity activityinfo);
+
+    List<ActivityinfoEntity> getListByStates();
 }
 

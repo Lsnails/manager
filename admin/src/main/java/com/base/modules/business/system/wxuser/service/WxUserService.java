@@ -18,5 +18,7 @@ public interface WxUserService extends IService<WxUserEntity> {
     Page<WxUserEntity> queryPage(Map<String, Object> params,WxUserEntity wxUser);
 
     WxUserEntity getUserInfo(String openId,String activityId);
+
+    WxUserEntity getUserByParam(String txt,String activityId);
 }
 
