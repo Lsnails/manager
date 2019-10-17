@@ -1,10 +1,11 @@
 package com.base.modules.business.system.wxuser.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -106,6 +107,25 @@ public class WxUserController extends AbstractController{
     public R delete(@RequestBody String[] ids){
         wxUserService.deleteBatchIds(Arrays.asList(ids));
 
+        return R.ok();
+    }
+    
+    /**
+     * 核销
+     */
+    @PostMapping("/hexiao")
+    @ApiOperation("核销")
+    public R hexiao(@RequestBody String[] ids){
+    	List<WxUserEntity> list =new ArrayList<>();
+    	for (int i = 0; i < ids.length; i++) {
+    		WxUserEntity entity =new WxUserEntity();
+    		entity.setId(ids[i]);
+    		//0 未核销 1已核销
+    		entity.setState(1);
+    		entity.setUpdateDate(new Date());
+    		list.add(entity);
+		}
+    	wxUserService.updateBatchById(list);
         return R.ok();
     }
 
