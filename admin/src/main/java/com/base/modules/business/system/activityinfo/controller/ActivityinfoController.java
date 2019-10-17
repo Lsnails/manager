@@ -2,6 +2,7 @@ package com.base.modules.business.system.activityinfo.controller;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,12 @@ public class ActivityinfoController extends AbstractController{
         return PageUtils.convertFrom(page);
     }
 
-
+    @PostMapping("/allList")
+    @ApiOperation("活动列表")
+    public R allList(ActivityinfoEntity activityinfo){
+    	List<ActivityinfoEntity> selectActivityList = activityinfoService.selectList(new EntityWrapper<ActivityinfoEntity>());
+        return R.ok().put("data", selectActivityList);
+    }
     /**
      * 信息
      */
