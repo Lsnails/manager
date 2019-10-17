@@ -124,6 +124,7 @@ public class WxController {
         wxEntityVo.setWxUserEntity(wxUser);
         wxEntityVo.setQrUrl("http://wx.ffhigh.com"+sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
         redirectAttributes.addFlashAttribute("wxEntity",wxEntityVo);
+        redirectAttributes.addFlashAttribute("param","param11111111");
         return "redirect:/wx/index.html";
     }
 

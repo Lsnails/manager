@@ -1,17 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>wx跳转页面</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta charset="UTF-8">
+    <title>数据转换平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/plugins/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/css/index.css">
 </head>
 <body>
-<div>
-    恭喜参加活动成功!!! /n
-    以下是您的个人信息,请注意保存: /n
-    彩票识别码:{{wxEntity.wxUserEntity.userCode}} /n
-    对应二维码:<img src="{{wxEntity.qrUrl}}">  {{wxEntity.qrUrl}}
+<div class="layui-layout layui-layout-admin" id="layui_layout">
+    <!-- 顶部区域 -->
+    <div class="layui-header  header">
+        <div class="layui-main">
+            {{param}}
+            恭喜参加活动成功!!! <br>
+            以下是您的个人信息,请注意保存: <br>
+            彩票识别码:{{wxEntity.wxUserEntity.userCode}} <br>
+            对应二维码:<img src="{{wxEntity.qrUrl}}">  {{wxEntity.qrUrl}}
+        </div>
+    </div>
 </div>
+
+<script type="text/javascript" src="${request.contextPath}/statics/libs/jquery.min.js"></script>
+<script type="text/javascript" src="${request.contextPath}/statics/plugins/layui/layui.js"></script>
+<script type="text/javascript" src="${request.contextPath}/statics/libs/vue.min.js"></script>
+<script type="text/javascript" src="${request.contextPath}/statics/libs/common.js"></script>
+<script type="text/javascript" src="${request.contextPath}/statics/js/index.js"></script>
 </body>
 </html>
