@@ -46,6 +46,7 @@ public class WxUserEntity implements Serializable {
 	private String networkName;
 	/**
 	 * 是否核销
+	 * 0 未核销 1已核销
 	 */
 	private Integer state;
 	/**
@@ -136,12 +137,14 @@ public class WxUserEntity implements Serializable {
 	}
 	/**
 	 * 设置：是否核销
+	 * 0 未核销 1已核销
 	 */
 	public void setState(Integer state) {
 		this.state = state;
 	}
 	/**
 	 * 获取：是否核销
+	 * 0 未核销 1已核销
 	 */
 	public Integer getState() {
 		return state;

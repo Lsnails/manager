@@ -123,6 +123,40 @@ var vm = new Vue({
 				}
 			});
 		},
+		hexiao:function(event){
+			var objs = layui.table.checkStatus('listTable');
+			if(objs.data.length==0){
+				layer.msg('请选择要核销的内容');
+				return ;
+			}
+			var ids = [];
+			for(var key in objs.data){
+				if(objs.data[key].state==1){
+					continue;
+				}
+				ids.push(objs.data[key].id)
+			}
+			if(ids.length==0){
+				layer.msg('您选择的均为已核销的，请选择未核销内容');
+				return ;
+			}
+			layer.confirm('确定要核销？', function(){
+				$.ajax({
+					type: "post",
+				    url: ctx + "cms/wxuser/hexiao",
+                    contentType: "application/json",
+				    data: JSON.stringify(ids),
+				    success: function(r){
+						if(r.code == 0){
+							layer.msg('操作成功');
+							vm.reload();
+						}else{
+							layer.msg(r.msg);
+						}
+					}
+				});
+			});
+		},
 		add: function(){
 			vm.showList = false;
 			vm.title = "新增";
