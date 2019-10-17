@@ -168,5 +168,13 @@ public class WxController {
         }
         return rBean;
     }
+    @GetMapping(value = "/test")
+    public String test(String code,RedirectAttributes attr) {
+        // 根据Code获取Openid
+    	attr.addAttribute("att1", code);  
+        attr.addAttribute("att2", code+"5555");  
+        attr.addFlashAttribute("msg", "添加出错!错误码为：");
+        return "redirect:/wx/test.html";
+    }
 
 }
