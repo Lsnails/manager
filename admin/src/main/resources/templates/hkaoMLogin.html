@@ -133,6 +133,7 @@ var vm = new Vue({
 			    dataType: "json",
 			    success: function(result){
 					if(result.code == 0){//登錄成功
+					    alert(result.mobile);
 						parent.location.href ='index.html';
 					}else{
 						vm.error = true;
