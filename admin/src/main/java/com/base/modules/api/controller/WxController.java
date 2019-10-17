@@ -97,7 +97,7 @@ public class WxController {
         System.err.println("用户刷新access_token:" + refresh_token);
         System.err.println("用户唯一标识:" + openid);
 
-        // 拉取用户信息
+        /*// 拉取用户信息
         String userInfoUrl = wx_userinfo_url + "access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN";
         String userInfoMsg = HttpUtils.doPost(userInfoUrl, "", "UTF-8");
         // 解析返回信息
@@ -112,15 +112,15 @@ public class WxController {
         System.err.println("国家:" + userInfo.getString("country"));
         System.err.println("头像:" + userInfo.getString("headimgurl"));
         System.err.println("特权:" + userInfo.getString("privilege"));
-        System.err.println("unionid:" + userInfo.getString("unionid"));
+        System.err.println("unionid:" + userInfo.getString("unionid"));*/
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
         if (null != activityinfoEntity) {
-            setWxUser(userInfo.getString("openid"), activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
+            setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
         }
         WxEntityVo wxEntityVo = new WxEntityVo();
-        WxUserEntity wxUser = wxUserService.getUserInfo(userInfo.getString("openid"), activityinfoEntity.getActivityinfoId());
+        WxUserEntity wxUser = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
         wxEntityVo.setWxUserEntity(wxUser);
         wxEntityVo.setQrUrl("http://wx.ffhigh.com"+sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
         redirectAttributes.addFlashAttribute("wxEntity",wxEntityVo);
