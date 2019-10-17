@@ -134,7 +134,11 @@ var vm = new Vue({
 			    success: function(result){
 					if(result.code == 0){//登錄成功
 					    alert(result.mobile);
-						parent.location.href ='index.html';
+					    if(result.mobile){
+                            parent.location.href ='wx/hx.html';
+                        }else{
+                            parent.location.href ='index.html';
+                        }
 					}else{
 						vm.error = true;
 						//vm.errorMsg = result.msg;
