@@ -7,7 +7,6 @@ import com.base.common.utils.Constant;
 import com.base.modules.sys.dao.SysDeptDao;
 import com.base.modules.sys.entity.SysDeptEntity;
 import com.base.modules.sys.service.SysDeptService;
-
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -59,7 +58,14 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 		return deptIdList;
 	}
 
-	/**
+    @Override
+    public SysDeptEntity getWdInfo(String id) {
+        EntityWrapper<SysDeptEntity> entityWrapper = new EntityWrapper();
+        entityWrapper.eq("dept_id", id);
+        return this.selectOne(entityWrapper);
+    }
+
+    /**
 	 * 递归
 	 */
 	private void getDeptTreeList(List<Long> subIdList, List<Long> deptIdList){

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>wx跳转页面</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+</head>
+<body>
+<div>
+    恭喜参加活动成功!!! /n
+    以下是您的个人信息,请注意保存: /n
+    彩票识别码:{{wxEntity.wxUserEntity.userCode}} /n
+    对应二维码:<img src="{{wxEntity.qrUrl}}">  {{wxEntity.qrUrl}}
+</div>
+</body>
+</html>

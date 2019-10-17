@@ -43,6 +43,15 @@ public class WxUserServiceImpl extends ServiceImpl<WxUserDao, WxUserEntity> impl
     }
 
 	@Override
+	public WxUserEntity getUserInfo(String openId, String activityId) {
+		EntityWrapper<WxUserEntity> entityWrapper = new EntityWrapper();
+		entityWrapper.eq("open_id", openId);
+		entityWrapper.eq("activity_id", activityId);
+		WxUserEntity wxUserEntity = this.selectOne(entityWrapper);
+		return wxUserEntity;
+	}
+
+	@Override
 	public WxUserEntity selectOne(Wrapper<WxUserEntity> wrapper) {
 		return super.selectOne(wrapper);
 	}

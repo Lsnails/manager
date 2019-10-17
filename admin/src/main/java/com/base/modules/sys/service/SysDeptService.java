@@ -28,4 +28,11 @@ public interface SysDeptService extends IService<SysDeptEntity> {
 	 */
 	List<Long> getSubDeptIdList(Long deptId);
 
+	/**
+	 * 获取网点信息 根据网点id
+	 * @param id
+	 * @return
+	 */
+	SysDeptEntity getWdInfo(String id);
+
 }

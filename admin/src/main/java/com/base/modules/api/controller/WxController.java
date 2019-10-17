@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.base.common.utils.DateUtils;
+import com.base.modules.api.entity.WxEntityVo;
 import com.base.modules.business.system.activityinfo.entity.ActivityinfoEntity;
 import com.base.modules.business.system.activityinfo.service.ActivityinfoService;
 import com.base.modules.business.system.wxuser.entity.WxUserEntity;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -76,7 +78,7 @@ public class WxController {
      * @return
      */
     @GetMapping(value = "/getcode")
-    public String getCode(String code) {
+    public String getCode(String code, RedirectAttributes redirectAttributes) {
         // 根据Code获取Openid
         String openidUrl = wx_openid_url + "appid=" + wx_appid + "&secret=" + wx_secret + "&code=" + code + "&grant_type=authorization_code";
         String openidMsg = HttpUtils.doPost(openidUrl, "", "UTF-8");
@@ -117,7 +119,12 @@ public class WxController {
         if (null != activityinfoEntity) {
             setWxUser(userInfo.getString("openid"), activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
         }
-        return "redirect:/wx/close.html";
+        WxEntityVo wxEntityVo = new WxEntityVo();
+        WxUserEntity wxUser = wxUserService.getUserInfo(userInfo.getString("openid"), activityinfoEntity.getActivityinfoId());
+        wxEntityVo.setWxUserEntity(wxUser);
+        wxEntityVo.setQrUrl("http://wx.ffhigh.com"+sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
+        redirectAttributes.addFlashAttribute("wxEntity",wxEntityVo);
+        return "redirect:/wx/index.html";
     }
 
     private void setWxUser(String openId, String activityId, String activityName) {
