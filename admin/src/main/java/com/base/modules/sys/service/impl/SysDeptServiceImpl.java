@@ -37,6 +37,12 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 	}
 
 	@Override
+	public List<SysDeptEntity> getList() {
+        List<SysDeptEntity> sysDeptEntities = this.selectList(new EntityWrapper<SysDeptEntity>());
+        return sysDeptEntities;
+	}
+
+	@Override
 	public List<Long> queryDetpIdList(Long parentId) {
 		return baseMapper.queryDetpIdList(parentId);
 	}

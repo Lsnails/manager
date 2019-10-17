@@ -15,6 +15,8 @@ public interface SysDeptService extends IService<SysDeptEntity> {
 
 	List<SysDeptEntity> queryList(Map<String, Object> map);
 
+	List<SysDeptEntity> getList();
+
 	/**
 	 * 查询子部门ID列表
 	 * @param parentId  上级部门ID

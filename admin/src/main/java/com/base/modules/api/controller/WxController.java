@@ -144,7 +144,7 @@ public class WxController {
 
     private SysDeptEntity getQrCode() {
         long now = DateUtils.dateToLong(new Date(), "HH:mm:ss");//取当前的时分秒
-        List<SysDeptEntity> list = sysDeptService.queryList(null);
+        List<SysDeptEntity> list = sysDeptService.getList();
         SysDeptEntity rBean = null;
         for (SysDeptEntity entity : list) {
             String showTime = entity.getShowTime();
