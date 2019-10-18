@@ -13,7 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/css/index.css">
 </head>
-<body>
+<body onload="getIE()">
 <div class="layui-layout layui-layout-admin" id="layui_layout">
 	<!-- 顶部区域 -->
 	<div class="layui-header  header">
@@ -110,5 +110,19 @@
 <script type="text/javascript" src="${request.contextPath}/statics/libs/vue.min.js"></script>
 <script type="text/javascript" src="${request.contextPath}/statics/libs/common.js"></script>
 <script type="text/javascript" src="${request.contextPath}/statics/js/index.js"></script>
+<script>
+    function getIE(){
+        $.ajax({
+            type: "POST",
+            url: "${request.contextPath}/wx/getBowser",
+            dataType: "json",
+            success: function(result){
+                if(result.isMobile){
+                    parent.location.href ='wx/hx.html';
+                }
+            }
+        });
+    }
+</script>
 </body>
 </html>

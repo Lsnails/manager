@@ -307,4 +307,11 @@ public class DictionaryServiceImpl extends ServiceImpl<DictionaryDao, Dictionary
 		List<DictionaryEntity> recursiveGetchildrenSysMenuList = this.recursiveGetchildrenSysMenuList(dictionaryEntity, queryDictionaryEntityList);
 		return recursiveGetchildrenSysMenuList;
 	}
+
+	@Override
+	public DictionaryEntity getInfoByCode(String code) {
+		EntityWrapper<DictionaryEntity> entityWrapper = new EntityWrapper<DictionaryEntity>();
+		entityWrapper.eq("code",code);
+		return this.selectOne(entityWrapper);
+	}
 }

@@ -15,8 +15,9 @@
 </head>
 <body>
 <div>
+    <input id="hid" type="hidden" value="${type}">
     <!-- 顶部区域 -->
-    <div align="center">
+    <div id="show" align="center" style="display:none">
         恭喜参加活动成功!!! <br>
         以下是您的个人信息,请注意保存: <br>
         彩票识别码:${wxEntity.wxUserEntity.userCode} <br>
@@ -28,5 +29,14 @@
 <script type="text/javascript" src="${request.contextPath}/statics/libs/jquery.min.js"></script>
 <script type="text/javascript" src="${request.contextPath}/statics/plugins/layui/layui.js"></script>
 <script type="text/javascript" src="${request.contextPath}/statics/libs/vue.min.js"></script>
+<script>
+    var hid = $("#hid").val();
+    alert(hid);
+    if(hid == '1'){ //第一种
+        $("#show").css("display","block");
+    }else{
+        parent.location.href ='wx/phone.html';
+    }
+</script>
 </body>
 </html>

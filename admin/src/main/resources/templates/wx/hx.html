@@ -29,13 +29,9 @@
 			<h4><i class="fa fa-exclamation-triangle"></i> {{errorMsg}}</h4>
 		</div> -->
           <div class="layui-form-item">
-              <div class="layui-inline">
-                  <div class="layui-input-inline">
-                      <select name="hd" id="hd">
-                          <option value=""></option>
-                      </select>
-                  </div>
-              </div>
+              <select name="hd" id="hd">
+                  <option value="">请选择网点</option>
+              </select>
           </div>
         <div class="layui-form-item">
             <input type="text" name="txt" v-model="txt" d="LAY-user-login-username" lay-verify="required" placeholder="彩票唯一编码 or 手机号" class="layui-input">
@@ -65,19 +61,17 @@ layui.use(['layer','form'],function(){
     layer = top.layer;//在最外层弹出
     localLayer = layui.layer;//在内容区弹出
     form = layui.form;
-    alert('${request.contextPath}');
+    // alert('${request.contextPath}');
     $.ajax({
         type: "POST",
         url: "${request.contextPath}/wx/getHdData",
         dataType: "json",
         success: function(result){
-            debugger
             if(result.acSize > 0){
                 $.each(result.acList, function (index, item) {
                     $('#hd').append(new Option(item.activityName,item.activityId));// 下拉菜单里添加元素
                 });
                 selList = result.acList;
-                alert(selList);
                 layui.form.render("select");
             }
         }
@@ -97,25 +91,25 @@ var vm = new Vue({
 	},
 	methods: {
         hxUser : function(){
-            var data = "openId="+vm.openId;
+            var hd = $("#hd").val();
+            if(hd == ''){
+                alert("请选择活动!");
+                return;
+            }
+            var data = "openId="+vm.openId+"&activityId="+hd;
             $.ajax({
                 type: "POST",
                 url: "${request.contextPath}/wx/hxUser",
                 data: data,
                 dataType: "json",
                 success: function(result){
-                    if(result.isData){
-                        var data = result.user;
-                        var html = "";
-                        if(data.state == 0){
-                            html = "当前用户未被核销";
-                            $("#hxDiv").css('display','block');
-                        }else{
-                            html= "当前用户已被核销";
-                        }
+                    if(result.success){
+                        alert("核销成功");
+                        window.location.reload();
                     }else{
                         //没数据
-                        $("#show").html("没有查到相关信息,请检查输入是否正确!");
+                        alert("此用户已被核销,请重新查询用户信息!");
+                        window.location.reload();
                     }
                 }
             });
@@ -136,14 +130,17 @@ var vm = new Vue({
                 success: function(result){
                     if(result.isData){
                         var data = result.user;
-                        alert(data);
+                        // alert(data);
                         var html = "";
                         if(data.state == 0){
+                            alert("当前用户未被核销");
                             html = "当前用户未被核销";
                             $("#hxDiv").css('display','block');
                             vm.openId = data.openId;
                         }else{
+                            alert("当前用户已被核销");
                             html= "当前用户已被核销";
+                            window.location.reload();
                         }
                         $("#show").html(html);
                     }else{

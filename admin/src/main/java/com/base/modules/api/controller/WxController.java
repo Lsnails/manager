@@ -11,11 +11,15 @@ import com.base.modules.business.system.activityinfo.entity.ActivityinfoEntity;
 import com.base.modules.business.system.activityinfo.service.ActivityinfoService;
 import com.base.modules.business.system.wxuser.entity.WxUserEntity;
 import com.base.modules.business.system.wxuser.service.WxUserService;
+import com.base.modules.customizesys.dictionary.entity.DictionaryEntity;
+import com.base.modules.customizesys.dictionary.service.DictionaryService;
 import com.base.modules.sys.entity.SysDeptEntity;
 import com.base.modules.sys.service.SysDeptService;
+import com.base.utils.CommonRpc;
 import com.base.utils.HttpUtils;
 import com.base.utils.UUIDUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +58,8 @@ public class WxController {
     private WxUserService wxUserService;
     @Autowired
     private SysDeptService sysDeptService;
+    @Autowired
+    private DictionaryService dictionaryService;
 
     /**
      * 配置微信文件
@@ -128,8 +135,23 @@ public class WxController {
         wxEntityVo.setWxUserEntity(wxUser);
         wxEntityVo.setQrUrl("http://wx.ffhigh.com" + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
         redirectAttributes.addFlashAttribute("wxEntity", wxEntityVo);
-        redirectAttributes.addFlashAttribute("param", "param11111111");
+        DictionaryEntity info = dictionaryService.getInfoByCode("user_type"); // 获取当前是哪种获取用户方式
+        if(null == info){
+            redirectAttributes.addFlashAttribute("type","1");//默认1方法 通过微信获取
+        }else{
+            redirectAttributes.addFlashAttribute("type",info.getDescription());
+        }
         return "redirect:/wx/index.html";
+    }
+
+    /**
+     * 跳转页面
+     * @return
+     */
+    @GetMapping("phone")
+    public String redirectPhone(String openId,RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("openId",openId);
+        return "redirect:/wx/phone.html";
     }
 
     private void setWxUser(String openId, String activityId, String activityName) {
@@ -211,9 +233,76 @@ public class WxController {
 
     @RequestMapping(value = "/hxUser")
     @ResponseBody
-    public R hxUser(String openId){
+    public R hxUser(String openId,String activityId){
         R r =new R();
+        WxUserEntity userInfo = wxUserService.getUserInfo(openId, activityId);
+        userInfo.setState(1);
+        boolean b = wxUserService.updateById(userInfo);
+        r.put("success",b);
         return r;
+    }
+
+    @RequestMapping(value = "/getBowser")
+    @ResponseBody
+    public R getBowser(HttpServletRequest request){
+        R r =new R();
+        boolean mobileDevice = JudgeIsMoblie(request);
+        r.put("isMobile",mobileDevice);
+        return r;
+    }
+
+    @RequestMapping(value = "/sendSms")
+    @ResponseBody
+    public R sendSms(String phone,HttpServletRequest request){
+        R r =new R();
+        String yzm = RandomStringUtils.randomNumeric(6);
+        boolean b = CommonRpc.getInstance().sendSms("1", phone, yzm);
+        if(b){
+            request.getSession().setAttribute("15300097795",yzm); //存储验证码
+        }
+        r.put("isSend",b);
+        return r;
+    }
+
+    @RequestMapping(value = "/commit")
+    @ResponseBody
+    public R commit(String phone,String yzm,HttpServletRequest request){
+        R r =new R();
+        boolean pass = false;
+        String sessionYzm = (String)request.getSession().getAttribute(phone);
+        if(sessionYzm.equals(yzm)){
+            pass = true;
+        }
+        r.put("isPass",pass);
+        return r;
+    }
+
+    public boolean JudgeIsMoblie(HttpServletRequest request) {
+        boolean isMoblie = false;
+        String[] mobileAgents = { "iphone", "android", "phone", "mobile", "wap", "netfront", "java", "opera mobi",
+                "opera mini", "ucweb", "windows ce", "symbian", "series", "webos", "sony", "blackberry", "dopod",
+                "nokia", "samsung", "palmsource", "xda", "pieplus", "meizu", "midp", "cldc", "motorola", "foma",
+                "docomo", "up.browser", "up.link", "blazer", "helio", "hosin", "huawei", "novarra", "coolpad", "webos",
+                "techfaith", "palmsource", "alcatel", "amoi", "ktouch", "nexian", "ericsson", "philips", "sagem",
+                "wellcom", "bunjalloo", "maui", "smartphone", "iemobile", "spice", "bird", "zte-", "longcos",
+                "pantech", "gionee", "portalmmm", "jig browser", "hiptop", "benq", "haier", "^lct", "320x320",
+                "240x320", "176x220", "w3c ", "acs-", "alav", "alca", "amoi", "audi", "avan", "benq", "bird", "blac",
+                "blaz", "brew", "cell", "cldc", "cmd-", "dang", "doco", "eric", "hipt", "inno", "ipaq", "java", "jigs",
+                "kddi", "keji", "leno", "lg-c", "lg-d", "lg-g", "lge-", "maui", "maxo", "midp", "mits", "mmef", "mobi",
+                "mot-", "moto", "mwbp", "nec-", "newt", "noki", "oper", "palm", "pana", "pant", "phil", "play", "port",
+                "prox", "qwap", "sage", "sams", "sany", "sch-", "sec-", "send", "seri", "sgh-", "shar", "sie-", "siem",
+                "smal", "smar", "sony", "sph-", "symb", "t-mo", "teli", "tim-", "tosh", "tsm-", "upg1", "upsi", "vk-v",
+                "voda", "wap-", "wapa", "wapi", "wapp", "wapr", "webc", "winw", "winw", "xda", "xda-",
+                "Googlebot-Mobile" };
+        if (request.getHeader("User-Agent") != null) {
+            for (String mobileAgent : mobileAgents) {
+                if (request.getHeader("User-Agent").toLowerCase().indexOf(mobileAgent) >= 0) {
+                    isMoblie = true;
+                    break;
+                }
+            }
+        }
+        return isMoblie;
     }
 
 }

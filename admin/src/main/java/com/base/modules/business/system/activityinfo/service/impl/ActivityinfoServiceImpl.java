@@ -36,7 +36,7 @@ public class ActivityinfoServiceImpl extends ServiceImpl<ActivityinfoDao, Activi
     @Override
     public List<ActivityinfoEntity> getListByStates() {
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper<ActivityinfoEntity>();
-        entityWrapper.eq("status",1);
+//        entityWrapper.eq("status",1);
         return this.selectList(entityWrapper);
     }
 

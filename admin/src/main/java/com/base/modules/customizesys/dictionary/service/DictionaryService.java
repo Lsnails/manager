@@ -1,14 +1,13 @@
 package com.base.modules.customizesys.dictionary.service;
 
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.base.modules.customizesys.dictionary.entity.DictionaryEntity;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 业务数据字典包含多层次数据
@@ -142,5 +141,7 @@ public interface DictionaryService extends IService<DictionaryEntity> {
      * @throws
      */
     List<DictionaryEntity> professorClsList(String language);
+
+    DictionaryEntity getInfoByCode(String code);
 }
 
