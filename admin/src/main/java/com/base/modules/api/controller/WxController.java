@@ -129,38 +129,44 @@ public class WxController {
     }
 
     private void redirectInfo(RedirectAttributes redirectAttributes, String openid) {
+        WxUserEntity wxUser = getWxUserEntity(openid);
+        WxEntityVo wxEntityVo = new WxEntityVo();
+        wxEntityVo.setWxUserEntity(wxUser);
+        wxEntityVo.setQrUrl("http://wx.ffhigh.com" + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
+        redirectAttributes.addFlashAttribute("wxEntity", wxEntityVo);
+        redirectAttributes.addFlashAttribute("phone",StringUtils.isNotBlank(wxEntityVo.getWxUserEntity().getPhone())==true?wxEntityVo.getWxUserEntity().getPhone():"");
+        DictionaryEntity info = dictionaryService.getInfoByCode("user_type"); // 获取当前是哪种获取用户方式
+        if (null == info) {
+            redirectAttributes.addFlashAttribute("type", "1");//默认1方法 通过微信获取
+        } else {
+            redirectAttributes.addFlashAttribute("type", info.getDescription());
+        }
+    }
+
+    private WxUserEntity getWxUserEntity(String openid) {
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
         if (null != activityinfoEntity) {
             setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
         }
-        WxEntityVo wxEntityVo = new WxEntityVo();
-        WxUserEntity wxUser = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
-        wxEntityVo.setWxUserEntity(wxUser);
-        wxEntityVo.setQrUrl("http://wx.ffhigh.com" + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
-        redirectAttributes.addFlashAttribute("wxEntity", wxEntityVo);
-        DictionaryEntity info = dictionaryService.getInfoByCode("user_type"); // 获取当前是哪种获取用户方式
-        if(null == info){
-            redirectAttributes.addFlashAttribute("type","1");//默认1方法 通过微信获取
-        }else{
-            redirectAttributes.addFlashAttribute("type",info.getDescription());
-        }
+        return wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
     }
 
     /**
      * 跳转页面
+     *
      * @return
      */
     @GetMapping("/phone")
-    public String redirectPhone(String openId,RedirectAttributes redirectAttributes){
-        redirectAttributes.addFlashAttribute("openId",openId);
+    public String redirectPhone(String openId, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("openId", openId);
         return "redirect:/wx/phone.html";
     }
 
     @GetMapping("/index")
-    public String redirectIndex(String openId,RedirectAttributes redirectAttributes){
-        redirectInfo(redirectAttributes,openId);
+    public String redirectIndex(String openId, RedirectAttributes redirectAttributes) {
+        redirectInfo(redirectAttributes, openId);
         return "redirect:/wx/index.html";
     }
 
@@ -216,8 +222,8 @@ public class WxController {
 
     @PostMapping(value = "/getUser")
     @ResponseBody
-    public R getUser(String txt,String activityId) {
-        WxUserEntity user = wxUserService.getUserByParam(txt,activityId);
+    public R getUser(String txt, String activityId) {
+        WxUserEntity user = wxUserService.getUserByParam(txt, activityId);
         R r = new R();
         r.put("isData", user == null ? false : true);
         r.put("user", user);
@@ -226,8 +232,8 @@ public class WxController {
 
     @RequestMapping(value = "/getHdData")
     @ResponseBody
-    public R getHdData(){
-        R r =new R();
+    public R getHdData() {
+        R r = new R();
         List<AcItem> acList = new ArrayList<AcItem>();
         List<ActivityinfoEntity> listByStates = activityinfoService.getListByStates();
         for (ActivityinfoEntity entity : listByStates) {
@@ -236,70 +242,84 @@ public class WxController {
             acItem.setActivityName(entity.getName());
             acList.add(acItem);
         }
-        r.put("acSize",acList.size());
-        r.put("acList",acList);
+        r.put("acSize", acList.size());
+        r.put("acList", acList);
         return r;
     }
 
     @RequestMapping(value = "/hxUser")
     @ResponseBody
-    public R hxUser(String openId,String activityId){
-        R r =new R();
+    public R hxUser(String openId, String activityId) {
+        R r = new R();
         WxUserEntity userInfo = wxUserService.getUserInfo(openId, activityId);
         userInfo.setState(1);
         boolean b = wxUserService.updateById(userInfo);
-        r.put("success",b);
+        r.put("success", b);
         return r;
     }
 
     @RequestMapping(value = "/getBowser")
     @ResponseBody
-    public R getBowser(HttpServletRequest request){
-        R r =new R();
+    public R getBowser(HttpServletRequest request) {
+        R r = new R();
         boolean mobileDevice = JudgeIsMoblie(request);
-        r.put("isMobile",mobileDevice);
+        r.put("isMobile", mobileDevice);
         return r;
     }
 
     @RequestMapping(value = "/sendSms")
     @ResponseBody
-    public R sendSms(String phone,HttpServletRequest request){
-        R r =new R();
+    public R sendSms(String phone, HttpServletRequest request) {
+        R r = new R();
         boolean isExist = false;
         boolean isSend = false;
-        String sessionYzm = (String)request.getSession().getAttribute(phone);
-        if(StringUtils.isNotBlank(sessionYzm)){
-            isExist = true;
-        }else{
-            String yzm = RandomStringUtils.randomNumeric(6);
-            boolean b = CommonRpc.getInstance().sendSms("1", phone, yzm);
-            if(b){
-                request.getSession().setAttribute("15300097795",yzm); //存储验证码
-                isSend = true;
+        boolean isLimit = false;
+        boolean phoneExist = false;
+
+        String sessionYzm = (String) request.getSession().getAttribute(phone);
+        Integer yzmNumber = (Integer) request.getSession().getAttribute("yzmNumber");//验证码次数验证 ... 默认3次 超过3次不在发送
+        if (null != yzmNumber && yzmNumber >= 3) {
+            isLimit = true;
+        } else {
+            if (StringUtils.isNotBlank(sessionYzm)) {
+                isExist = true;
+            } else {
+                String yzm = RandomStringUtils.randomNumeric(6);
+                boolean b = CommonRpc.getInstance().sendSms("1", phone, yzm);
+                if (b) {
+                    request.getSession().setAttribute(phone, yzm); //存储验证码
+                    request.getSession().setAttribute("yzmNumber", yzmNumber == null ? 1 : yzmNumber + 1);
+                    isSend = true;
+                }
             }
         }
-        r.put("isSend", isExist);
-        r.put("isExist",isSend);
+        r.put("isLimit", isLimit);
+        r.put("isSend", isSend);
+        r.put("isExist", isExist);
         return r;
     }
 
     @RequestMapping(value = "/commit")
     @ResponseBody
-    public R commit(String phone,String yzm,HttpServletRequest request,String openId){
-        R r =new R();
+    public R commit(String phone, String yzm, HttpServletRequest request, String openId) {
+        R r = new R();
         boolean pass = false;
-        String sessionYzm = (String)request.getSession().getAttribute(phone);
-        if(sessionYzm.equals(yzm)){
+        String sessionYzm = (String) request.getSession().getAttribute(phone);
+        if (sessionYzm.equals(yzm)) {
             pass = true;
             request.getSession().removeAttribute(phone); //移除session
+            //更新用户数据,更新手机号
+            WxUserEntity wxUserEntity = getWxUserEntity(openId);
+            wxUserEntity.setPhone(phone);
+            wxUserService.updateById(wxUserEntity);
         }
-        r.put("isPass",pass);
+        r.put("isPass", pass);
         return r;
     }
 
     public boolean JudgeIsMoblie(HttpServletRequest request) {
         boolean isMoblie = false;
-        String[] mobileAgents = { "iphone", "android", "phone", "mobile", "wap", "netfront", "java", "opera mobi",
+        String[] mobileAgents = {"iphone", "android", "phone", "mobile", "wap", "netfront", "java", "opera mobi",
                 "opera mini", "ucweb", "windows ce", "symbian", "series", "webos", "sony", "blackberry", "dopod",
                 "nokia", "samsung", "palmsource", "xda", "pieplus", "meizu", "midp", "cldc", "motorola", "foma",
                 "docomo", "up.browser", "up.link", "blazer", "helio", "hosin", "huawei", "novarra", "coolpad", "webos",
@@ -313,7 +333,7 @@ public class WxController {
                 "prox", "qwap", "sage", "sams", "sany", "sch-", "sec-", "send", "seri", "sgh-", "shar", "sie-", "siem",
                 "smal", "smar", "sony", "sph-", "symb", "t-mo", "teli", "tim-", "tosh", "tsm-", "upg1", "upsi", "vk-v",
                 "voda", "wap-", "wapa", "wapi", "wapp", "wapr", "webc", "winw", "winw", "xda", "xda-",
-                "Googlebot-Mobile" };
+                "Googlebot-Mobile"};
         if (request.getHeader("User-Agent") != null) {
             for (String mobileAgent : mobileAgents) {
                 if (request.getHeader("User-Agent").toLowerCase().indexOf(mobileAgent) >= 0) {

@@ -18,7 +18,6 @@
 </head>
 <body layadmin-themealias="default">
  <div id="rrapp" class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;" v-cloak>
-    <input id="openId" type="hidden" value="${openId}">
     <div class="layadmin-user-login-main">
       <div class="layadmin-user-login-box layadmin-user-login-header">
         <h2>数据录入</h2>
@@ -31,10 +30,10 @@
         <div class="layui-form-item">
           <button class="layui-btn layui-btn-fluid"  @click="sendSms">点击发送验证码</button>
         </div>
-          <div class="layui-form-item">
+          <div class="layui-form-item" id="yzmDiv" style="display: none">
               <input type="text" name="yzm" v-model="yzm" d="LAY-user-login-username" lay-verify="required" placeholder="请输入验证码" class="layui-input">
           </div>
-          <div class="layui-form-item" id="hxDiv" style="display: none">
+          <div class="layui-form-item" id="yzmCommitDiv" style="display: none">
               <button class="layui-btn layui-btn-fluid"  @click="commit">点击提交数据</button>
           </div>
       </div>
@@ -52,7 +51,6 @@ var layer,localLayer,form;
 layui.use(['layer','form'],function(){
     layer = top.layer;//在最外层弹出
     localLayer = layui.layer;//在内容区弹出
-    openId = $("#openId").val(); //获取openId
 });
 var vm = new Vue({
 	el:'#rrapp',
@@ -68,7 +66,8 @@ var vm = new Vue({
 	},
 	methods: {
         sendSms : function(){
-            alert(vm.openId);
+            vm.openId = "${openId}";
+            alert("openId : " +vm.openId);
             var phone = vm.phone;
             if(phone == ''){
                 alert("请输入手机号!");
@@ -81,12 +80,18 @@ var vm = new Vue({
                 data: data,
                 dataType: "json",
                 success: function(result){
+                    if(result.isLimit){
+                        alert("验证码接口受限,请联系管理员!");
+                        return;
+                    }
                     if(result.isExist){
                         alert("请输入您获取到的验证码 或者 稍等几分钟在尝试获取新的验证码!");
                         return;
                     }
                     if(result.isSend){
                         alert("短信发送成功,请注意查收!");
+                        $("#yzmDiv").css("display","block");
+                        $("#yzmCommitDiv").css("display","block");
                         // window.location.reload();
                     }else{
                         //没数据
@@ -99,6 +104,10 @@ var vm = new Vue({
             var phone = vm.phone;
             var yzm = vm.yzm;
             var openId = vm.openId;
+            if(phone == '' || yzm == ''){
+                alert("手机号和验证码不能为空!");
+                return;
+            }
             var data = "phone="+vm.phone+"&yzm=" + yzm+"&openId="+openId;
             $.ajax({
                 type: "POST",
