@@ -124,6 +124,11 @@ public class WxController {
         System.err.println("头像:" + userInfo.getString("headimgurl"));
         System.err.println("特权:" + userInfo.getString("privilege"));
         System.err.println("unionid:" + userInfo.getString("unionid"));*/
+        redirectInfo(redirectAttributes, openid);
+        return "redirect:/wx/index.html";
+    }
+
+    private void redirectInfo(RedirectAttributes redirectAttributes, String openid) {
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
@@ -141,17 +146,22 @@ public class WxController {
         }else{
             redirectAttributes.addFlashAttribute("type",info.getDescription());
         }
-        return "redirect:/wx/index.html";
     }
 
     /**
      * 跳转页面
      * @return
      */
-    @GetMapping("phone")
+    @GetMapping("/phone")
     public String redirectPhone(String openId,RedirectAttributes redirectAttributes){
         redirectAttributes.addFlashAttribute("openId",openId);
         return "redirect:/wx/phone.html";
+    }
+
+    @GetMapping("/index")
+    public String redirectIndex(String openId,RedirectAttributes redirectAttributes){
+        redirectInfo(redirectAttributes,openId);
+        return "redirect:/wx/index.html";
     }
 
     private void setWxUser(String openId, String activityId, String activityName) {
@@ -255,23 +265,33 @@ public class WxController {
     @ResponseBody
     public R sendSms(String phone,HttpServletRequest request){
         R r =new R();
-        String yzm = RandomStringUtils.randomNumeric(6);
-        boolean b = CommonRpc.getInstance().sendSms("1", phone, yzm);
-        if(b){
-            request.getSession().setAttribute("15300097795",yzm); //存储验证码
+        boolean isExist = false;
+        boolean isSend = false;
+        String sessionYzm = (String)request.getSession().getAttribute(phone);
+        if(StringUtils.isNotBlank(sessionYzm)){
+            isExist = true;
+        }else{
+            String yzm = RandomStringUtils.randomNumeric(6);
+            boolean b = CommonRpc.getInstance().sendSms("1", phone, yzm);
+            if(b){
+                request.getSession().setAttribute("15300097795",yzm); //存储验证码
+                isSend = true;
+            }
         }
-        r.put("isSend",b);
+        r.put("isSend", isExist);
+        r.put("isExist",isSend);
         return r;
     }
 
     @RequestMapping(value = "/commit")
     @ResponseBody
-    public R commit(String phone,String yzm,HttpServletRequest request){
+    public R commit(String phone,String yzm,HttpServletRequest request,String openId){
         R r =new R();
         boolean pass = false;
         String sessionYzm = (String)request.getSession().getAttribute(phone);
         if(sessionYzm.equals(yzm)){
             pass = true;
+            request.getSession().removeAttribute(phone); //移除session
         }
         r.put("isPass",pass);
         return r;

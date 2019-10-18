@@ -81,6 +81,10 @@ var vm = new Vue({
                 data: data,
                 dataType: "json",
                 success: function(result){
+                    if(result.isExist){
+                        alert("请输入您获取到的验证码 或者 稍等几分钟在尝试获取新的验证码!");
+                        return;
+                    }
                     if(result.isSend){
                         alert("短信发送成功,请注意查收!");
                         // window.location.reload();
@@ -94,7 +98,8 @@ var vm = new Vue({
         commit : function(){
             var phone = vm.phone;
             var yzm = vm.yzm;
-            var data = "phone="+vm.phone+"&yzm=" + yzm;
+            var openId = vm.openId;
+            var data = "phone="+vm.phone+"&yzm=" + yzm+"&openId="+openId;
             $.ajax({
                 type: "POST",
                 url: "${request.contextPath}/wx/commit",
@@ -103,6 +108,7 @@ var vm = new Vue({
                 success: function(result){
                     if(result.isPass){
                         alert("验证成功,请稍等!");
+                        parent.location.href ='${request.contextPath}/wx/index?openId='+openId;
                     }else{
                         //没数据
                         alert("验证码错误,请重新输入!");
