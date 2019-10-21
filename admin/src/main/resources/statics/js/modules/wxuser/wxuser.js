@@ -26,7 +26,7 @@ layui.use(['form','laydate','element','table',],function(){
 		cols : [[
 			{ type: "checkbox", fixed:"left", width:50},
 			{ title: 'id',field: 'id',hide:true },
-				{ title: 'wx openId唯一标识',field: 'openId',minWidth: 260}, 
+				{ title: 'wx openId唯一标识',field: 'openId',minWidth: 120}, 
 //				{ title: '活动id',field: 'activityId',minWidth: 70}, 
 				{ title: '活动名称',field: 'activityName',minWidth: 70}, 
 //				{ title: '网点id',field: 'networkId',minWidth: 70}, 
@@ -43,9 +43,14 @@ layui.use(['form','laydate','element','table',],function(){
 					}
 	            }}, 
 				{ title: '手机号',field: 'phone',minWidth: 50}, 
-				{ title: '用户唯一编码',field: 'userCode',minWidth: 70}, 
-				{ title: '创建时间',field: 'createDate',minWidth: 50}, 
-				{ title: '修改时间',field: 'updateDate',minWidth: 50}
+				{ title: '用户唯一编码',field: 'userCode',minWidth: 120}, 
+				{ title: '自定义数据1',field: 'remark',minWidth: 120}, 
+				{ title: '自定义数据2',field: 'remark2',minWidth: 120}, 
+				{ title: '自定义数据3',field: 'remark3',minWidth: 120}, 
+				{ title: '自定义数据4',field: 'remark4',minWidth: 120}, 
+				{ title: '自定义数据5',field: 'remark5',minWidth: 120}, 
+				{ title: '创建时间',field: 'createDate',minWidth: 100}, 
+				{ title: '修改时间',field: 'updateDate',minWidth: 100}
 //				{ title:"操作",fixed:'right',toolbar: "#operationBar",width:100}
 		]]
 	});

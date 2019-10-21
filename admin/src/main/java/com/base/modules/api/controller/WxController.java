@@ -128,6 +128,11 @@ public class WxController {
         return "redirect:/wx/index.html";
     }
 
+    /**
+     * 跳转
+     * @param redirectAttributes
+     * @param openid
+     */
     private void redirectInfo(RedirectAttributes redirectAttributes, String openid) {
         WxUserEntity wxUser = getWxUserEntity(openid);
         WxEntityVo wxEntityVo = new WxEntityVo();
@@ -143,6 +148,11 @@ public class WxController {
         }
     }
 
+    /**
+     * 生成wx用户
+     * @param openid
+     * @return
+     */
     private WxUserEntity getWxUserEntity(String openid) {
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
@@ -151,6 +161,31 @@ public class WxController {
             setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
         }
         return wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
+    }
+    
+    
+    /**
+     * openId 获取用户信息
+     * @param openid
+     * @return
+     */
+    private WxUserEntity getWxUserInfo(String openid) {
+    	EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
+        entityWrapper.eq("status", 1);
+        ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
+        return wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
+    }
+    
+    /**
+     * 根据手机号获取用户信息
+     * @param phone
+     * @return
+     */
+    private WxUserEntity getWxUserInfoByPhone(String phone) {
+    	EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
+        entityWrapper.eq("status", 1);
+        ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
+        return wxUserService.getUserByParam(phone, activityinfoEntity.getActivityinfoId());
     }
 
     /**
@@ -162,6 +197,17 @@ public class WxController {
     public String redirectPhone(String openId, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("openId", openId);
         return "redirect:/wx/phone.html";
+    }
+    
+    /**
+     * 跳转页面
+     *
+     * @return
+     */
+    @GetMapping("/customer")
+    public String customer(String openId, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("openId", openId);
+        return "redirect:/wx/customer.html";
     }
 
     @GetMapping("/index")
@@ -276,26 +322,32 @@ public class WxController {
         boolean isLimit = false;
         boolean phoneExist = false;
 
-        String sessionYzm = (String) request.getSession().getAttribute(phone);
-        Integer yzmNumber = (Integer) request.getSession().getAttribute("yzmNumber");//验证码次数验证 ... 默认3次 超过3次不在发送
-        if (null != yzmNumber && yzmNumber >= 3) {
-            isLimit = true;
-        } else {
-            if (StringUtils.isNotBlank(sessionYzm)) {
-                isExist = true;
+        WxUserEntity wxUserInfoByPhone = getWxUserInfoByPhone(phone);
+        if(wxUserInfoByPhone != null) {
+        	String sessionYzm = (String) request.getSession().getAttribute(phone);
+            Integer yzmNumber = (Integer) request.getSession().getAttribute("yzmNumber");//验证码次数验证 ... 默认3次 超过3次不在发送
+            if (null != yzmNumber && yzmNumber >= 3) {
+                isLimit = true;
             } else {
-                String yzm = RandomStringUtils.randomNumeric(6);
-                boolean b = CommonRpc.getInstance().sendSms("1", phone, yzm);
-                if (b) {
-                    request.getSession().setAttribute(phone, yzm); //存储验证码
-                    request.getSession().setAttribute("yzmNumber", yzmNumber == null ? 1 : yzmNumber + 1);
-                    isSend = true;
+                if (StringUtils.isNotBlank(sessionYzm)) {
+                    isExist = true;
+                } else {
+                    String yzm = RandomStringUtils.randomNumeric(6);
+                    boolean b = CommonRpc.getInstance().sendSms("1", phone, yzm);
+                    if (b) {
+                        request.getSession().setAttribute(phone, yzm); //存储验证码
+                        request.getSession().setAttribute("yzmNumber", yzmNumber == null ? 1 : yzmNumber + 1);
+                        isSend = true;
+                    }
                 }
             }
+        }else {
+        	phoneExist = true;
         }
         r.put("isLimit", isLimit);
         r.put("isSend", isSend);
         r.put("isExist", isExist);
+        r.put("phoneExist", phoneExist);
         return r;
     }
 
@@ -304,17 +356,75 @@ public class WxController {
     public R commit(String phone, String yzm, HttpServletRequest request, String openId) {
         R r = new R();
         boolean pass = false;
-        String sessionYzm = (String) request.getSession().getAttribute(phone);
-        if (sessionYzm.equals(yzm)) {
-            pass = true;
-            request.getSession().removeAttribute(phone); //移除session
-            //更新用户数据,更新手机号
-            WxUserEntity wxUserEntity = getWxUserEntity(openId);
-            wxUserEntity.setPhone(phone);
-            wxUserService.updateById(wxUserEntity);
+        boolean isExsit = true;
+        if(StringUtils.isBlank(openId)) {
+        	isExsit = true;
+        }else {
+        	String sessionYzm = (String) request.getSession().getAttribute(phone);
+            if (sessionYzm.equals(yzm)) {
+                pass = true;
+                request.getSession().removeAttribute(phone); //移除session
+                //更新用户数据,更新手机号
+                WxUserEntity wxUserEntity = getWxUserInfo(openId);
+                if(null == wxUserEntity) {
+                	isExsit = true;
+                }else {
+                	wxUserEntity.setPhone(phone);
+                    wxUserService.updateById(wxUserEntity);
+                }
+            }
         }
         r.put("isPass", pass);
+        r.put("isExsit", isExsit);
         return r;
+    }
+    
+    @RequestMapping(value = "/customerCommit")
+    @ResponseBody
+    public R customerCommit(String phone, String yzm, HttpServletRequest request, String openId) {
+        R r = new R();
+        boolean pass = false;
+        boolean isExsit = false;
+        if(StringUtils.isBlank(openId)) {
+        	isExsit = true;
+        }else {
+          String sessionYzm = (String) request.getSession().getAttribute(phone);
+            if (sessionYzm.equals(yzm)) {
+                pass = true;
+                request.getSession().removeAttribute(phone); //移除session
+              //更新用户数据,更新手机号
+                WxUserEntity wxUserEntity = getWxUserInfo(openId);
+                if(null == wxUserEntity) {
+                	isExsit = true;
+                }else {
+                	wxUserEntity.setPhone(phone);
+                    List<DictionaryEntity> list = dictionaryService.getInfoListLikeCode("input");
+                    for (int i = 0; i < list.size(); i++) {
+                    	String value = request.getParameter(list.get(i).getCode());
+                    	setWxData(i,value,wxUserEntity);
+        			}
+                    wxUserService.updateById(wxUserEntity);
+                }
+            }
+        }
+        r.put("isPass", pass);
+        r.put("isExsit", isExsit);
+        return r;
+    }
+    
+    private void setWxData(int i,String value,WxUserEntity wxUserEntity) {
+    	switch(i) {
+    		case 0:
+    			wxUserEntity.setRemark(value); break;
+    		case 1:
+    			wxUserEntity.setRemark2(value); break;
+    		case 2:
+    			wxUserEntity.setRemark3(value); break;
+    		case 3:
+    			wxUserEntity.setRemark4(value); break;
+    		case 4:
+    			wxUserEntity.setRemark5(value); break;
+    	}
     }
 
     public boolean JudgeIsMoblie(HttpServletRequest request) {
@@ -343,6 +453,20 @@ public class WxController {
             }
         }
         return isMoblie;
+    }
+    
+    
+    /**
+     * 
+     * @return
+     */
+    @RequestMapping(value = "/getInputList")
+    @ResponseBody
+    public R getInputList() {
+        R r = new R();
+        List<DictionaryEntity> list = dictionaryService.getInfoListLikeCode("input");
+        r.put("inputList", list);
+        return r;
     }
 
 }

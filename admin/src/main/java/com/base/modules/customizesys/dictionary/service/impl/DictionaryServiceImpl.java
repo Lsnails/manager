@@ -314,4 +314,12 @@ public class DictionaryServiceImpl extends ServiceImpl<DictionaryDao, Dictionary
 		entityWrapper.eq("code",code);
 		return this.selectOne(entityWrapper);
 	}
+
+	@Override
+	public List<DictionaryEntity> getInfoListLikeCode(String code) {
+		EntityWrapper<DictionaryEntity> entityWrapper = new EntityWrapper<DictionaryEntity>();
+		entityWrapper.like("code", code);
+		entityWrapper.orderBy("order_num",true);
+		return this.selectList(entityWrapper);
+	}
 }

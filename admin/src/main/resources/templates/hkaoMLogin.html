@@ -134,12 +134,12 @@ var vm = new Vue({
 			    success: function(result){
 					if(result.code == 0){//登錄成功
 					    alert(result.mobile);
-					    /*if(result.mobile){
+					    if(result.mobile){
                             parent.location.href ='wx/hx.html';
                         }else{
                             parent.location.href ='index.html';
-                        }*/
-                        parent.location.href ='wx/hx.html';
+                        }
+                        //parent.location.href ='wx/hx.html';
 					}else{
 						vm.error = true;
 						//vm.errorMsg = result.msg;

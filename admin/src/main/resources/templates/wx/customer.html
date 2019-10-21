@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>数据录入</title>
+	<title>录入</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -23,19 +23,19 @@
         <h2>数据录入</h2>
         <p></p>
       </div>
-      <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+      <div id="mainDiv" class="layadmin-user-login-box layadmin-user-login-body layui-form">
         <div class="layui-form-item">
             <input type="text" name="phone" v-model="phone" d="LAY-user-login-username" lay-verify="required" placeholder="手机号" class="layui-input">
         </div>
         <div class="layui-form-item">
           <button class="layui-btn layui-btn-fluid"  @click="sendSms">点击发送验证码</button>
         </div>
-          <div class="layui-form-item" id="yzmDiv" style="display: none">
+          <div class="layui-form-item" id="yzmDiv" > <!-- style="display: none" -->
               <input type="text" name="yzm" v-model="yzm" d="LAY-user-login-username" lay-verify="required" placeholder="请输入验证码" class="layui-input">
           </div>
-          <div class="layui-form-item" id="yzmCommitDiv" style="display: none">
-              <button class="layui-btn layui-btn-fluid"  @click="commit">点击提交数据</button>
-          </div>
+      </div>
+      <div class="layui-form-item" id="yzmCommitDiv" >
+          <button class="layui-btn layui-btn-fluid"  @click="commit">点击提交数据</button>
       </div>
     </div>
     
@@ -51,13 +51,32 @@ var layer,localLayer,form;
 layui.use(['layer','form'],function(){
     layer = top.layer;//在最外层弹出
     localLayer = layui.layer;//在内容区弹出
+    $.ajax({
+        type: "POST",
+        url: "${request.contextPath}/wx/getInputList",
+        dataType: "json",
+        success: function(result){
+            if(result.inputList.length > 0){
+            	var mainDiv = $("#mainDiv");
+                $.each(result.inputList, function (index, item) {
+                	var html = "<div class=\"layui-form-item\">";
+                	html = html + '<input type="text" id="'+item.code+'" name="'+item.code+'" lay-verify="required" placeholder="'+item.name+'" class="layui-input">';
+                	html = html + '</div>';
+                    mainDiv.append(html);
+                });
+                inputList = result.inputList;
+            }
+        }
+    });
+    
 });
 var vm = new Vue({
 	el:'#rrapp',
 	data:{
 		phone: '',
         yzm: '',
-        openId: ''
+        openId: '',
+        inputList : '',
 	},
 	beforeCreate: function(){
 		if(self != top){
@@ -113,9 +132,17 @@ var vm = new Vue({
                 return;
             }
             var data = "phone="+vm.phone+"&yzm=" + yzm+"&openId="+openId;
+            $.each(inputList, function (index, item) {
+            	var value = $('#'+item.code+'').val();
+            	if(value == ''){
+            		alert('请填写'+item.name+'选项');
+            		return;
+            	}
+            	data = data + "&"+item.code+"="+value;
+            });
             $.ajax({
                 type: "POST",
-                url: "${request.contextPath}/wx/commit",
+                url: "${request.contextPath}/wx/customerCommit",
                 data: data,
                 dataType: "json",
                 success: function(result){

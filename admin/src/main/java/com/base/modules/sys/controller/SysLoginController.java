@@ -55,7 +55,7 @@ public class SysLoginController {
 	@RequestMapping(value = "/sys/login", method = RequestMethod.POST)
 	public R login(String username, String password, String captcha, HttpServletRequest request) {
         boolean mobileDevice = JudgeIsMoblie(request);
-        log.error("浏览器标识 是否为手机端 : -->" + mobileDevice);
+//        log.error("浏览器标识 是否为手机端 : -->" + mobileDevice);
         //注释验证码
 //		String kaptcha = ShiroUtils.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
 //		if(!captcha.equalsIgnoreCase(kaptcha)){

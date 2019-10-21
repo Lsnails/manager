@@ -143,5 +143,7 @@ public interface DictionaryService extends IService<DictionaryEntity> {
     List<DictionaryEntity> professorClsList(String language);
 
     DictionaryEntity getInfoByCode(String code);
+    
+    List<DictionaryEntity> getInfoListLikeCode(String code);
 }
 
