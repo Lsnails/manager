@@ -323,7 +323,7 @@ public class WxController {
         boolean phoneExist = false;
 
         WxUserEntity wxUserInfoByPhone = getWxUserInfoByPhone(phone);
-        if(wxUserInfoByPhone != null) {
+        if(wxUserInfoByPhone == null) {
         	String sessionYzm = (String) request.getSession().getAttribute(phone);
             Integer yzmNumber = (Integer) request.getSession().getAttribute("yzmNumber");//验证码次数验证 ... 默认3次 超过3次不在发送
             if (null != yzmNumber && yzmNumber >= 3) {

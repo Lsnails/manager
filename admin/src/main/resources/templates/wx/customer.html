@@ -30,11 +30,11 @@
         <div class="layui-form-item">
           <button class="layui-btn layui-btn-fluid"  @click="sendSms">点击发送验证码</button>
         </div>
-          <div class="layui-form-item" id="yzmDiv" > <!-- style="display: none" -->
+          <div class="layui-form-item" id="yzmDiv" style="display: none"> <!-- style="display: none" -->
               <input type="text" name="yzm" v-model="yzm" d="LAY-user-login-username" lay-verify="required" placeholder="请输入验证码" class="layui-input">
           </div>
       </div>
-      <div class="layui-form-item" id="yzmCommitDiv" >
+      <div class="layui-form-item" id="yzmCommitDiv" style="display: none">
           <button class="layui-btn layui-btn-fluid"  @click="commit">点击提交数据</button>
       </div>
     </div>
