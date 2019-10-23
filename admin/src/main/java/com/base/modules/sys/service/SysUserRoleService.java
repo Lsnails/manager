@@ -27,4 +27,10 @@ public interface SysUserRoleService extends IService<SysUserRoleEntity> {
 	 * 根据用户ids，删除用户与角色的关系
 	 */
 	void deleteSysUserRoleByUserIds(List<Long> userIds);
+	
+	/**
+	 * 根据角色ids，删除用户与角色的关系
+	 */
+	void deleteSysUserRoleByRoles(List<Long> roleIds);
+	
 }

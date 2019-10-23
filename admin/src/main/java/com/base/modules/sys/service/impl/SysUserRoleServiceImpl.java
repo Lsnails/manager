@@ -56,4 +56,11 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleDao, SysUserR
 		wrapper.in("user_id",userIds);
 		this.delete(wrapper);
 	}
+	@Override
+	public void deleteSysUserRoleByRoles(List<Long> roleIds) {
+		EntityWrapper<SysUserRoleEntity> wrapper = new EntityWrapper<SysUserRoleEntity>();
+		wrapper.in("role_id",roleIds);
+		this.delete(wrapper);
+	}
+	
 }
