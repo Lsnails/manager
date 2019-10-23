@@ -86,6 +86,17 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> i
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void update(SysRoleEntity role) {
+		// 修改角色部门信息，需清除改角色和用户的关系 wh add
+		Long newDeptId = role.getDeptId();
+		Long roleId = role.getRoleId();
+		SysRoleEntity dbSysRole = this.selectById(roleId);
+		if (dbSysRole != null && newDeptId != null) {
+			if (!String.valueOf(newDeptId).equals(String.valueOf(dbSysRole.getDeptId()))) {
+				Long[] roleIds = { roleId };
+				sysUserRoleService.deleteBatch(roleIds);
+			}
+		}
+				
 		this.updateAllColumnById(role);
 
 		//更新角色与菜单关系

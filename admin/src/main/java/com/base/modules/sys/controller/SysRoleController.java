@@ -1,5 +1,18 @@
 package com.base.modules.sys.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.annotation.SysLog;
 import com.base.common.utils.PageUtils;
@@ -9,14 +22,9 @@ import com.base.modules.sys.entity.SysRoleEntity;
 import com.base.modules.sys.service.SysRoleDeptService;
 import com.base.modules.sys.service.SysRoleMenuService;
 import com.base.modules.sys.service.SysRoleService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 角色管理
@@ -124,6 +132,10 @@ public class SysRoleController extends AbstractController {
 	@RequiresPermissions("sys:role:select")
 	@ApiOperation("通过部门id获取，对应的角色")
 	public R querySysRoleList(@PathVariable String  deptId){
+		// 因为原系统不能设置，bigint为null，然后设置值为-1，表示null
+		if ("-1".equals(deptId)) {
+			return R.ok().put("data", new ArrayList<SysRoleEntity>());
+		}
 		SysRoleEntity sysRole =new SysRoleEntity();
 		sysRole.setDeptId(Long.valueOf(deptId).longValue());
 		List<SysRoleEntity> sysRoleList = sysRoleService.querySysRoleList(sysRole);
