@@ -35,4 +35,13 @@ public interface SysDeptService extends IService<SysDeptEntity> {
 	 */
 	SysDeptEntity getWdInfo(String id);
 
+	/**
+	 * 1.删除部门 
+	 * 2.删除部门和角色关系
+	 * 3.解除用户和部门的关系
+	 * 4.删除用户和此部门下角色的关系
+	 * @param deptId
+	 */
+	void deleteDeptAndRelatedInfo(Long deptId);
+
 }

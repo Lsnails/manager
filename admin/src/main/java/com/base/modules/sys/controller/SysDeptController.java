@@ -149,10 +149,14 @@ public class SysDeptController extends AbstractController {
 		//判断是否有子部门
 		List<Long> deptList = sysDeptService.queryDetpIdList(deptId);
 		if(deptList.size() > 0){
-			return R.error("请先删除子部门");
+			return R.error("请先删除子网点");
 		}
 
-		sysDeptService.deleteById(deptId);
+		//1.删除部门
+		//2.删除部门和角色关系
+		//3.解除用户和部门的关系
+		//4.删除用户和此部门下角色的关系
+		sysDeptService.deleteDeptAndRelatedInfo(deptId);
 		
 		return R.ok();
 	}

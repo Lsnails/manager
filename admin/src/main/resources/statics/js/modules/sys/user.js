@@ -60,11 +60,11 @@ layui.use(['form','laydate','element','table',],function(){
     })
 
     form.on('checkbox()', function(data){
-        if(data.elem.checked){
-            vm.user.roleIdList.push(data.value)
-        }else{
-            vm.user.roleIdList.indexOf(data.value)>-1?vm.user.roleIdList.splice(vm.user.roleIdList.indexOf(data.value),1):null;
-        }
+    	 if(data.elem.checked){
+             vm.user.roleIdList.push(data.value)
+         }else{
+             vm.user.roleIdList.indexOf(parseInt(data.value))!=-1?vm.user.roleIdList.splice(vm.user.roleIdList.indexOf(data.value),1):null;
+         }
     });
     form.on('radio()', function(data){
         vm.user.status = data.value;
@@ -100,8 +100,8 @@ var ztree;
 var vm = new Vue({
     el:'#rrapp',
     data:{
-        q:{
-            username: null
+    	q:{
+            username: ''
         },
         showList: true,
         deptFlag:false,
@@ -152,7 +152,6 @@ var vm = new Vue({
                 this.getRoleList(objs.data[0].deptId);
                 setTimeout(function(){
                     vm.$nextTick(function () {
-                        console.log(vm.roleList)
                         if(vm.roleList.length>0){
                             vm.deptFlag = true;
                         }

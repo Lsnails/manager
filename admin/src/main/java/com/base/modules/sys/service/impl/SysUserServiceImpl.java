@@ -51,9 +51,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		String username = (String)params.get("username");
 		
 		Wrapper<SysUserEntity> wrapper = new EntityWrapper<SysUserEntity>();
-		wrapper.like(StringUtils.isNotBlank(username),"username", username);
+		
 //		wrapper.addFilterIfNeed(params.get(Constant.SQL_FILTER) != null, (String)params.get(Constant.SQL_FILTER));
 		wrapper.addFilterIfNeed(params.get(Constant.SQL_FILTER) != null && !" ()".equals(params.get(Constant.SQL_FILTER)), (String)params.get(Constant.SQL_FILTER));		
+		wrapper.like("username", username);
 		Page<SysUserEntity> page = this.selectPage(
 			new Query<SysUserEntity>(params).getPage(),
 			wrapper
