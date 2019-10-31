@@ -62,4 +62,15 @@ public class WxUserServiceImpl extends ServiceImpl<WxUserDao, WxUserEntity> impl
 	public WxUserEntity selectOne(Wrapper<WxUserEntity> wrapper) {
 		return super.selectOne(wrapper);
 	}
+
+	@Override
+	public boolean isExist(String param) {
+		EntityWrapper<WxUserEntity> entityWrapper = new EntityWrapper();
+		entityWrapper.eq("user_code", param);
+		WxUserEntity wxUserEntity = this.selectOne(entityWrapper);
+		if(null != wxUserEntity) {
+			return true;
+		}
+		return false;
+	}
 }

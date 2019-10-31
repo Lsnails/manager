@@ -55,8 +55,14 @@ layui.use(['layTreeTable','form','element','upload','laydate'],function(){
           $('#qrcodeimg').attr('src', result); //图片链接（base64）
         });
       }
+	  ,size: 1024 //限制文件大小，单位 KB
       ,accept: 'file' //普通文件
       ,done: function(res){
+    	  var size = res.data.fileSize/1024/1024;
+    	  size = size.toFixed(2);
+    	  if(size>=1){
+    		  return layer.msg('上传失败,请上传小于1M的图片');
+    	  }
         //如果上传失败
         if(res.code > 0){
           return layer.msg('上传失败');
@@ -151,7 +157,6 @@ var vm = new Vue({
             }
 
             $.get(ctx + "sys/dept/info/"+ids[0], function(r){
-            	debugger;
                 vm.showList = false;
                 vm.title = "修改";
                 $('#qrcodeimg').removeAttr("src");

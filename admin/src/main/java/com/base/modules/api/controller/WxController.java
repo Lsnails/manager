@@ -229,7 +229,7 @@ public class WxController {
             wxUserEntity.setActivityId(activityId);
             wxUserEntity.setActivityName(activityName);
             wxUserEntity.setCreateDate(new Date());
-            wxUserEntity.setUserCode(UUIDUtils.getId().toUpperCase());
+            wxUserEntity.setUserCode(UUIDUtils.getRandom(8,wxUserService));
             wxUserEntity.setNetworkId(qrCode.getDeptId().toString());
             wxUserEntity.setNetworkName(qrCode.getName());
             wxUserEntity.setId(UUIDUtils.getRandomUUID());
