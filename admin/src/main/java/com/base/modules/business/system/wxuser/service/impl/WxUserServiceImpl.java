@@ -33,6 +33,9 @@ public class WxUserServiceImpl extends ServiceImpl<WxUserDao, WxUserEntity> impl
     		if(StringUtils.isNotBlank(wxUser.getUserCode())) {
     			entityWrapper.like("user_code", wxUser.getUserCode());
     		}
+    		if(StringUtils.isNotBlank(wxUser.getActivityName())) {
+    			entityWrapper.like("acvivity_name", wxUser.getActivityName());
+    		}
     	}
         Page<WxUserEntity> page = this.selectPage(
                 new Query<WxUserEntity>(params).getPage(),

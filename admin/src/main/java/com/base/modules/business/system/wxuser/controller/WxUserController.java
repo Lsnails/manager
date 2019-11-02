@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.base.common.utils.PageUtils;
 import com.base.common.utils.R;
 import com.base.common.validator.ValidatorUtils;
+import com.base.modules.business.system.activityinfo.entity.ActivityinfoEntity;
+import com.base.modules.business.system.activityinfo.service.ActivityinfoService;
 import com.base.modules.business.system.wxuser.entity.WxUserEntity;
 import com.base.modules.business.system.wxuser.service.WxUserService;
 import com.base.modules.sys.controller.AbstractController;
@@ -44,6 +47,8 @@ import io.swagger.annotations.ApiOperation;
 public class WxUserController extends AbstractController{
     @Autowired
     private WxUserService wxUserService;
+    @Autowired
+    private ActivityinfoService activityinfoService;
 
     /**
      * 列表
@@ -116,9 +121,21 @@ public class WxUserController extends AbstractController{
     @PostMapping("/hexiao")
     @ApiOperation("核销")
     public R hexiao(@RequestBody String[] ids){
+    	R r = new R();
     	List<WxUserEntity> list =new ArrayList<>();
     	for (int i = 0; i < ids.length; i++) {
     		WxUserEntity entity =new WxUserEntity();
+    		entity = wxUserService.selectById(ids[i]);
+    		EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper<ActivityinfoEntity>();
+    		entityWrapper.eq("activityinfo_id", entity.getActivityId());
+    		ActivityinfoEntity selectOne = activityinfoService.selectOne(entityWrapper);
+    		if(selectOne != null) {
+    			if("0".equals(selectOne.getStatus())) {
+    				r.put("code", 1);
+    				r.put("msg", "用户编码为："+entity.getUserCode()+",活动已经过期，请取消选择！");
+    				return r;
+    			}
+    		}
     		entity.setId(ids[i]);
     		//0 未核销 1已核销
     		entity.setState(1);

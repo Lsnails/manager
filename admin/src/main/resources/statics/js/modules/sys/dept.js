@@ -29,7 +29,8 @@ layui.use(['layTreeTable','form','element','upload','laydate'],function(){
             {title: '展示时间',key: 'showTime',minWidth: '100px',align: 'center',template: function(item){
 				return item.showTime == null ?'无':item.showTime;
             }},
-            {title: '排序号',key: 'orderNum',minWidth: '100px',align: 'center'}
+            {title: '排序号',key: 'orderNum',minWidth: '100px',align: 'center'},
+            {title: '展示次数',key: 'number',minWidth: '100px',align: 'center'}
 
 
         ]

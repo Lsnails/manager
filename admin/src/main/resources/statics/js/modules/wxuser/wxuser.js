@@ -21,6 +21,8 @@ layui.use(['form','laydate','element','table',],function(){
 		limit : 20,
 		limits : [10,15,20,25,50,100],
 		id : "listTable",
+		totalRow: true
+		,toolbar: true,
 //		toolbar: '#toptoolbar',
 //		defaultToolbar: ['filter'],
 		cols : [[

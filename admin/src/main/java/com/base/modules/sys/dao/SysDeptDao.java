@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.base.modules.sys.entity.SysDeptEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 部门管理
@@ -16,5 +17,9 @@ public interface SysDeptDao extends BaseMapper<SysDeptEntity> {
      * @param parentId  上级部门ID
      */
     List<Long> queryDetpIdList(Long parentId);
+    
+    Long queryNumber(Map<String,Object> map);
+    
+    void updateCnt(Map<String,Object> map);
 
 }

@@ -83,8 +83,20 @@
           <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
           <input type="password" name="password"  @keyup.enter="login" v-model="password" id="LAY-user-login-password" lay-verify="required" placeholder="密码" class="layui-input">
         </div>
-        
-        <div class="layui-form-item">
+
+		<!-- <div class="form-group has-feedback">
+			<input type="text" class="form-control" v-model="captcha"
+				@keyup.enter="login" placeholder="验证码"> <span
+				class="glyphicon glyphicon-warning-sign form-control-feedback"></span>
+		</div>
+		<div class="form-group has-feedback">
+			<img alt="如果看不清楚，请单击图片刷新！" class="pointer" :src="src"
+				@click="refreshCode"> &nbsp;&nbsp;&nbsp;&nbsp;<a
+				href="javascript:;" @click="refreshCode">点击刷新</a>
+		</div> -->
+
+
+		<div class="layui-form-item">
           <button class="layui-btn layui-btn-fluid"  @click="login">登 入</button>
         </div>
 

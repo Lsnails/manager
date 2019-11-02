@@ -33,14 +33,18 @@ public class UUIDUtils {
 		for (int i = 0; i < length; i++) {
 			val += String.valueOf(random.nextInt(10));
 		}
-		boolean exist = wxUserService.isExist(val);
-		if(exist) {
-			getRandom(length , wxUserService);
+		if(null != wxUserService) {
+			boolean exist = wxUserService.isExist(val);
+			if(exist) {
+				getRandom(length , wxUserService);
+			}
 		}
 		return val;
 	}
 
     public static void main(String[] args) {
-//        System.out.println(getRandom(8));
+    	for (int i = 0; i < 50; i++) {
+    		System.out.println(getRandom(8,null));
+		}
     }
 }

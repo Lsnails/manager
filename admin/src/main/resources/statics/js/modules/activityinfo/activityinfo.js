@@ -172,7 +172,7 @@ var vm = new Vue({
 //				    data: JSON.stringify(ids),
 				    success: function(r){
 						if(r.code == 0){
-							layer.msg('操作成功');
+							layer.msg('活动关闭成功！');
 							vm.reload();
 						}else{
 							layer.msg(r.msg);
@@ -200,7 +200,7 @@ var vm = new Vue({
 //				    data: {},
 				    success: function(r){
 						if(r.code == 0){
-							layer.msg('操作成功');
+							layer.msg('活动启用成功！');
 							vm.reload();
 						}else{
 							layer.msg(r.msg);

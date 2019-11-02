@@ -38,6 +38,8 @@ public class SysDeptEntity implements Serializable {
 	private String qrcodetitle;
 	//二维码展示时间
 	private String showTime;
+	// 序列号
+	private int number;
 	/**
 	 * 图片服务器地址
 	 */
@@ -183,6 +185,15 @@ public class SysDeptEntity implements Serializable {
 	public void setShowTime(String showTime) {
 		this.showTime = showTime;
 	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+	
 	
 	
 }

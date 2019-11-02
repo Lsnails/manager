@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.base.common.annotation.DataFilter;
 import com.base.common.utils.Constant;
+import com.base.common.utils.DateUtils;
 import com.base.modules.sys.dao.SysDeptDao;
 import com.base.modules.sys.entity.SysDeptEntity;
 import com.base.modules.sys.entity.SysRoleDeptEntity;
@@ -15,17 +16,21 @@ import com.base.modules.sys.service.SysRoleService;
 import com.base.modules.sys.service.SysUserRoleService;
 import com.base.modules.sys.service.SysUserService;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 @Service("sysDeptService")
+@Transactional(rollbackFor = {Throwable.class}, propagation = Propagation.REQUIRED)
 public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> implements SysDeptService {
 	
 	@Autowired
@@ -60,7 +65,11 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 
 	@Override
 	public List<SysDeptEntity> getList() {
-        List<SysDeptEntity> sysDeptEntities = this.selectList(new EntityWrapper<SysDeptEntity>());
+//		Long queryNumber = baseMapper.queryNumber();
+		EntityWrapper<SysDeptEntity> entityWrapper = new EntityWrapper<SysDeptEntity>();
+		entityWrapper.eq("del_flag", 0);
+//		entityWrapper.eq("number", queryNumber);
+        List<SysDeptEntity> sysDeptEntities = this.selectList(entityWrapper);
         return sysDeptEntities;
 	}
 
@@ -137,5 +146,32 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 		role.setDeptId(-1L);
 		roleWrapper.eq("dept_id", deptId);
 		sysRoleService.update(role, roleWrapper);
+	}
+
+	@Override
+	public SysDeptEntity getQrCode() {
+		long now = DateUtils.dateToLong(new Date(), "HH:mm:ss");//取当前的时分秒
+        List<SysDeptEntity> list = this.getList();
+        SysDeptEntity rBean = null;
+        for (SysDeptEntity entity : list) {
+            String showTime = entity.getShowTime();
+            Map<String,Object> obj = new HashMap<String,Object>();
+            obj.put("showTime",showTime);
+            Long queryNumber = baseMapper.queryNumber(obj);
+            if (StringUtils.isNotBlank(showTime)) {
+                String[] split = showTime.split(" - ");
+                long start = DateUtils.strToLong(split[0], "HH:mm:ss");
+                long end = DateUtils.strToLong(split[1], "HH:mm:ss");
+                if (now >= start && now <= end && queryNumber == Long.valueOf(entity.getNumber())) {
+                    rBean = entity;
+                    break;
+                }
+            }
+        }
+        Map<String,Object> obj = new HashMap<String,Object>();
+        obj.put("number", 1);
+        obj.put("id", rBean.getDeptId());
+        baseMapper.updateCnt(obj);
+        return rBean;
 	}
 }

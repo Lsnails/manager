@@ -43,5 +43,7 @@ public interface SysDeptService extends IService<SysDeptEntity> {
 	 * @param deptId
 	 */
 	void deleteDeptAndRelatedInfo(Long deptId);
+	
+	SysDeptEntity getQrCode();
 
 }

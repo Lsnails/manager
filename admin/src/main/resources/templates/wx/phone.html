@@ -27,13 +27,18 @@
         <div class="layui-form-item">
             <input type="text" name="phone" v-model="phone" d="LAY-user-login-username" lay-verify="required" placeholder="手机号" class="layui-input">
         </div>
-        <div class="layui-form-item">
+      <!--   <div class="layui-form-item">
           <button class="layui-btn layui-btn-fluid"  @click="sendSms">点击发送验证码</button>
-        </div>
-          <div class="layui-form-item" id="yzmDiv" style="display: none">
+        </div> -->
+          <div class="layui-form-item" id="yzmDiv">
               <input type="text" name="yzm" v-model="yzm" d="LAY-user-login-username" lay-verify="required" placeholder="请输入验证码" class="layui-input">
           </div>
-          <div class="layui-form-item" id="yzmCommitDiv" style="display: none">
+          <div class="form-group has-feedback">
+			<img alt="如果看不清楚，请单击图片刷新！" class="pointer" :src="src"
+				@click="refreshCode"> &nbsp;&nbsp;&nbsp;&nbsp;<a
+				href="javascript:;" @click="refreshCode">点击刷新</a>
+		  </div>
+          <div class="layui-form-item" id="yzmCommitDiv">
               <button class="layui-btn layui-btn-fluid"  @click="commit">点击提交数据</button>
           </div>
       </div>
@@ -57,7 +62,8 @@ var vm = new Vue({
 	data:{
 		phone: '',
         yzm: '',
-        openId: ''
+        openId: '',
+        src: '${request.contextPath}/captcha.jpg'
 	},
 	beforeCreate: function(){
 		if(self != top){
@@ -65,8 +71,11 @@ var vm = new Vue({
 		}
 	},
 	methods: {
+		refreshCode: function(){
+			this.src = "${request.contextPath}/captcha.jpg?t=" + $.now();
+		},
         sendSms : function(){
-            vm.openId = "${openId}";
+            vm.openId = "";
             //alert("openId : " +vm.openId);
             var phone = vm.phone;
             if(phone == ''){
@@ -94,7 +103,7 @@ var vm = new Vue({
                     }
                     if(result.isSend){
                         alert("短信发送成功,请注意查收!");
-                        $("#yzmDiv").css("display","block");
+                        //$("#yzmDiv").css("display","block");
                         $("#yzmCommitDiv").css("display","block");
                         // window.location.reload();
                     }else{
@@ -103,11 +112,11 @@ var vm = new Vue({
                     }
                 }
             });
-        },
+        }, 
         commit : function(){
             var phone = vm.phone;
             var yzm = vm.yzm;
-            var openId = vm.openId;
+            var openId = "${openId}";
             if(phone == '' || yzm == ''){
                 alert("手机号和验证码不能为空!");
                 return;

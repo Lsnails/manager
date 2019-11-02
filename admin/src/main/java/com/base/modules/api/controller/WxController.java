@@ -15,9 +15,12 @@ import com.base.modules.customizesys.dictionary.entity.DictionaryEntity;
 import com.base.modules.customizesys.dictionary.service.DictionaryService;
 import com.base.modules.sys.entity.SysDeptEntity;
 import com.base.modules.sys.service.SysDeptService;
+import com.base.modules.sys.shiro.ShiroUtils;
 import com.base.utils.CommonRpc;
 import com.base.utils.HttpUtils;
 import com.base.utils.UUIDUtils;
+import com.google.code.kaptcha.Constants;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,7 +161,10 @@ public class WxController {
         entityWrapper.eq("status", 1);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
         if (null != activityinfoEntity) {
-            setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
+        	WxUserEntity entity = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
+        	if(null == entity) {
+        		 setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
+        	}
         }
         return wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
     }
@@ -221,7 +227,7 @@ public class WxController {
         entityWrapper.eq("open_id", openId);
         entityWrapper.eq("activity_id", activityId);
         WxUserEntity wxUserEntity = wxUserService.selectOne(entityWrapper);
-        SysDeptEntity qrCode = getQrCode();
+        SysDeptEntity qrCode = sysDeptService.getQrCode();
         //只有当用户不存在的时候,才存入用户数据
         if (wxUserEntity == null) {
             wxUserEntity = new WxUserEntity();
@@ -238,7 +244,7 @@ public class WxController {
         }
     }
 
-    private SysDeptEntity getQrCode() {
+  /*  private SysDeptEntity getQrCode() {
         long now = DateUtils.dateToLong(new Date(), "HH:mm:ss");//取当前的时分秒
         List<SysDeptEntity> list = sysDeptService.getList();
         SysDeptEntity rBean = null;
@@ -255,7 +261,7 @@ public class WxController {
             }
         }
         return rBean;
-    }
+    }*/
 
     @GetMapping(value = "/test")
     public String test(String code, RedirectAttributes attr) {
@@ -313,7 +319,7 @@ public class WxController {
         return r;
     }
 
-    @RequestMapping(value = "/sendSms")
+   /* @RequestMapping(value = "/sendSms")
     @ResponseBody
     public R sendSms(String phone, HttpServletRequest request) {
         R r = new R();
@@ -349,21 +355,21 @@ public class WxController {
         r.put("isExist", isExist);
         r.put("phoneExist", phoneExist);
         return r;
-    }
+    }*/
 
     @RequestMapping(value = "/commit")
     @ResponseBody
     public R commit(String phone, String yzm, HttpServletRequest request, String openId) {
         R r = new R();
         boolean pass = false;
-        boolean isExsit = true;
+        boolean isExsit = false;
         if(StringUtils.isBlank(openId)) {
         	isExsit = true;
         }else {
-        	String sessionYzm = (String) request.getSession().getAttribute(phone);
+        	String sessionYzm = ShiroUtils.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
             if (sessionYzm.equals(yzm)) {
                 pass = true;
-                request.getSession().removeAttribute(phone); //移除session
+//                request.getSession().removeAttribute(phone); //移除session
                 //更新用户数据,更新手机号
                 WxUserEntity wxUserEntity = getWxUserInfo(openId);
                 if(null == wxUserEntity) {
@@ -388,10 +394,10 @@ public class WxController {
         if(StringUtils.isBlank(openId)) {
         	isExsit = true;
         }else {
-          String sessionYzm = (String) request.getSession().getAttribute(phone);
+          String sessionYzm = ShiroUtils.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
             if (sessionYzm.equals(yzm)) {
                 pass = true;
-                request.getSession().removeAttribute(phone); //移除session
+//                request.getSession().removeAttribute(phone); //移除session
               //更新用户数据,更新手机号
                 WxUserEntity wxUserEntity = getWxUserInfo(openId);
                 if(null == wxUserEntity) {

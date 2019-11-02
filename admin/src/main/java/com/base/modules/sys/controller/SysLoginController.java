@@ -3,6 +3,7 @@ package com.base.modules.sys.controller;
 
 import com.base.common.utils.R;
 import com.base.modules.sys.shiro.ShiroUtils;
+import com.base.utils.UUIDUtils;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
@@ -38,12 +39,12 @@ public class SysLoginController {
         response.setContentType("image/jpeg");
 
         //生成文字验证码
-        String text = producer.createText();
+//        String text = producer.createText();
+        String text = UUIDUtils.getRandom(4, null);
         //生成图片验证码
         BufferedImage image = producer.createImage(text);
         //保存到shiro session
         ShiroUtils.setSessionAttribute(Constants.KAPTCHA_SESSION_KEY, text);
-        
         ServletOutputStream out = response.getOutputStream();
         ImageIO.write(image, "jpg", out);
 	}
@@ -56,7 +57,7 @@ public class SysLoginController {
 	public R login(String username, String password, String captcha, HttpServletRequest request) {
         boolean mobileDevice = JudgeIsMoblie(request);
 //        log.error("浏览器标识 是否为手机端 : -->" + mobileDevice);
-        //注释验证码
+//        注释验证码
 //		String kaptcha = ShiroUtils.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
 //		if(!captcha.equalsIgnoreCase(kaptcha)){
 //			return R.error("验证码不正确");

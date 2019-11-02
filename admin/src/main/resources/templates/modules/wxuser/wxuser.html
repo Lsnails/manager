@@ -8,11 +8,15 @@
 <div id="rrapp" v-cloak>
     <div v-show="showList">
 		<form class="layui-form searchForm" lay-filter="searchForm" action="">
-			<div class="layui-inline">
+			<!-- <div class="layui-inline">
 				<select lay-filter="searchActivityList" class="layui-input" lay-search="">
 					<option value="">请选择活动</option>
 					<option v-for="item in activityList" :value="item.activityinfoId">{{item.name}}</option>
 				</select>
+			</div>
+			 -->
+			 <div class="layui-inline">
+				<input type="text" class="layui-input" v-model="q.activityName" @keyup.enter="query" placeholder="活动名称">
 			</div>
 			<div class="layui-inline">
 				<input type="text" class="layui-input" v-model="q.networkName" @keyup.enter="query" placeholder="网点名称">
