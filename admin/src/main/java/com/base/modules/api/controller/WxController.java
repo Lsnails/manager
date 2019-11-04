@@ -1,9 +1,25 @@
 package com.base.modules.api.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.base.common.utils.DateUtils;
 import com.base.common.utils.R;
 import com.base.modules.api.entity.AcItem;
 import com.base.modules.api.entity.WxEntityVo;
@@ -16,27 +32,9 @@ import com.base.modules.customizesys.dictionary.service.DictionaryService;
 import com.base.modules.sys.entity.SysDeptEntity;
 import com.base.modules.sys.service.SysDeptService;
 import com.base.modules.sys.shiro.ShiroUtils;
-import com.base.utils.CommonRpc;
 import com.base.utils.HttpUtils;
 import com.base.utils.UUIDUtils;
 import com.google.code.kaptcha.Constants;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @ClassName WxController
@@ -128,7 +126,16 @@ public class WxController {
         System.err.println("特权:" + userInfo.getString("privilege"));
         System.err.println("unionid:" + userInfo.getString("unionid"));*/
         redirectInfo(redirectAttributes, openid);
-        return "redirect:/wx/index.html";
+        String x = (String)redirectAttributes.getFlashAttributes().get("isNew");
+        String o = (String)redirectAttributes.getFlashAttributes().get("over");
+        if(("1").equals(o)) {
+        	return "redirect:/wx/index4.html";
+        }
+        if(("0").equals(x)) {
+        	return "redirect:/wx/index3.html";
+        }else {
+        	return "redirect:/wx/index2.html";
+        }
     }
 
     /**
@@ -137,17 +144,22 @@ public class WxController {
      * @param openid
      */
     private void redirectInfo(RedirectAttributes redirectAttributes, String openid) {
-        WxUserEntity wxUser = getWxUserEntity(openid);
-        WxEntityVo wxEntityVo = new WxEntityVo();
-        wxEntityVo.setWxUserEntity(wxUser);
-        wxEntityVo.setQrUrl("http://wx.ffhigh.com" + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
-        redirectAttributes.addFlashAttribute("wxEntity", wxEntityVo);
-        redirectAttributes.addFlashAttribute("phone",StringUtils.isNotBlank(wxEntityVo.getWxUserEntity().getPhone())==true?wxEntityVo.getWxUserEntity().getPhone():"");
-        DictionaryEntity info = dictionaryService.getInfoByCode("user_type"); // 获取当前是哪种获取用户方式
-        if (null == info) {
-            redirectAttributes.addFlashAttribute("type", "1");//默认1方法 通过微信获取
-        } else {
-            redirectAttributes.addFlashAttribute("type", info.getDescription());
+        WxUserEntity wxUser = getWxUserEntity(openid,redirectAttributes);
+        if(wxUser != null) {
+        	WxEntityVo wxEntityVo = new WxEntityVo();
+            wxEntityVo.setWxUserEntity(wxUser);
+            wxEntityVo.setQrUrl("http://wx.ffhigh.com" + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
+            redirectAttributes.addFlashAttribute("wxEntity", wxEntityVo);
+            redirectAttributes.addFlashAttribute("phone",StringUtils.isNotBlank(wxEntityVo.getWxUserEntity().getPhone())==true?wxEntityVo.getWxUserEntity().getPhone():"");
+            DictionaryEntity info = dictionaryService.getInfoByCode("user_type"); // 获取当前是哪种获取用户方式
+            if (null == info) {
+                redirectAttributes.addFlashAttribute("type", "1");//默认1方法 通过微信获取
+            } else {
+                redirectAttributes.addFlashAttribute("type", info.getDescription());
+            }
+            redirectAttributes.addFlashAttribute("over", "0");
+        }else {
+        	redirectAttributes.addFlashAttribute("over", "1");
         }
     }
 
@@ -156,7 +168,7 @@ public class WxController {
      * @param openid
      * @return
      */
-    private WxUserEntity getWxUserEntity(String openid) {
+    private WxUserEntity getWxUserEntity(String openid,RedirectAttributes redirectAttributes) {
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
@@ -164,9 +176,15 @@ public class WxController {
         	WxUserEntity entity = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
         	if(null == entity) {
         		 setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
+        		 redirectAttributes.addFlashAttribute("isNew","0");
+        	}else {
+        		redirectAttributes.addFlashAttribute("isNew","1");
         	}
+        	return wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
+        }else {
+        	return null;
         }
-        return wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
+        
     }
     
     
@@ -219,7 +237,12 @@ public class WxController {
     @GetMapping("/index")
     public String redirectIndex(String openId, RedirectAttributes redirectAttributes) {
         redirectInfo(redirectAttributes, openId);
-        return "redirect:/wx/index.html";
+        String x = (String)redirectAttributes.getFlashAttributes().get("isNew");
+        if(("0").equals(x)) {
+        	return "redirect:/wx/index3.html";
+        }else {
+        	return "redirect:/wx/index2.html";
+        }
     }
 
     private void setWxUser(String openId, String activityId, String activityName) {
