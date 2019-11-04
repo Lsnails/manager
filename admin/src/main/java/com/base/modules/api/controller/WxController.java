@@ -1,22 +1,5 @@
 package com.base.modules.api.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -35,6 +18,21 @@ import com.base.modules.sys.shiro.ShiroUtils;
 import com.base.utils.HttpUtils;
 import com.base.utils.UUIDUtils;
 import com.google.code.kaptcha.Constants;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName WxController
@@ -125,16 +123,41 @@ public class WxController {
         System.err.println("头像:" + userInfo.getString("headimgurl"));
         System.err.println("特权:" + userInfo.getString("privilege"));
         System.err.println("unionid:" + userInfo.getString("unionid"));*/
+        redirectAttributes.addFlashAttribute("openId", openid);//  openId 页面上获取
         redirectInfo(redirectAttributes, openid);
-        String x = (String)redirectAttributes.getFlashAttributes().get("isNew");
-        String o = (String)redirectAttributes.getFlashAttributes().get("over");
+        String type = (String)redirectAttributes.getFlashAttributes().get("type"); // 1 直接获取 2 通过手机号 3 自定义获取
+        String x = (String)redirectAttributes.getFlashAttributes().get("isNew"); // 是否为新用户  0 新 1老
+        String o = (String)redirectAttributes.getFlashAttributes().get("over"); // 0 没有一个进行中的活动
+        WxEntityVo vo = (WxEntityVo)redirectAttributes.getFlashAttributes().get("wxEntity");
+
         if(("1").equals(o)) {
-        	return "redirect:/wx/index4.html";
+            //活动结束跳转页面
+            return "redirect:/wx/index4.html";
         }
-        if(("0").equals(x)) {
-        	return "redirect:/wx/index3.html";
-        }else {
-        	return "redirect:/wx/index2.html";
+
+        if(("1").equals(type)){ //直接跳转 首页
+            return returnUrl(x);
+        }else if(("2").equals(type)){
+            if(StringUtils.isNotBlank(vo.getWxUserEntity().getPhone())){
+                return returnUrl(x);
+            }else{
+                return "redirect:/wx/phone.html";
+            }
+        }else if(("3").equals(type)){
+            if(StringUtils.isNotBlank(vo.getWxUserEntity().getPhone())){
+                return returnUrl(x);
+            }else{
+                return "redirect:/wx/customer.html";
+            }
+        }
+        return "redirect:/wx/index4.html";
+    }
+
+    private String returnUrl(String x) {
+        if (("0").equals(x)) {
+            return "redirect:/wx/index3.html";
+        } else {
+            return "redirect:/wx/index2.html";
         }
     }
 
@@ -157,9 +180,9 @@ public class WxController {
             } else {
                 redirectAttributes.addFlashAttribute("type", info.getDescription());
             }
-            redirectAttributes.addFlashAttribute("over", "0");
+            redirectAttributes.addFlashAttribute("over", "0"); //新用户
         }else {
-        	redirectAttributes.addFlashAttribute("over", "1");
+        	redirectAttributes.addFlashAttribute("over", "1"); //老用户
         }
     }
 
@@ -238,11 +261,7 @@ public class WxController {
     public String redirectIndex(String openId, RedirectAttributes redirectAttributes) {
         redirectInfo(redirectAttributes, openId);
         String x = (String)redirectAttributes.getFlashAttributes().get("isNew");
-        if(("0").equals(x)) {
-        	return "redirect:/wx/index3.html";
-        }else {
-        	return "redirect:/wx/index2.html";
-        }
+        return returnUrl(x);
     }
 
     private void setWxUser(String openId, String activityId, String activityName) {

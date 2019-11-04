@@ -15,7 +15,6 @@
 </head>
 <body>
 <div>
-<input id="hid" type="hidden" value="${type}">
     <!-- 顶部区域 -->
     <div id="show" align="center">
     	<img src="${request.contextPath}/statics/images/tp.jpg" width="200px" style="margin-top: 50px"><br>
@@ -38,22 +37,5 @@
 <script type="text/javascript" src="${request.contextPath}/statics/libs/jquery.min.js"></script>
 <script type="text/javascript" src="${request.contextPath}/statics/plugins/layui/layui.js"></script>
 <script type="text/javascript" src="${request.contextPath}/statics/libs/vue.min.js"></script>
-<script>
-    var hid = $("#hid").val();
-    var openId = "${wxEntity.wxUserEntity.openId}";
-    var phone = "${phone}";
-    //alert("phone -- >" + phone);
-    if(phone != ''){
-        $("#show").css("display","block");
-    }else{
-        if(hid == '1'){ //第一种
-            $("#show").css("display","block");
-        }else if(hid == '2'){
-            parent.location.href ='${request.contextPath}/wx/phone?openId='+openId;
-        }else{
-        	parent.location.href ='${request.contextPath}/wx/customer?openId='+openId;
-        }
-    }
-</script>
 </body>
 </html>
