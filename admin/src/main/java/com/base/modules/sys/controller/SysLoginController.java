@@ -122,9 +122,9 @@ public class SysLoginController {
                 "kddi", "keji", "leno", "lg-c", "lg-d", "lg-g", "lge-", "maui", "maxo", "midp", "mits", "mmef", "mobi",
                 "mot-", "moto", "mwbp", "nec-", "newt", "noki", "oper", "palm", "pana", "pant", "phil", "play", "port",
                 "prox", "qwap", "sage", "sams", "sany", "sch-", "sec-", "send", "seri", "sgh-", "shar", "sie-", "siem",
-                "smal", "smar", "sony", "sph-", "symb", "t-mo", "teli", "tim-", "tosh", "tsm-", "upg1", "upsi", "vk-v",
+                "smal", "smar", "sony", "sph-", "symb", "t-mo", "teli", "tim-", "tsm-", "upg1", "upsi", "vk-v",
                 "voda", "wap-", "wapa", "wapi", "wapp", "wapr", "webc", "winw", "winw", "xda", "xda-",
-                "Googlebot-Mobile" };
+                "Googlebot-Mobile" }; //tosh
         if (request.getHeader("User-Agent") != null) {
             for (String mobileAgent : mobileAgents) {
                 if (request.getHeader("User-Agent").toLowerCase().indexOf(mobileAgent) >= 0) {
