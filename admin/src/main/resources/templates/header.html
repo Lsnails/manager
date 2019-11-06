@@ -18,6 +18,14 @@
         localLayer = layui.layer;//在内容区弹出
 
     });
+    window.alert = function(name){
+        var iframe = document.createElement("IFRAME");
+        iframe.style.display="none";
+        iframe.setAttribute("src", 'data:text/plain,');
+        document.documentElement.appendChild(iframe);
+        window.frames[0].window.alert(name);
+        iframe.parentNode.removeChild(iframe);
+    };
 </script>
 
 <#import "/spring.ftl" as spring>
