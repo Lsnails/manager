@@ -13,12 +13,15 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
   <style>
-  	html,body{width:100%;height:100%;min-width:300px;min-height:400px;}
+  	html,body{width:100%;height:100%;min-width:300px;min-height:400px;background:#ffffff}
   </style>
 </head>
-<body style="background:#FFFFFF;">
- <div id="rrapp" class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;" v-cloak>
+<body>
+ <div id="rrapp" class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="padding-top: 0px;"v-cloak>
     <div class="layadmin-user-login-main">
+        <div align="center">
+            <img src="${request.contextPath}/statics/images/tp.jpg" width="200px" style="margin-top: 10px"><br>
+        </div>
       <div class="layadmin-user-login-box layadmin-user-login-header">
         <h2>乐善牧野</h2>
         <p></p>
@@ -41,9 +44,6 @@
           <div class="layui-form-item" id="yzmCommitDiv" style="margin-top: 10px;">
               <button class="layui-btn layui-btn-fluid"  @click="commit">提交信息&nbsp;即刻参与活动</button>
           </div>
-          <div id="show" align="center">
-              <img src="${request.contextPath}/statics/images/tp.jpg" width="200px" style="margin-top: 25px"><br>
-          </div>
       </div>
     </div>
     
@@ -54,6 +54,7 @@
 <script src="${request.contextPath}/statics/libs/jquery.min.js"></script>
 <script src="${request.contextPath}/statics/libs/vue.min.js"></script>
 <script type="text/javascript" src="${request.contextPath}/statics/plugins/layui/layui.js"></script>
+<script src="${request.contextPath}/statics/js/common.js"></script>
 <script type="text/javascript">
 var layer,localLayer,form;
 layui.use(['layer','form'],function(){
@@ -119,7 +120,7 @@ var vm = new Vue({
         commit : function(){
             var phone = vm.phone;
             var yzm = vm.yzm;
-            var openId = "${openId}";
+            var openId = "";
             if(phone == '' || yzm == ''){
                 alert("手机号和验证码不能为空!");
                 return;

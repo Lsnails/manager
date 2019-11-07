@@ -12,12 +12,17 @@
     <link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/plugins/layui/css/layui.css">
     <link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/css/index.css">
+    <style>
+        body,html{
+            background:#ffffff
+        }
+    </style>
 </head>
 <body>
 <div>
     <!-- 顶部区域 -->
-    <div align="center" style="margin-top: 100px;letter-spacing: 3px;">
-    	<strong><font color="red">恭喜参加活动成功！</font></strong>
+    <div align="center" style="margin-top: 50px;letter-spacing: 3px;">
+    	<strong><font color="red" size="+2">恭喜参加活动成功！</font></strong>
     </div>
     <div align="center">
     	<img src="${wxEntity.qrUrl}" width="200px" style="margin-top: 20px"><br>
@@ -36,5 +41,6 @@
 <script type="text/javascript" src="${request.contextPath}/statics/libs/jquery.min.js"></script>
 <script type="text/javascript" src="${request.contextPath}/statics/plugins/layui/layui.js"></script>
 <script type="text/javascript" src="${request.contextPath}/statics/libs/vue.min.js"></script>
+<script src="${request.contextPath}/statics/js/common.js"></script>
 </body>
 </html>
