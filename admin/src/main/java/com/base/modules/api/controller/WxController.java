@@ -171,7 +171,9 @@ public class WxController {
         if(wxUser != null) {
         	WxEntityVo wxEntityVo = new WxEntityVo();
             wxEntityVo.setWxUserEntity(wxUser);
-            wxEntityVo.setQrUrl("http://wx.ffhigh.com" + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
+            if(sysDeptService.getWdInfo(wxUser.getNetworkId()) != null) {
+            	wxEntityVo.setQrUrl("http://wx.ffhigh.com" + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
+            }
             redirectAttributes.addFlashAttribute("wxEntity", wxEntityVo);
             redirectAttributes.addFlashAttribute("phone",StringUtils.isNotBlank(wxEntityVo.getWxUserEntity().getPhone())==true?wxEntityVo.getWxUserEntity().getPhone():"");
             DictionaryEntity info = dictionaryService.getInfoByCode("user_type"); // 获取当前是哪种获取用户方式

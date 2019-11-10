@@ -120,7 +120,7 @@ var vm = new Vue({
         commit : function(){
             var phone = vm.phone;
             var yzm = vm.yzm;
-            var openId = "";
+            var openId = "${openId}";
             if(phone == '' || yzm == ''){
                 alert("手机号和验证码不能为空!");
                 return;
