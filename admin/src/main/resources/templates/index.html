@@ -14,7 +14,7 @@
 	<link rel="stylesheet" type="text/css" href="${request.contextPath}/statics/css/index.css">
 </head>
 <body onload="getIE()">
-<div class="layui-layout layui-layout-admin" id="layui_layout">
+<div class="layui-layout layui-layout-admin" style="display:none" id="layui_layout">
 	<!-- 顶部区域 -->
 	<div class="layui-header  header">
 		<div class="layui-main">
@@ -118,7 +118,9 @@
             dataType: "json",
             success: function(result){
                 if(result.isMobile){
-                    parent.location.href ='wx/hx.html';
+                    parent.location.href ='wxadmin/hx.html';
+                }else{
+                	$("#layui_layout").css("display","block");
                 }
             }
         });

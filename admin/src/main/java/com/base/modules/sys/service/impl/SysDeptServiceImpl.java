@@ -49,7 +49,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 	@DataFilter(subDept = true, user = false)
 	public List<SysDeptEntity> queryList(Map<String, Object> params){
 		List<SysDeptEntity> deptList =
-			this.selectList(new EntityWrapper<SysDeptEntity>()
+			this.selectList(new EntityWrapper<SysDeptEntity>().orderBy("orderNum desc")
 			.addFilterIfNeed(params.get(Constant.SQL_FILTER) != null && !" ()".equals(params.get(Constant.SQL_FILTER)), (String)params.get(Constant.SQL_FILTER)));
 
 		for(SysDeptEntity sysDeptEntity : deptList){

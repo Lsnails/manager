@@ -163,7 +163,6 @@ var vm = new Vue({
 				layer.msg('已关闭！');
 				return;
 			}
-			debugger;
 			layer.confirm('确定关闭该活动吗？', function(){
 				$.ajax({
 					type: "PUT",

@@ -87,7 +87,6 @@ var vm = new Vue({
 
             function getData(){
                 $.get(tab.tabConfig.url,function(res){
-                	debugger
                     if(res.code == 0){
                         //重新渲染左侧菜单
                         tab.render(res.menuList);
@@ -114,7 +113,6 @@ var vm = new Vue({
 
             //刷新后还原打开的窗口
             if(cacheStr) {
-            	debugger;
                 if (window.sessionStorage.getItem("menu") != null) {
                     menu = JSON.parse(window.sessionStorage.getItem("menu"));
                     curmenu = window.sessionStorage.getItem("curmenu");
@@ -122,7 +120,6 @@ var vm = new Vue({
                     for (var i = 0; i < menu.length; i++) {
                         openTitle = '';
                         if (menu[i].icon) {
-                        	debugger
                             if (menu[i].icon.split("-")[0] == 'icon') {
                                 openTitle += '<i class="seraph ' + menu[i].icon + '"></i>';
                             } else {

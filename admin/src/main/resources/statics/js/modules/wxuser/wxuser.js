@@ -81,7 +81,6 @@ layui.use(['form','laydate','element','table',],function(){
 		return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
 	});
 	form.on('select(searchActivityList)', function(data){
-		debugger;
 		vm.q.activityId = data.value;
     });
 	
@@ -184,7 +183,6 @@ var vm = new Vue({
         saveOrUpdate: function (flag) {
 			var url = vm.wxUser.id == null ? "cms/wxuser/save" : "cms/wxuser/update";
 			var type = vm.wxUser.id == null ? "post":"put";
-			debugger;
 			$.ajax({
 				type: type,
 				url: ctx + url,
@@ -230,7 +228,6 @@ var vm = new Vue({
 		},
 
 		getInfo: function(id){
-			debugger;
 			$.get(ctx + "cms/wxuser/info/"+id, function(r){
                 vm.wxUser = r.wxUser;
             });
@@ -243,7 +240,6 @@ var vm = new Vue({
 		},
 		
 		reload: function () {
-			debugger;
 			vm.showList = true;
 			layui.table.reload("listTable",{
 				page: {

@@ -24,6 +24,7 @@ public class ActivityinfoServiceImpl extends ServiceImpl<ActivityinfoDao, Activi
     @Override
     public Page<ActivityinfoEntity> queryPage(Map<String, Object> params,ActivityinfoEntity activityinfo) {
     	EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper<ActivityinfoEntity>();
+    	entityWrapper.orderBy("createtime desc");
     	if(activityinfo!=null) {
     		if(StringUtils.isNotBlank(activityinfo.getName())) {
     			entityWrapper.like("name", activityinfo.getName());

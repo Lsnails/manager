@@ -18,8 +18,8 @@
 </head>
 <body layadmin-themealias="default" >
  <div id="rrapp" class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;" v-cloak>
-	<div>
-		<li class="layui-nav-item"><a href="javascript:;" @click="logout"><i class="fa fa-sign-out"></i> &nbsp;退出系统</a></li>
+	<div style="float: right;margin-right: 5px;margin-top: -30px;">
+		<li class="layui-nav-item"><a href="javascript:;" @click="logout"><font color=red>退出系统</font></a></li>
 	</div>
     <div class="layadmin-user-login-main">
       <div class="layadmin-user-login-box layadmin-user-login-header">
@@ -162,6 +162,7 @@ var vm = new Vue({
                 success: function (result) {
                 }
             });
+            window.location.reload();
         }
 	}
 });
