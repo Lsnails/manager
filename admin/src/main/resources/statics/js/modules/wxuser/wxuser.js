@@ -99,7 +99,8 @@ var vm = new Vue({
 			activityId: null,
 			networkName: null,
 			phone: null,
-			userCode: null
+			userCode: null,
+			networkId: null,
 		},
 		wxUser: {},
 		activityList:[]
@@ -113,6 +114,7 @@ var vm = new Vue({
 			vm.q.networkName = ''
 			vm.q.phone = ''
 			vm.q.userCode = ''
+			vm.q.networkId = ''
 			vm.reload();
 		},
         selectActivityList: function () {
@@ -250,8 +252,8 @@ var vm = new Vue({
 					activityId: vm.q.activityId,
 					networkName: vm.q.networkName,
 					phone: vm.q.phone,
-					userCode: vm.q.userCode
-
+					userCode: vm.q.userCode,
+					networkId: vm.q.networkId
 				}
 			})
 		}

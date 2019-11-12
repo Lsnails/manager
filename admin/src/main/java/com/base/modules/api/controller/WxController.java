@@ -225,17 +225,17 @@ public class WxController {
         return wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
     }
     
-    /**
+/*    *//**
      * 根据手机号获取用户信息
      * @param phone
      * @return
-     */
+     *//*
     private WxUserEntity getWxUserInfoByPhone(String phone) {
     	EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
         return wxUserService.getUserByParam(phone, activityinfoEntity.getActivityinfoId());
-    }
+    }*/
 
     /**
      * 跳转页面
@@ -317,8 +317,8 @@ public class WxController {
 
     @PostMapping(value = "/getUser")
     @ResponseBody
-    public R getUser(String txt, String activityId) {
-        WxUserEntity user = wxUserService.getUserByParam(txt, activityId);
+    public R getUser(String txt, String activityId , String networkId) {
+        WxUserEntity user = wxUserService.getUserByParam(txt, activityId , networkId);
         R r = new R();
         r.put("isData", user == null ? false : true);
         r.put("user", user);

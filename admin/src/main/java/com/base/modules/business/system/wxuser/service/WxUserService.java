@@ -19,7 +19,7 @@ public interface WxUserService extends IService<WxUserEntity> {
 
     WxUserEntity getUserInfo(String openId,String activityId);
 
-    WxUserEntity getUserByParam(String txt,String activityId);
+    WxUserEntity getUserByParam(String txt,String activityId,String networkId);
     
     boolean isExist(String param);
 }

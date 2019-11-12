@@ -36,6 +36,9 @@ public class WxUserServiceImpl extends ServiceImpl<WxUserDao, WxUserEntity> impl
     		if(StringUtils.isNotBlank(wxUser.getActivityName())) {
     			entityWrapper.like("acvivity_name", wxUser.getActivityName());
     		}
+    		if(StringUtils.isNotBlank(wxUser.getNetworkId())) {
+    			entityWrapper.eq("network_id", wxUser.getNetworkId());
+    		}
     	}
         Page<WxUserEntity> page = this.selectPage(
                 new Query<WxUserEntity>(params).getPage(),
@@ -55,9 +58,9 @@ public class WxUserServiceImpl extends ServiceImpl<WxUserDao, WxUserEntity> impl
 	}
 
 	@Override
-	public WxUserEntity getUserByParam(String txt,String activityId) {
+	public WxUserEntity getUserByParam(String txt,String activityId,String networkId) {
 		EntityWrapper<WxUserEntity> entityWrapper = new EntityWrapper();
-        entityWrapper.eq("activity_id",activityId).like("phone",txt).or().like("user_code",txt);
+        entityWrapper.eq("activity_id",activityId).eq("network_id", networkId).like("phone",txt).or().like("user_code",txt);
 		return this.selectOne(entityWrapper);
 	}
 
