@@ -36,10 +36,10 @@
               </select>
           </div>
         <div class="layui-form-item">
-            <input type="text" name="txt" v-model="txt" d="LAY-user-login-username" lay-verify="required" placeholder="彩票唯一编码 or 手机号" class="layui-input">
+            <input type="text" name="txt" v-model="txt" d="LAY-user-login-username" lay-verify="required" placeholder="兑奖识别码 or 手机号" class="layui-input">
         </div>
         <div class="layui-form-item">
-            <input type="text" name="networkId" v-model="networkId" d="LAY-user-login-username" lay-verify="required" placeholder="网点编码" class="layui-input">
+            <input type="text" name="networkId" v-model="networkId" d="LAY-user-login-username" lay-verify="required" placeholder="网点证件编号" class="layui-input">
         </div>
         <div class="layui-form-item">
           <button class="layui-btn layui-btn-fluid"  @click="getUser">点击查询用户数据</button>
@@ -88,7 +88,7 @@ var vm = new Vue({
 	data:{
 		txt: '',
         selList: '',
-        openId: ''，
+        openId: '',
         networkId: '',
 	},
 	beforeCreate: function(){
@@ -103,7 +103,7 @@ var vm = new Vue({
                 alert("请选择活动!");
                 return;
             }
-            var data = "openId="+vm.openId+"&activityId="+hd;
+            var data = "openId="+vm.openId+"&activityId="+hd+"&wdCode="+vm.networkId;
             $.ajax({
                 type: "POST",
                 url: "${request.contextPath}/wx/hxUser",
@@ -129,14 +129,14 @@ var vm = new Vue({
                 return;
             }
             if(vm.networkId == ''){
-            	alert("请输入网点编码");
+            	alert("请输入网点证件编号");
             	return;
             }
             if(vm.txt == ''){
-            	alert("请输入用户编码 或 手机号");
+            	alert("请输入用户兑奖识别码 或 手机号");
             	return;
             }
-            var data = "txt="+vm.txt+"&activityId="+hd+"&networkId="+vm.networkId;
+            var data = "txt="+vm.txt+"&activityId="+hd;
             $.ajax({
                 type: "POST",
                 url: "${request.contextPath}/wx/getUser",

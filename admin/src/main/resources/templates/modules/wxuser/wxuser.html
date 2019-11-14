@@ -22,7 +22,7 @@
 				<input type="text" class="layui-input" v-model="q.networkName" @keyup.enter="query" placeholder="网点名称">
 			</div>
 			<div class="layui-inline">
-				<input type="text" class="layui-input" v-model="q.networkId" @keyup.enter="query" placeholder="网点名称">
+				<input type="text" class="layui-input" v-model="q.wdCode" @keyup.enter="query" placeholder="网点证件编码">
 			</div>
 			<div class="layui-inline">
 				<input type="text" class="layui-input" v-model="q.phone" @keyup.enter="query" placeholder="手机号">
@@ -83,7 +83,13 @@
 					</div>
 				</div>
 				<div class="layui-form-item">
-					<label class="layui-form-label">用户唯一编码</label>
+					<label class="layui-form-label">用户兑奖识别码</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" v-model="wxUser.userCode" placeholder="用户唯一编码"/>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">网点证件编号</label>
 					<div class="layui-input-block">
 						<input type="text" class="layui-input" v-model="wxUser.userCode" placeholder="用户唯一编码"/>
 					</div>

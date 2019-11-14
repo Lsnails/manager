@@ -45,7 +45,8 @@ layui.use(['form','laydate','element','table',],function(){
 					}
 	            }}, 
 				{ title: '手机号',field: 'phone',minWidth: 50}, 
-				{ title: '用户唯一编码',field: 'userCode',minWidth: 120}, 
+				{ title: '用户兑奖识别码',field: 'userCode',minWidth: 120},
+            	{ title: '网点证件编号',field: 'wdCode',minWidth: 120},
 				{ title: '自定义数据1',field: 'remark',minWidth: 120}, 
 				{ title: '自定义数据2',field: 'remark2',minWidth: 120}, 
 				{ title: '自定义数据3',field: 'remark3',minWidth: 120}, 
@@ -100,7 +101,7 @@ var vm = new Vue({
 			networkName: null,
 			phone: null,
 			userCode: null,
-			networkId: null,
+			wdCode: null,
 		},
 		wxUser: {},
 		activityList:[]
@@ -114,7 +115,7 @@ var vm = new Vue({
 			vm.q.networkName = ''
 			vm.q.phone = ''
 			vm.q.userCode = ''
-			vm.q.networkId = ''
+			vm.q.wdCode = ''
 			vm.reload();
 		},
         selectActivityList: function () {
@@ -253,7 +254,7 @@ var vm = new Vue({
 					networkName: vm.q.networkName,
 					phone: vm.q.phone,
 					userCode: vm.q.userCode,
-					networkId: vm.q.networkId
+                    wdCode: vm.q.wdCode
 				}
 			})
 		}

@@ -317,8 +317,8 @@ public class WxController {
 
     @PostMapping(value = "/getUser")
     @ResponseBody
-    public R getUser(String txt, String activityId , String networkId) {
-        WxUserEntity user = wxUserService.getUserByParam(txt, activityId , networkId);
+    public R getUser(String txt, String activityId) {
+        WxUserEntity user = wxUserService.getUserByParam(txt, activityId , null);
         R r = new R();
         r.put("isData", user == null ? false : true);
         r.put("user", user);
@@ -344,10 +344,11 @@ public class WxController {
 
     @RequestMapping(value = "/hxUser")
     @ResponseBody
-    public R hxUser(String openId, String activityId) {
+    public R hxUser(String openId, String activityId , String wdCode) {
         R r = new R();
         WxUserEntity userInfo = wxUserService.getUserInfo(openId, activityId);
         userInfo.setState(1);
+        userInfo.setWdCode(wdCode);
         boolean b = wxUserService.updateById(userInfo);
         r.put("success", b);
         return r;

@@ -72,6 +72,19 @@ public class WxUserEntity implements Serializable {
 	private String remark4;
 	private String remark5;
 
+	/**
+	 * 网点code 手填
+	 */
+	private String wdCode;
+
+	public String getWdCode() {
+		return wdCode;
+	}
+
+	public void setWdCode(String wdCode) {
+		this.wdCode = wdCode;
+	}
+
 	public WxUserEntity() {
 	}
 
