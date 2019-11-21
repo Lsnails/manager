@@ -43,12 +43,17 @@ import java.util.List;
 @Controller
 @RequestMapping("/wx")
 public class WxController {
+//    private static final String URL = "http://wx.ffhigh.com/";
+    private static final String URL = "http://wx.ticket.42du.net/";
+
 
     public static final String wx_token_url = "https://open.weixin.qq.com/connect/oauth2/authorize?";
-    public static final String wx_appid = "wx01fc3b985a70091e";
-    public static final String wx_redirect_url = "http://wx.ffhigh.com/admin/wx/getcode";
+//    public static final String wx_appid = "wx01fc3b985a70091e";
+    public static final String wx_appid = "wx759b4ad634e6acdc";
+    public static final String wx_redirect_url = URL+"admin/wx/getcode";
     public static final String wx_openid_url = "https://api.weixin.qq.com/sns/oauth2/access_token?";
-    public static final String wx_secret = "ab086069a568f7311f6fc9a35f7bc970";
+//    public static final String wx_secret = "ab086069a568f7311f6fc9a35f7bc970";
+    public static final String wx_secret = "bf593b12274c8f76d631e53c9649f7f7";
     public static final String wx_userinfo_url = "https://api.weixin.qq.com/sns/userinfo?";
 
     @Autowired
@@ -69,8 +74,26 @@ public class WxController {
         return "5PHIL3aROj08OBwf";
     }
 
+    @GetMapping(value = "/MP_verify_cWjF0KqOz7Y4hKc2.txt")
+    @ResponseBody
+    public String txConfig(){
+        return "cWjF0KqOz7Y4hKc2";
+    }
+
     @GetMapping(value = "/wxLogin")
     public String get(String scope, HttpServletResponse response) throws IOException {
+        if (StringUtils.isBlank(scope)) {
+            scope = "snsapi_base"; //静默授权
+        } else {
+            scope = "snsapi_userinfo"; // 完全授权
+        }
+        String url = wx_token_url + "appid=" + wx_appid + "&redirect_uri=" + wx_redirect_url + "&response_type=code&scope=" + scope + "&state=123#wechat_redirect";
+//        response.sendRedirect(url);
+        return "redirect:" + url;
+    }
+
+    @GetMapping(value = "/wxLogin1")
+    public String get1(String scope, HttpServletResponse response) throws IOException {
         if (StringUtils.isBlank(scope)) {
             scope = "snsapi_base"; //静默授权
         } else {
@@ -172,7 +195,7 @@ public class WxController {
         	WxEntityVo wxEntityVo = new WxEntityVo();
             wxEntityVo.setWxUserEntity(wxUser);
             if(sysDeptService.getWdInfo(wxUser.getNetworkId()) != null) {
-            	wxEntityVo.setQrUrl("http://wx.ffhigh.com" + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
+            	wxEntityVo.setQrUrl(URL + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
             }
             redirectAttributes.addFlashAttribute("wxEntity", wxEntityVo);
             redirectAttributes.addFlashAttribute("phone",StringUtils.isNotBlank(wxEntityVo.getWxUserEntity().getPhone())==true?wxEntityVo.getWxUserEntity().getPhone():"");
