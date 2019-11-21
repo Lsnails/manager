@@ -202,7 +202,7 @@ public class CommonRpc {
 		request.putQueryParameter("TemplateParam",TemplateParam);// 否 短信模板变量对应的实际值，JSON格式。 {"code":"1111"}
 	}
     public static void main(String[] args) {
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAIStB1CY0pRUEK", "ToV6LyW9s2pyVyvKuFpYQCWhk464JS");
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "123456", "123456");
         IAcsClient client = new DefaultAcsClient(profile);
         //SendSms
         CommonRequest request = new CommonRequest();

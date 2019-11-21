@@ -2,8 +2,8 @@ package com.base.utils;
 
 public class ConstantSms {
 	
-	public static final String accessKeyId="LTAI4FrqGp5NNm9dHzGAkq6Q";
-	public static final String AccessKeySecret="cFcrnnYxf9P0BWhSvoezV6LKg6Fr4L";
+	public static final String accessKeyId="123456";
+	public static final String AccessKeySecret="123456";
 	public static final String SignName ="SMSYZ";
 	/** 大陆内部短信模板*/
 	public static final String TemplateCode_PRC ="SMS_175542276";// old SMS_164505745 SMS_164680238
