@@ -94,8 +94,8 @@ upload:
   dir: /root/server/apache-tomcat-8.0.36_80/webapps   #本地临时文件，后面不带斜杠eg c:/upload/tmp
   ip: 39.104.121.221   #ftp地址
   port: 22             #ftp端口
-  username: root       #ftp用户名
-  password: Xiaohan@123        #ftp密码
+  username: 123456       #ftp用户名
+  password: 123456        #ftp密码
   remotePath: /usr/etc/upload  #远程服务器上传服务器路径
   dirPath:  /images #nginx转发文件，下的子目录 nginx转发后的访问地址 eg：http://192.168.100.228//html/upload/images/78c5007815624d0abd6ac28ed63f2128.png
   uploadFileType: .doc|.docx|.xls|.xlsx|.zip|.tar|.rar|.7z|.jpg|.png|.gif|.jpeg|.swf|.mp4|.mp3|.txt|.ipa  #可上传文件类型
