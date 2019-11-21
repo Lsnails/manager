@@ -23,7 +23,7 @@ spring:
       enabled: true
   redis:
     database: 0
-    host: localhost
+    host: 39.104.121.221
     port: 6379
     password:      # 密码（默认为空）
     timeout: 6000ms  # 连接超时时长（毫秒）
@@ -31,8 +31,8 @@ spring:
       pool:
         max-active: 1000  # 连接池最大连接数（使用负值表示没有限制）
         max-wait: -1ms      # 连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-idle: 10      # 连接池中的最大空闲连接
-        min-idle: 5       # 连接池中的最小空闲连接
+        max-idle: 100      # 连接池中的最大空闲连接
+        min-idle: 20       # 连接池中的最小空闲连接
   freemarker:
 #    settings:
 #      auto_import: /spring.ftl as spring
@@ -91,7 +91,7 @@ logging:
 #上传文件到服务器
 upload: 
   ftp-enabled : false  #是否启用ftp上传，1.如果没有单独的图片服务器，设置为false，即不走ftp上传，需要配置“本地临时文件dir，并且使用nginx转发 2.有单独的图片服务器，需要配置ftp相关信息，并且做nginx转发”
-  dir: /root/server/apache-tomcat-8.0.36_80/webapps   #本地临时文件，后面不带斜杠eg c:/upload/tmp
+  dir: /wx/apache-tomcat-8.0.36_80/webapps/   #本地临时文件，后面不带斜杠eg c:/upload/tmp
   ip: 39.104.121.221   #ftp地址
   port: 22             #ftp端口
   username: 123456       #ftp用户名
@@ -100,7 +100,7 @@ upload:
   dirPath:  /images #nginx转发文件，下的子目录 nginx转发后的访问地址 eg：http://192.168.100.228//html/upload/images/78c5007815624d0abd6ac28ed63f2128.png
   uploadFileType: .doc|.docx|.xls|.xlsx|.zip|.tar|.rar|.7z|.jpg|.png|.gif|.jpeg|.swf|.mp4|.mp3|.txt|.ipa  #可上传文件类型
 nginx:
-  serverip: 39.104.121.221  #nginx代理ip
+  serverip: 49.233.84.36  #nginx代理ip
   serverport: 80          #nginx代理端口
   
 oss:
