@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body  class="sub-content">
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+		<form class="layui-form searchForm" lay-filter="searchForm" action="">
+			<div class="layui-inline">
+				<input type="text" class="layui-input"   placeholder="">
+			</div>
+
+			<button type="button" class="layui-btn"  @click="query">查询</button>
+		</form>
+		<div class="layui-btn-group">
+			<button type="button" class="layui-btn" id="upload" @click="showExpression">上传文件</button>
+			<#if shiro.hasPermission("datainfo:buyinfo:save")>
+			<button class="layui-btn  " @click="add" title="新增"><i class="layui-icon layui-icon-add-1"></i></button>
+			</#if>
+			<#if shiro.hasPermission("datainfo:buyinfo:update")>
+			<button class="layui-btn  " @click="update" title="修改"><i class="layui-icon layui-icon-edit"></i></button>
+			</#if>
+			<#if shiro.hasPermission("datainfo:buyinfo:delete")>
+			<button class="layui-btn  " @click="del" title="删除"><i class="layui-icon layui-icon-delete"></i></button>
+			</#if>
+		</div>
+		<table id="listData" lay-filter="listData"></table>
+    </div>
+
+    <div v-show="!showList"  class="layui-card">
+		<div class="layui-card-header"><h3 class="x-card-title">{{title}}</h3><span @click="reload" class="x-pull-right"><i class="layui-icon layui-icon-close-fill x-closeCard"></i></span></div>
+		<div class="layui-card-body" >
+			<form class="layui-form"  lay-filter="myForm">
+															<div class="layui-form-item">
+				<label class="layui-form-label">姓名</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.name" placeholder="姓名"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">电话号码</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.phone" placeholder="电话号码"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">产品型号</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.proType" placeholder="产品型号"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">购买时间</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.buyTime" placeholder="购买时间"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">购买价格</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.buyPrice" placeholder="购买价格"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">购买数量</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.buyNumber" placeholder="购买数量"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">购买渠道</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.buyChannel" placeholder="购买渠道"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">收货地址（购买地址）</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.buyAddress" placeholder="收货地址（购买地址）"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">省市缩写</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.address" placeholder="省市缩写"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">备注</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.remark" placeholder="备注"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">星标</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.star" placeholder="星标"/>
+				</div>
+			</div>
+												<div class="layui-form-item">
+				<label class="layui-form-label">回访记录</label>
+				<div class="layui-input-block">
+					<input type="text" class="layui-input" v-model="buyInfo.returnInfo" placeholder="回访记录"/>
+				</div>
+			</div>
+									<div class="layui-form-item">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit lay-filter="*" >确定</button>
+					<button type="button" class="layui-btn layui-btn-primary" @click="reload" >返回</button>
+				</div>
+			</div>
+        	</form>
+		</div>
+    </div>
+</div>
+<script type="text/html" id="toptoolbar"></script>
+<script type="text/html" id="operationBar">
+    <a class="layui-btn layui-btn-sm"  lay-event="look" title="查看"><i class="layui-icon layui-icon-search"></i></a>
+</script>
+<script src="${request.contextPath}/statics/js/modules/datainfo/buyinfo.js?_${.now?long}"></script>
+</body>
+</html>

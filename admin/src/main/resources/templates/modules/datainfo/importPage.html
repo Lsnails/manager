@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>导入页面</title>
+		<#include "/header.html">
+</head>
+<body  class="sub-content">
+<div id="rrapp2" v-cloak>
+    <div v-show="true"  class="layui-card">
+		<div class="layui-card-body" >
+			<form class="layui-form"  lay-filter="myForm">
+				<div class="layui-form-item" id="chooseDiv">
+					  <label class="layui-form-label"><span class="layui-bg-red">*</span>选择文件</label>
+					  <button type="button" class="layui-btn layui-btn-normal" id="chooseFile">选择文件</button>
+				</div>
+				<div class="layui-form-item" >
+					<div class="layui-input-block" id="btnDiv"><!-- style="display:none;" -->
+						<button type="button" class="layui-btn" id="shipmentaUpload" >确定</button>
+						<!-- <button class="layui-btn" lay-submit lay-filter="*" >确定</button> -->
+						<button type="button" class="layui-btn layui-btn-primary" @click="cancle" >取消</button>
+					</div>
+				</div>
+        	</form>
+        	
+		</div>
+    </div>
+</div>
+<script type="text/html" id="toptoolbar"></script>
+<script type="text/html" id="operationBar">
+</script>
+<script src="${request.contextPath}/statics/js/modules/datainfo/importPage.js?_${.now?long}"></script>
+</body>
+</html>
