@@ -6,42 +6,77 @@
 	<script src="${request.contextPath}/statics/plugins/echarts/echarts.min.js?_${.now?long}"></script>
 </head>
  
-<body  class="sub-content">
-<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-	<div>
-		选择类型<select id="">
-			<option>1</option>
-			<option>2</option>
-			<option>3</option>
+<body class="sub-content" onload="init()">
+	<div align="center" style=" letter-spacing:3px">
+	选择类型:<select id="searchType" width="100px" onchange="init()">
+			<option value="1">省市</option>
+			<option value="2">产品类型</option>
+			<option value="3">购买时间</option>
 		</select>
 	</div>
-    <div id="main" style="width: 600px;height:400px;"></div>
+    <div id="main" style="width: 1200px;height:550px;"></div>
     <script type="text/javascript">
+    	//默认设置 searchType 为1
+    	$("#searchType").val("1");
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('main'));
+        var xdata;
+        var ydata;
 
-        // 指定图表的配置项和数据
-        var option = {
-            title: {
-                text: 'ECharts 入门示例'
-            },
-            tooltip: {},
-            legend: {
-                data:['数量']
-            },
-            xAxis: {
-                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-            },
-            yAxis: {},
-            series: [{
-                name: '数量',
-                type: 'bar',
-                data: [5, 20, 36, 10, 10, 20]
-            }]
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
+        function init(){
+            var searchType = $("#searchType").val();
+            console.log(searchType);
+        	 $.ajax({
+                 type: "POST",
+                 data: {"type" : searchType},
+                 url: "${request.contextPath}/buyinfo/bar",
+                 dataType: "json",
+                 success: function(result){
+                	 xdata  = result.data.xAxisData;
+                	 ydata  = result.data.seriesData;
+                	 var option = {
+                	            title: {
+                	                text: '柱状图展示'
+                	            },
+                	            tooltip: {},
+                	            legend: {
+                	                data:xdata
+                	            },
+                	            xAxis: {
+                	                data: xdata,
+                	                axisLabel: {  
+                                        interval: 0, 
+                                        rotate:40  
+                                    }  
+                	            },
+                	            dataZoom: [ {
+                	                type: 'slider',
+                	                show: true,
+                	                start: 0,
+                	                end: 20,
+                	                handleSize: 8,
+                	                bottom:-10
+                	            },
+                	            {
+                	                type: 'inside',
+                	                start: 0,
+                	                end: 20
+                	            }],
+                	            yAxis: {
+                	            	//min: 'dataMin', // 最小值
+                	            	minInterval: 1
+                   	            },
+                	            series: [{
+                	                name: '数量',
+                	                type: 'bar',
+                	                barMaxWidth:'30%',
+                	                data: ydata
+                	            }]
+                	        };
+                	 myChart.setOption(option,true);
+                 }
+             });
+        }
     </script>
 </body>
 </html>

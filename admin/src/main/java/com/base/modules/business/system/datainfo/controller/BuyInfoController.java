@@ -2,8 +2,10 @@ package com.base.modules.business.system.datainfo.controller;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +24,8 @@ import com.base.common.utils.PageUtils;
 import com.base.common.utils.R;
 import com.base.common.validator.ValidatorUtils;
 import com.base.modules.business.system.datainfo.entity.BuyInfoEntity;
+import com.base.modules.business.system.datainfo.entity.EchartsBar;
+import com.base.modules.business.system.datainfo.entity.EchartsPie;
 import com.base.modules.business.system.datainfo.service.BuyInfoService;
 import com.base.modules.sys.controller.AbstractController;
 import com.base.utils.UUIDUtils;
@@ -125,6 +129,16 @@ public class BuyInfoController extends AbstractController{
             return R.error("上传文件为空");
         }
         return R.ok();
+    }
+    
+    @PostMapping("/bar")
+    @ApiOperation("上传方法")
+    public R bar(@RequestParam String type) {
+    	if(StringUtils.equals(type, "4")) {
+    		return R.ok().put("data", buyInfoService.queryBuyInfo(type));
+    	}else {
+    		return R.ok().put("data", buyInfoService.queryBuyInfoByType(type));
+    	}
     }
 
 }

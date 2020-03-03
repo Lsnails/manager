@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.base.modules.business.system.datainfo.entity.BuyInfoEntity;
+import com.base.modules.business.system.datainfo.entity.EchartsBar;
+import com.base.modules.business.system.datainfo.entity.EchartsPie;
 
 /**
  * 
@@ -24,6 +26,8 @@ public interface BuyInfoService extends IService<BuyInfoEntity> {
     
     void importData(MultipartFile file) throws IOException;
     
-    List<Map<String,Object>> queryBuyInfoByType(String  type);
+    EchartsBar queryBuyInfoByType(String  type);
+    
+    EchartsPie queryBuyInfo(String  type);
 }
 

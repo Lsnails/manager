@@ -17,9 +17,13 @@ import com.base.common.utils.ExcelReaderUtil;
 import com.base.common.utils.Query;
 import com.base.modules.business.system.datainfo.dao.BuyInfoDao;
 import com.base.modules.business.system.datainfo.entity.BuyInfoEntity;
+import com.base.modules.business.system.datainfo.entity.EchartsBar;
+import com.base.modules.business.system.datainfo.entity.EchartsPie;
+import com.base.modules.business.system.datainfo.entity.PieData;
 import com.base.modules.business.system.datainfo.service.BuyInfoService;
 import com.base.utils.AddressUtils;
 import com.base.utils.UUIDUtils;
+import com.mysql.fabric.xmlrpc.base.Array;
 
 
 @Service("buyInfoService")
@@ -96,13 +100,36 @@ public class BuyInfoServiceImpl extends ServiceImpl<BuyInfoDao, BuyInfoEntity> i
 	}
 
 	@Override
-	public List<Map<String, Object>> queryBuyInfoByType(String type) {
+	public EchartsBar queryBuyInfoByType(String type) {
 		List<Map<String, Object>> queryBuyInfoByType = baseMapper.queryBuyInfoByType(type);
+		List<String> x = new ArrayList<>();
+		List<String> y = new ArrayList<>();
+		EchartsBar bar = new EchartsBar();
 		queryBuyInfoByType.stream().forEach(i->{
-			System.out.println(i);
-			System.out.println("");
+			x.add(i.get("x").toString());
+			y.add(i.get("number").toString());
 		});
-		return null;
+		bar.setxAxisData(x);
+		bar.setSeriesData(y);
+		return bar;
+	}
+
+	@Override
+	public EchartsPie queryBuyInfo(String type) {
+		List<Map<String, Object>> queryBuyInfoByType = baseMapper.queryBuyInfoByType(type);
+		List<String> x = new ArrayList<>();
+		List<PieData> y = new ArrayList<>();
+		EchartsPie pie = new EchartsPie();
+		queryBuyInfoByType.stream().forEach(i->{
+			x.add(i.get("x").toString());
+			PieData pieData = new PieData();
+			pieData.setName(i.get("x").toString());
+			pieData.setValue(i.get("number").toString());
+			y.add(pieData);
+		});
+		pie.setLegeneData(x);
+		pie.setSeriesData(y);
+		return pie;
 	}
 	
 	
