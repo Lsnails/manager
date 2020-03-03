@@ -52,7 +52,7 @@ public class BuyInfoController extends AbstractController{
     @ApiOperation("数据管理列表")
     @RequiresPermissions("datainfo:buyinfo:list")
     public R list(@RequestParam Map<String, Object> params,BuyInfoEntity buyInfo){
-        Page<BuyInfoEntity> page = buyInfoService.queryPage(params);
+        Page<BuyInfoEntity> page = buyInfoService.queryPage(params,buyInfo);
 
         return PageUtils.convertFrom(page);
     }

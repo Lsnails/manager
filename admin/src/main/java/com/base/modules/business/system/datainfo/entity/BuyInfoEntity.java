@@ -1,12 +1,13 @@
 package com.base.modules.business.system.datainfo.entity;
 
 
+import java.io.Serializable;
+import java.util.Date;
+
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 
@@ -43,7 +44,17 @@ public class BuyInfoEntity implements Serializable {
 	/**
 	 * 购买价格
 	 */
-	private String buyPrice;
+	private Double buyPrice;
+	/**
+	 * 购买价格范围 小区间  -非数据库字段
+	 */
+	@TableField(exist=false)
+	private String buyPriceMin;
+	/**
+	 * 购买价格范围 大区间  -非数据库字段
+	 */
+	@TableField(exist=false)
+	private String buyPriceMax;
 	/**
 	 * 购买数量
 	 */
@@ -144,14 +155,11 @@ public class BuyInfoEntity implements Serializable {
 	/**
 	 * 设置：购买价格
 	 */
-	public void setBuyPrice(String buyPrice) {
-		this.buyPrice = buyPrice;
-	}
-	/**
-	 * 获取：购买价格
-	 */
-	public String getBuyPrice() {
+	public Double getBuyPrice() {
 		return buyPrice;
+	}
+	public void setBuyPrice(Double buyPrice) {
+		this.buyPrice = buyPrice;
 	}
 	/**
 	 * 设置：购买数量
@@ -261,4 +269,30 @@ public class BuyInfoEntity implements Serializable {
 	public Date getUpdateDate() {
 		return updateDate;
 	}
+	/**
+	 * 购买价格范围 小区间  -非数据库字段
+	 */
+	public String getBuyPriceMin() {
+		return buyPriceMin;
+	}
+	/**
+	 * 购买价格范围 小区间  -非数据库字段
+	 */
+	public void setBuyPriceMin(String buyPriceMin) {
+		this.buyPriceMin = buyPriceMin;
+	}
+	/**
+	 * 购买价格范围 大区间  -非数据库字段
+	 */
+	public String getBuyPriceMax() {
+		return buyPriceMax;
+	}
+	/**
+	 * 购买价格范围 大区间  -非数据库字段
+	 */
+	public void setBuyPriceMax(String buyPriceMax) {
+		this.buyPriceMax = buyPriceMax;
+	}
+	
+	
 }

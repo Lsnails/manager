@@ -21,6 +21,49 @@
         <result property="createDate" column="create_date"/>
         <result property="updateDate" column="update_date"/>
     </resultMap>
-
+	<select id="queryBuyInfoByType" resultType="java.util.Map">
+		 <if test="type=='1'">
+		  	SELECT
+				t.address x,
+				count(1) number
+			FROM
+				biz_buy_info t
+			GROUP BY
+				t.address
+		 </if>
+		 <if test="type=='2'">
+		 	SELECT
+				t.pro_type x,
+				count(1) number
+			FROM
+				biz_buy_info t
+			GROUP BY
+				t.pro_type
+		 </if>
+		 <if test="type=='3'">
+		 	SELECT
+				t.buy_time x,
+				count(1) number
+			FROM
+				biz_buy_info t
+			GROUP BY
+				t.buy_time	
+		 </if>
+		 <if test="type == '4'">
+		 	SELECT
+				'已拜访' x,
+				count(1) number
+			FROM
+				biz_buy_info t
+			where (t.return_info is not null and t.return_info <> '')
+			UNION
+			select 
+				'未拜访' x,
+				count(1) number
+			FROM
+				biz_buy_info t1
+			where t1.return_info is null or t1.return_info =''
+		 </if>
+	</select>
 
 </mapper>

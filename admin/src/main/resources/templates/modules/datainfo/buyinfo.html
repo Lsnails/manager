@@ -2,17 +2,66 @@
 <html>
 <head>
     <title></title>
-		<#include "/header.html">
+	<#include "/header.html">
+	<style>
+       .layui-inline {
+           margin-bottom: 10px;
+       }
+
+	.layui-card-header {
+		background-color: #f2f2f2;
+	}
+    </style>
 </head>
+ 
 <body  class="sub-content">
 <div id="rrapp" v-cloak>
     <div v-show="showList">
 		<form class="layui-form searchForm" lay-filter="searchForm" action="">
 			<div class="layui-inline">
-				<input type="text" class="layui-input"   placeholder="">
+				<div class="layui-input-inline" style="width: 280px;">
+					<input type="text" class="layui-input"  v-model="q.buyTime" @keyup.enter="query" id="searchDate" placeholder="导入日期 ">
+				</div>
+		     </div>
+			<div class="layui-inline">
+			    <div class="layui-input-inline" style="width: 280px;">
+					<input type="text" class="layui-input"  v-model="q.name" @keyup.enter="query" placeholder="客户姓名">
+				</div>
 			</div>
-
-			<button type="button" class="layui-btn"  @click="query">查询</button>
+			<div class="layui-inline">
+				<div class="layui-input-inline" style="width: 280px;">
+					<select lay-filter="searchStar" class="layui-input" v-model="q.star"  name="star">
+							<option value="">星标查询</option>
+							<option value="1">1星</option>
+							<option value="2">2星</option>
+							<option value="3">3星</option>
+							<option value="4">4星</option>
+							<option value="5">5星</option>
+					</select>
+				</div>
+			</div>
+			
+			<div class="layui-inline">
+				 <div class="layui-input-inline" style="width: 280px;">
+					<input type="text" class="layui-input" v-model="q.buyPriceMin"  @keyup.enter="query" placeholder="价格范围">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<div class="layui-input-inline" style="width: 280px;">
+					<input type="text" class="layui-input" v-model="q.buyPriceMax"  @keyup.enter="query"  placeholder="价格范围">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<div class="layui-input-inline" style="width: 280px;">
+					<input type="text" class="layui-input"  v-model="q.proType"  @keyup.enter="query"  placeholder="产品型号">
+				</div>
+			</div>
+			<div class="layui-inline">
+				 <div class="layui-input-inline">
+					<button type="button" class="layui-btn"  @click="query"  >查询</button>
+					<a class="layui-btn layui-btn-primary" id="resetSearch" @click="resetSearch">重置</a>
+				</div>
+			</div>
 		</form>
 		<div class="layui-btn-group">
 			<button type="button" class="layui-btn" id="upload" @click="showExpression">上传文件</button>

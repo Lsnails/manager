@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,10 +26,31 @@ import com.base.utils.UUIDUtils;
 public class BuyInfoServiceImpl extends ServiceImpl<BuyInfoDao, BuyInfoEntity> implements BuyInfoService {
 
     @Override
-    public Page<BuyInfoEntity> queryPage(Map<String, Object> params) {
+    public Page<BuyInfoEntity> queryPage(Map<String, Object> params,BuyInfoEntity buyInfo) {
+    	EntityWrapper<BuyInfoEntity> entityWrapper = new EntityWrapper<BuyInfoEntity>();
+    	if(buyInfo!=null) {
+    		if(StringUtils.isNotBlank(buyInfo.getBuyTime())) {
+    			entityWrapper.like("buy_time", buyInfo.getBuyTime());
+    		}
+    		if(StringUtils.isNotBlank(buyInfo.getName())) {
+    			entityWrapper.eq("name", buyInfo.getName());
+    		}
+    		if(StringUtils.isNotBlank(buyInfo.getStar())) {
+    			entityWrapper.eq("star", buyInfo.getStar());
+    		}
+    		if(StringUtils.isNotBlank(buyInfo.getProType())) {
+    			entityWrapper.eq("pro_type", buyInfo.getProType());
+    		}
+    		if(StringUtils.isNotBlank(buyInfo.getBuyPriceMin())) {
+    			entityWrapper.ge("buy_price", buyInfo.getBuyPriceMin());//大于等于
+    		}
+    		if(StringUtils.isNotBlank(buyInfo.getBuyPriceMax())) {
+    			entityWrapper.le("buy_price", buyInfo.getBuyPriceMax());//小于等于
+    		}
+    	}
         Page<BuyInfoEntity> page = this.selectPage(
                 new Query<BuyInfoEntity>(params).getPage(),
-                new EntityWrapper<BuyInfoEntity>()
+                entityWrapper
         );
 
         return page;
@@ -48,8 +69,8 @@ public class BuyInfoServiceImpl extends ServiceImpl<BuyInfoDao, BuyInfoEntity> i
         	buyInfoEntity.setName(i.get(0).trim());
         	buyInfoEntity.setPhone(i.get(1).trim());
         	buyInfoEntity.setProType(i.get(2).trim());
-        	buyInfoEntity.setBuyTime(i.get(3).trim());
-        	buyInfoEntity.setBuyPrice(i.get(4).trim());
+        	buyInfoEntity.setBuyTime(i.get(3).substring(0, 11).trim());
+        	buyInfoEntity.setBuyPrice(Double.valueOf(i.get(4).trim()));
         	buyInfoEntity.setBuyNumber(Integer.valueOf(i.get(5).trim()));
         	buyInfoEntity.setBuyChannel(i.get(6).trim());
         	buyInfoEntity.setBuyAddress(i.get(7).trim());
@@ -72,6 +93,16 @@ public class BuyInfoServiceImpl extends ServiceImpl<BuyInfoDao, BuyInfoEntity> i
 			}
 		});
 		return reStr.toString();
+	}
+
+	@Override
+	public List<Map<String, Object>> queryBuyInfoByType(String type) {
+		List<Map<String, Object>> queryBuyInfoByType = baseMapper.queryBuyInfoByType(type);
+		queryBuyInfoByType.stream().forEach(i->{
+			System.out.println(i);
+			System.out.println("");
+		});
+		return null;
 	}
 	
 	

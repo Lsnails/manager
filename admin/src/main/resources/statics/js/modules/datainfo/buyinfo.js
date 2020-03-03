@@ -17,7 +17,7 @@ layui.use(['form','laydate','element','table','upload'],function(){
 			,groups:5
 
 		},
-		height : 'full-80',
+		height : 'full-150',
 		loading:true,
 		limit : 20,
 		limits : [10,15,20,25,50,100],
@@ -91,6 +91,19 @@ layui.use(['form','laydate','element','table','upload'],function(){
 	});
 
 
+	laydate.render({
+	    elem: '#searchDate',
+	    done: function(value, date){
+	    	console.log(date);
+	    	console.log(value);
+	    	vm.q.buyTime = value;
+	    }
+	});
+	
+	form.on('select(searchStar)', function(data){
+        vm.q.star=data.value;
+        console.log(vm.q.star);
+    });
 
 })
 
@@ -100,12 +113,24 @@ var vm = new Vue({
 	data:{
 		showList: true,
 		title: null,
-		q:{},
+		q:{buyTime: '',name: '',buyPriceMin: '',buyPriceMax: '',star: '',proType: ''},
 		buyInfo: {},
 	},
 	methods: {
 		query: function () {
 			vm.reload();
+		},
+		resetSearch:function(){
+			this.q.buyTime = ''
+			this.q.name = ''
+			this.q.buyPriceMin = ''
+			this.q.buyPriceMax = ''
+			this.q.star = ''
+			this.q.proType = ''
+			layui.form.val("searchForm", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+				"star":""
+			});
+			this.reload();
 		},
 		add: function(){
 			vm.showList = false;
@@ -202,10 +227,14 @@ var vm = new Vue({
 			layui.table.reload("listTable",{
 				page: {
 					curr: 1
-				},
+				}, 
 				where: {
-					name: vm.q,
-
+					buyTime: vm.q.buyTime,
+					name: vm.q.name,
+					buyPriceMin: vm.q.buyPriceMin,
+					buyPriceMax: vm.q.buyPriceMax,
+					star: vm.q.star,
+					proType: vm.q.proType
 				}
 			})
 		}
