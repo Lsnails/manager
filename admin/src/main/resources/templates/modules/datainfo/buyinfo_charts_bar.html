@@ -7,19 +7,22 @@
 </head>
  
 <body class="sub-content" onload="init()">
-	<div align="center" style=" letter-spacing:3px">
-	选择类型:<select id="searchType" width="100px" onchange="init()">
-			<option value="1">省市</option>
-			<option value="2">产品类型</option>
-			<option value="3">购买时间</option>
-		</select>
-	</div>
+		<div class="layui-inline" align="center" style=" letter-spacing:3px">
+			<label class="layui-form-label" style="width: 100px;">选择类型：</label>
+			<div class="layui-input-inline" style="width: 280px;">
+				<select id="searchType"  lay-filter="searchStar" onchange="init()" class="layui-input" v-model="q.star"  name="star">
+						<option value="1">省市</option>
+						<option value="2">产品类型</option>
+						<option value="3">购买时间</option>
+				</select>
+			</div>
+		</div>
     <div id="main" style="width: 1200px;height:550px;"></div>
     <script type="text/javascript">
     	//默认设置 searchType 为1
     	$("#searchType").val("1");
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
+        var myChart = echarts.init(document.getElementById('main'),"westeros");
         var xdata;
         var ydata;
 
@@ -36,7 +39,7 @@
                 	 ydata  = result.data.seriesData;
                 	 var option = {
                 	            title: {
-                	                text: '柱状图展示'
+                	                //text: '柱状图展示'
                 	            },
                 	            tooltip: {},
                 	            legend: {
@@ -64,7 +67,8 @@
                 	            }],
                 	            yAxis: {
                 	            	//min: 'dataMin', // 最小值
-                	            	minInterval: 1
+                	            	minInterval: 1,
+                	            	
                    	            },
                 	            series: [{
                 	                name: '数量',
