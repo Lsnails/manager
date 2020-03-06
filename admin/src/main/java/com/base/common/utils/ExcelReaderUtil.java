@@ -107,7 +107,7 @@ public class ExcelReaderUtil {
      */
     public static List<List<String>> readCsv(InputStream inputStream) throws IOException {
         // 第一参数：读取文件的路径 第二个参数：分隔符（不懂仔细查看引用百度百科的那段话） 第三个参数：字符集
-        CsvReader csvReader = new CsvReader(inputStream, Charset.forName("GBK"));
+        CsvReader csvReader = new CsvReader(inputStream, Charset.forName("UTF-8"));
         // 如果你的文件没有表头，这行不用执行
         // 这行不要是为了从表头的下一行读，也就是过滤表头
         csvReader.readHeaders();
