@@ -1,22 +1,5 @@
 package com.base.modules.api.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -35,6 +18,24 @@ import com.base.modules.sys.shiro.ShiroUtils;
 import com.base.utils.HttpUtils;
 import com.base.utils.UUIDUtils;
 import com.google.code.kaptcha.Constants;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName WxController
@@ -44,17 +45,18 @@ import com.google.code.kaptcha.Constants;
  **/
 @Controller
 @RequestMapping("/wx")
+@Slf4j
 public class WxController {
-//    private static final String URL = "http://wx.ffhigh.com/";
+    //    private static final String URL = "http://wx.ffhigh.com/";
     private static final String URL = "http://wx.ticket.42du.net/";
 
 
     public static final String wx_token_url = "https://open.weixin.qq.com/connect/oauth2/authorize?";
-//    public static final String wx_appid = "wx01fc3b985a70091e";
+    //    public static final String wx_appid = "wx01fc3b985a70091e";
     public static final String wx_appid = "wx759b4ad634e6acdc";
-    public static final String wx_redirect_url = URL+"admin/wx/getcode";
+    public static final String wx_redirect_url = URL + "admin/wx/getcode?number={0}";
     public static final String wx_openid_url = "https://api.weixin.qq.com/sns/oauth2/access_token?";
-//    public static final String wx_secret = "ab086069a568f7311f6fc9a35f7bc970";
+    //    public static final String wx_secret = "ab086069a568f7311f6fc9a35f7bc970";
     public static final String wx_secret = "bf593b12274c8f76d631e53c9649f7f7";
     public static final String wx_userinfo_url = "https://api.weixin.qq.com/sns/userinfo?";
 
@@ -78,18 +80,21 @@ public class WxController {
 
     @GetMapping(value = "/MP_verify_cWjF0KqOz7Y4hKc2.txt")
     @ResponseBody
-    public String txConfig(){
+    public String txConfig() {
         return "cWjF0KqOz7Y4hKc2";
     }
 
     @GetMapping(value = "/wxLogin")
-    public String get(String scope, HttpServletResponse response) throws IOException {
+    public String get(String scope, String number, HttpServletResponse response) throws IOException {
+        String enUrl = MessageFormat.format(wx_redirect_url, number);
+        log.error("enUrl - >{}", enUrl);
+        log.error("编码后的Url -> {}", URLEncoder.encode(enUrl, "GBK"));
         if (StringUtils.isBlank(scope)) {
             scope = "snsapi_base"; //静默授权
         } else {
             scope = "snsapi_userinfo"; // 完全授权
         }
-        String url = wx_token_url + "appid=" + wx_appid + "&redirect_uri=" + wx_redirect_url + "&response_type=code&scope=" + scope + "&state=123#wechat_redirect";
+        String url = wx_token_url + "appid=" + wx_appid + "&redirect_uri=" + enUrl + "&response_type=code&scope=" + scope + "&state=123#wechat_redirect";
 //        response.sendRedirect(url);
         return "redirect:" + url;
     }
@@ -113,8 +118,9 @@ public class WxController {
      * @return
      */
     @GetMapping(value = "/getcode")
-    public String getCode(String code, RedirectAttributes redirectAttributes) {
+    public String getCode(String code, String number, RedirectAttributes redirectAttributes) {
         // 根据Code获取Openid
+        log.error("getCode - > 参数 : {}", number);
         String openidUrl = wx_openid_url + "appid=" + wx_appid + "&secret=" + wx_secret + "&code=" + code + "&grant_type=authorization_code";
         String openidMsg = HttpUtils.doPost(openidUrl, "", "UTF-8");
         System.out.println("返回结果: -->     " + openidMsg);
@@ -150,28 +156,28 @@ public class WxController {
         System.err.println("unionid:" + userInfo.getString("unionid"));*/
         redirectAttributes.addFlashAttribute("openId", openid);//  openId 页面上获取
         redirectInfo(redirectAttributes, openid);
-        String x = (String)redirectAttributes.getFlashAttributes().get("isNew"); // 是否为新用户  0 新 1老
-        String o = (String)redirectAttributes.getFlashAttributes().get("over"); // 0 没有一个进行中的活动
-        String type = (String)redirectAttributes.getFlashAttributes().get("type"); // 1 直接获取 2 通过手机号 3 自定义获取
-        WxEntityVo vo = (WxEntityVo)redirectAttributes.getFlashAttributes().get("wxEntity");
+        String x = (String) redirectAttributes.getFlashAttributes().get("isNew"); // 是否为新用户  0 新 1老
+        String o = (String) redirectAttributes.getFlashAttributes().get("over"); // 0 没有一个进行中的活动
+        String type = (String) redirectAttributes.getFlashAttributes().get("type"); // 1 直接获取 2 通过手机号 3 自定义获取
+        WxEntityVo vo = (WxEntityVo) redirectAttributes.getFlashAttributes().get("wxEntity");
 
-        if(("1").equals(o)) {
+        if (("1").equals(o)) {
             //活动结束跳转页面
             return "redirect:/wx/index4.html";
         }
 
-        if(("1").equals(type)){ //直接跳转 首页
+        if (("1").equals(type)) { //直接跳转 首页
             return returnUrl(x);
-        }else if(("2").equals(type)){
-            if(StringUtils.isNotBlank(vo.getWxUserEntity().getPhone())){
+        } else if (("2").equals(type)) {
+            if (StringUtils.isNotBlank(vo.getWxUserEntity().getPhone())) {
                 return returnUrl(x);
-            }else{
+            } else {
                 return "redirect:/wx/phone.html";
             }
-        }else if(("3").equals(type)){
-            if(StringUtils.isNotBlank(vo.getWxUserEntity().getPhone())){
+        } else if (("3").equals(type)) {
+            if (StringUtils.isNotBlank(vo.getWxUserEntity().getPhone())) {
                 return returnUrl(x);
-            }else{
+            } else {
                 return "redirect:/wx/customer.html";
             }
         }
@@ -188,19 +194,20 @@ public class WxController {
 
     /**
      * 跳转
+     *
      * @param redirectAttributes
      * @param openid
      */
     private void redirectInfo(RedirectAttributes redirectAttributes, String openid) {
-        WxUserEntity wxUser = getWxUserEntity(openid,redirectAttributes);
-        if(wxUser != null) {
-        	WxEntityVo wxEntityVo = new WxEntityVo();
+        WxUserEntity wxUser = getWxUserEntity(openid, redirectAttributes);
+        if (wxUser != null) {
+            WxEntityVo wxEntityVo = new WxEntityVo();
             wxEntityVo.setWxUserEntity(wxUser);
-            if(sysDeptService.getWdInfo(wxUser.getNetworkId()) != null) {
-            	wxEntityVo.setQrUrl(URL + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
+            if (sysDeptService.getWdInfo(wxUser.getNetworkId()) != null) {
+                wxEntityVo.setQrUrl(URL + sysDeptService.getWdInfo(wxUser.getNetworkId()).getQrcodeurl());
             }
             redirectAttributes.addFlashAttribute("wxEntity", wxEntityVo);
-            redirectAttributes.addFlashAttribute("phone",StringUtils.isNotBlank(wxEntityVo.getWxUserEntity().getPhone())==true?wxEntityVo.getWxUserEntity().getPhone():"");
+            redirectAttributes.addFlashAttribute("phone", StringUtils.isNotBlank(wxEntityVo.getWxUserEntity().getPhone()) == true ? wxEntityVo.getWxUserEntity().getPhone() : "");
             DictionaryEntity info = dictionaryService.getInfoByCode("user_type"); // 获取当前是哪种获取用户方式
             if (null == info) {
                 redirectAttributes.addFlashAttribute("type", "1");//默认1方法 通过微信获取
@@ -208,49 +215,51 @@ public class WxController {
                 redirectAttributes.addFlashAttribute("type", info.getDescription());
             }
             redirectAttributes.addFlashAttribute("over", "0"); //新用户
-        }else {
-        	redirectAttributes.addFlashAttribute("over", "1"); //老用户
+        } else {
+            redirectAttributes.addFlashAttribute("over", "1"); //老用户
         }
     }
 
     /**
      * 生成wx用户
+     *
      * @param openid
      * @return
      */
-    private WxUserEntity getWxUserEntity(String openid,RedirectAttributes redirectAttributes) {
+    private WxUserEntity getWxUserEntity(String openid, RedirectAttributes redirectAttributes) {
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
         if (null != activityinfoEntity) {
-        	WxUserEntity entity = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
-        	if(null == entity) {
-        		 setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
-        		 redirectAttributes.addFlashAttribute("isNew","0");
-        	}else {
-        		redirectAttributes.addFlashAttribute("isNew","1");
-        	}
-        	return wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
-        }else {
-        	return null;
+            WxUserEntity entity = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
+            if (null == entity) {
+                setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
+                redirectAttributes.addFlashAttribute("isNew", "0");
+            } else {
+                redirectAttributes.addFlashAttribute("isNew", "1");
+            }
+            return wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
+        } else {
+            return null;
         }
-        
+
     }
-    
-    
+
+
     /**
      * openId 获取用户信息
+     *
      * @param openid
      * @return
      */
     private WxUserEntity getWxUserInfo(String openid) {
-    	EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
+        EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
         return wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
     }
-    
-/*    *//**
+
+    /*    *//**
      * 根据手机号获取用户信息
      * @param phone
      * @return
@@ -272,7 +281,7 @@ public class WxController {
         redirectAttributes.addFlashAttribute("openId", openId);
         return "redirect:/wx/phone.html";
     }
-    
+
     /**
      * 跳转页面
      *
@@ -303,7 +312,7 @@ public class WxController {
             wxUserEntity.setActivityId(activityId);
             wxUserEntity.setActivityName(activityName);
             wxUserEntity.setCreateDate(new Date());
-            wxUserEntity.setUserCode(UUIDUtils.getRandom(8,wxUserService));
+            wxUserEntity.setUserCode(UUIDUtils.getRandom(8, wxUserService));
             wxUserEntity.setNetworkId(qrCode.getDeptId().toString());
             wxUserEntity.setNetworkName(qrCode.getName());
             wxUserEntity.setId(UUIDUtils.getRandomUUID());
@@ -343,7 +352,7 @@ public class WxController {
     @PostMapping(value = "/getUser")
     @ResponseBody
     public R getUser(String txt, String activityId) {
-        WxUserEntity user = wxUserService.getUserByParam(txt, activityId , null);
+        WxUserEntity user = wxUserService.getUserByParam(txt, activityId, null);
         R r = new R();
         r.put("isData", user == null ? false : true);
         r.put("user", user);
@@ -369,7 +378,7 @@ public class WxController {
 
     @RequestMapping(value = "/hxUser")
     @ResponseBody
-    public R hxUser(String openId, String activityId , String wdCode) {
+    public R hxUser(String openId, String activityId, String wdCode) {
         R r = new R();
         WxUserEntity userInfo = wxUserService.getUserInfo(openId, activityId);
         userInfo.setState(1);
@@ -432,19 +441,19 @@ public class WxController {
         R r = new R();
         boolean pass = false;
         boolean isExsit = false;
-        if(StringUtils.isBlank(openId)) {
-        	isExsit = true;
-        }else {
-        	String sessionYzm = ShiroUtils.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
+        if (StringUtils.isBlank(openId)) {
+            isExsit = true;
+        } else {
+            String sessionYzm = ShiroUtils.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
             if (sessionYzm.equals(yzm)) {
                 pass = true;
 //                request.getSession().removeAttribute(phone); //移除session
                 //更新用户数据,更新手机号
                 WxUserEntity wxUserEntity = getWxUserInfo(openId);
-                if(null == wxUserEntity) {
-                	isExsit = true;
-                }else {
-                	wxUserEntity.setPhone(phone);
+                if (null == wxUserEntity) {
+                    isExsit = true;
+                } else {
+                    wxUserEntity.setPhone(phone);
                     wxUserService.updateById(wxUserEntity);
                 }
             }
@@ -453,31 +462,31 @@ public class WxController {
         r.put("isExsit", isExsit);
         return r;
     }
-    
+
     @RequestMapping(value = "/customerCommit")
     @ResponseBody
     public R customerCommit(String phone, String yzm, HttpServletRequest request, String openId) {
         R r = new R();
         boolean pass = false;
         boolean isExsit = false;
-        if(StringUtils.isBlank(openId)) {
-        	isExsit = true;
-        }else {
-          String sessionYzm = ShiroUtils.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
+        if (StringUtils.isBlank(openId)) {
+            isExsit = true;
+        } else {
+            String sessionYzm = ShiroUtils.getKaptcha(Constants.KAPTCHA_SESSION_KEY);
             if (sessionYzm.equals(yzm)) {
                 pass = true;
 //                request.getSession().removeAttribute(phone); //移除session
-              //更新用户数据,更新手机号
+                //更新用户数据,更新手机号
                 WxUserEntity wxUserEntity = getWxUserInfo(openId);
-                if(null == wxUserEntity) {
-                	isExsit = true;
-                }else {
-                	wxUserEntity.setPhone(phone);
+                if (null == wxUserEntity) {
+                    isExsit = true;
+                } else {
+                    wxUserEntity.setPhone(phone);
                     List<DictionaryEntity> list = dictionaryService.getInfoListLikeCode("input");
                     for (int i = 0; i < list.size(); i++) {
-                    	String value = request.getParameter(list.get(i).getCode());
-                    	setWxData(i,value,wxUserEntity);
-        			}
+                        String value = request.getParameter(list.get(i).getCode());
+                        setWxData(i, value, wxUserEntity);
+                    }
                     wxUserService.updateById(wxUserEntity);
                 }
             }
@@ -486,20 +495,25 @@ public class WxController {
         r.put("isExsit", isExsit);
         return r;
     }
-    
-    private void setWxData(int i,String value,WxUserEntity wxUserEntity) {
-    	switch(i) {
-    		case 0:
-    			wxUserEntity.setRemark(value); break;
-    		case 1:
-    			wxUserEntity.setRemark2(value); break;
-    		case 2:
-    			wxUserEntity.setRemark3(value); break;
-    		case 3:
-    			wxUserEntity.setRemark4(value); break;
-    		case 4:
-    			wxUserEntity.setRemark5(value); break;
-    	}
+
+    private void setWxData(int i, String value, WxUserEntity wxUserEntity) {
+        switch (i) {
+            case 0:
+                wxUserEntity.setRemark(value);
+                break;
+            case 1:
+                wxUserEntity.setRemark2(value);
+                break;
+            case 2:
+                wxUserEntity.setRemark3(value);
+                break;
+            case 3:
+                wxUserEntity.setRemark4(value);
+                break;
+            case 4:
+                wxUserEntity.setRemark5(value);
+                break;
+        }
     }
 
     public boolean JudgeIsMoblie(HttpServletRequest request) {
@@ -529,10 +543,9 @@ public class WxController {
         }
         return isMoblie;
     }
-    
-    
+
+
     /**
-     * 
      * @return
      */
     @RequestMapping(value = "/getInputList")
