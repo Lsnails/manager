@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.base.common.utils.Constant;
 import com.base.common.utils.Query;
 import com.base.modules.business.system.activityinfo.dao.ActivityinfoDao;
 import com.base.modules.business.system.activityinfo.entity.ActivityinfoEntity;
 import com.base.modules.business.system.activityinfo.service.ActivityinfoService;
+import com.base.modules.sys.entity.SysUserEntity;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,10 @@ public class ActivityinfoServiceImpl extends ServiceImpl<ActivityinfoDao, Activi
     @Override
     public Page<ActivityinfoEntity> queryPage(Map<String, Object> params,ActivityinfoEntity activityinfo) {
     	EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper<ActivityinfoEntity>();
+        Long userId = ((SysUserEntity) SecurityUtils.getSubject().getPrincipal()).getUserId();
+        if(userId != Constant.SUPER_ADMIN){
+            entityWrapper.eq("createby",userId);
+        }
     	entityWrapper.orderBy("createtime desc");
     	if(activityinfo!=null) {
     		if(StringUtils.isNotBlank(activityinfo.getName())) {

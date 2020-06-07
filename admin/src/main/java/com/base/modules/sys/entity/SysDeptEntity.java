@@ -55,6 +55,8 @@ public class SysDeptEntity implements Serializable {
 	@TableField(exist=false)
 	private List<?> list;
 
+	private  String createBy;
+
 
 	public void setDeptId(Long deptId) {
 		this.deptId = deptId;
@@ -193,7 +195,13 @@ public class SysDeptEntity implements Serializable {
 	public void setNumber(int number) {
 		this.number = number;
 	}
-	
-	
-	
+
+
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
 }

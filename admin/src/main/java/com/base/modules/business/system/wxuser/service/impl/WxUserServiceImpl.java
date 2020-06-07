@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.base.common.utils.Constant;
 import com.base.common.utils.Query;
 import com.base.modules.business.system.wxuser.dao.WxUserDao;
 import com.base.modules.business.system.wxuser.entity.WxUserEntity;
 import com.base.modules.business.system.wxuser.service.WxUserService;
+import com.base.modules.sys.entity.SysUserEntity;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -40,6 +43,10 @@ public class WxUserServiceImpl extends ServiceImpl<WxUserDao, WxUserEntity> impl
     			entityWrapper.eq("wd_code", wxUser.getWdCode());
     		}
     	}
+		Long userId = ((SysUserEntity) SecurityUtils.getSubject().getPrincipal()).getUserId();
+		if(userId != Constant.SUPER_ADMIN){
+			entityWrapper.eq("create_by",userId);
+		}
         Page<WxUserEntity> page = this.selectPage(
                 new Query<WxUserEntity>(params).getPage(),
                 entityWrapper

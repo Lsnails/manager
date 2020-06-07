@@ -1,6 +1,7 @@
 package com.base.modules.sys.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.base.common.annotation.DataFilter;
 import com.base.common.utils.Constant;
@@ -17,6 +18,7 @@ import com.base.modules.sys.service.SysUserRoleService;
 import com.base.modules.sys.service.SysUserService;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -48,8 +50,13 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 	@Override
 	@DataFilter(subDept = true, user = false)
 	public List<SysDeptEntity> queryList(Map<String, Object> params){
+		Wrapper<SysDeptEntity> wrapper = new EntityWrapper<SysDeptEntity>().orderBy("orderNum desc");
+		Long userId = ((SysUserEntity) SecurityUtils.getSubject().getPrincipal()).getUserId();
+//		if(userId != Constant.SUPER_ADMIN){
+//			wrapper.eq("create_by",userId);
+//		}
 		List<SysDeptEntity> deptList =
-			this.selectList(new EntityWrapper<SysDeptEntity>().orderBy("orderNum desc")
+			this.selectList(wrapper
 			.addFilterIfNeed(params.get(Constant.SQL_FILTER) != null && !" ()".equals(params.get(Constant.SQL_FILTER)), (String)params.get(Constant.SQL_FILTER)));
 
 		for(SysDeptEntity sysDeptEntity : deptList){

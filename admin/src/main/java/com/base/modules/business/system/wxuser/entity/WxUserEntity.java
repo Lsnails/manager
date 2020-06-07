@@ -71,6 +71,7 @@ public class WxUserEntity implements Serializable {
 	private String remark3;
 	private String remark4;
 	private String remark5;
+	private String createBy;
 
 	/**
 	 * 网点code 手填
@@ -249,5 +250,12 @@ public class WxUserEntity implements Serializable {
 	public void setRemark5(String remark5) {
 		this.remark5 = remark5;
 	}
-	
+
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
 }

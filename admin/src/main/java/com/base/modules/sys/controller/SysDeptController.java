@@ -124,8 +124,9 @@ public class SysDeptController extends AbstractController {
 	@RequestMapping("/save")
 	@RequiresPermissions("sys:dept:save")
 	public R save(@RequestBody SysDeptEntity dept){
+		dept.setCreateBy(this.getUserId()+"");
 		sysDeptService.insert(dept);
-		
+
 		return R.ok();
 	}
 	

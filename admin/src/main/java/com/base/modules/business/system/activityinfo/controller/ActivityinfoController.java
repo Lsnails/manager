@@ -82,7 +82,7 @@ public class ActivityinfoController extends AbstractController{
     	String uuId = UUIDUtils.getRandomUUID();
     	activityinfo.setActivityinfoId(uuId);
     	activityinfo.setCreatetime(new Date());
-    	activityinfo.setCreateby(this.getUsername());
+    	activityinfo.setCreateby(this.getUserId()+"");
     	activityinfo.setLastmodifyby(this.getUsername());
     	activityinfo.setLastmodifytime(new Date());
         activityinfoService.insert(activityinfo);
@@ -103,6 +103,7 @@ public class ActivityinfoController extends AbstractController{
         //修改状态为1启动时候，将其他的活动置为0（关闭）
         if("1".equals(status)) {
         	EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper<ActivityinfoEntity>();
+            entityWrapper.eq("createby",this.getUserId()+"");
         	ActivityinfoEntity entity =new ActivityinfoEntity();
         	entity.setStatus("0");
         	activityinfoService.update(entity, entityWrapper);
@@ -123,6 +124,7 @@ public class ActivityinfoController extends AbstractController{
         //修改状态为1启动时候，将其他的活动置为0（关闭）
         if("1".equals(status)) {
         	EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper<ActivityinfoEntity>();
+            entityWrapper.eq("createby",this.getUserId()+"");
         	ActivityinfoEntity entity =new ActivityinfoEntity();
         	entity.setStatus("0");
         	activityinfoService.update(entity, entityWrapper);
