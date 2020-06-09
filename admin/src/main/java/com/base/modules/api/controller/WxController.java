@@ -84,6 +84,12 @@ public class WxController {
         return "cWjF0KqOz7Y4hKc2";
     }
 
+    @GetMapping(value = "/MP_verify_0dMvLgMEHKVcs2y7.txt")
+    @ResponseBody
+    public String txConfig1() {
+        return "0dMvLgMEHKVcs2y7";
+    }
+
     @GetMapping(value = "/wxLogin")
     public String get(String scope, String number, HttpServletResponse response) throws IOException {
         String enUrl = MessageFormat.format(wx_redirect_url, number);
