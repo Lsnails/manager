@@ -161,7 +161,7 @@ public class WxController {
         System.err.println("特权:" + userInfo.getString("privilege"));
         System.err.println("unionid:" + userInfo.getString("unionid"));*/
         redirectAttributes.addFlashAttribute("openId", openid);//  openId 页面上获取
-        redirectInfo(redirectAttributes, openid);
+        redirectInfo(redirectAttributes, openid ,number);
         String x = (String) redirectAttributes.getFlashAttributes().get("isNew"); // 是否为新用户  0 新 1老
         String o = (String) redirectAttributes.getFlashAttributes().get("over"); // 0 没有一个进行中的活动
         String type = (String) redirectAttributes.getFlashAttributes().get("type"); // 1 直接获取 2 通过手机号 3 自定义获取
@@ -204,8 +204,8 @@ public class WxController {
      * @param redirectAttributes
      * @param openid
      */
-    private void redirectInfo(RedirectAttributes redirectAttributes, String openid) {
-        WxUserEntity wxUser = getWxUserEntity(openid, redirectAttributes);
+    private void redirectInfo(RedirectAttributes redirectAttributes, String openid , String number) {
+        WxUserEntity wxUser = getWxUserEntity(openid, redirectAttributes , number);
         if (wxUser != null) {
             WxEntityVo wxEntityVo = new WxEntityVo();
             wxEntityVo.setWxUserEntity(wxUser);
@@ -232,14 +232,14 @@ public class WxController {
      * @param openid
      * @return
      */
-    private WxUserEntity getWxUserEntity(String openid, RedirectAttributes redirectAttributes) {
+    private WxUserEntity getWxUserEntity(String openid, RedirectAttributes redirectAttributes,String number) {
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
         if (null != activityinfoEntity) {
             WxUserEntity entity = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
             if (null == entity) {
-                setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName());
+                setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName() , number);
                 redirectAttributes.addFlashAttribute("isNew", "0");
             } else {
                 redirectAttributes.addFlashAttribute("isNew", "1");
@@ -301,11 +301,11 @@ public class WxController {
 
     @GetMapping("/index")
     public String redirectIndex(String openId, RedirectAttributes redirectAttributes) {
-        redirectInfo(redirectAttributes, openId);
+        redirectInfo(redirectAttributes, openId , "");
         return returnUrl("0");
     }
 
-    private void setWxUser(String openId, String activityId, String activityName) {
+    private void setWxUser(String openId, String activityId, String activityName , String number) {
         EntityWrapper<WxUserEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("open_id", openId);
         entityWrapper.eq("activity_id", activityId);
@@ -323,6 +323,7 @@ public class WxController {
             wxUserEntity.setNetworkName(qrCode.getName());
             wxUserEntity.setId(UUIDUtils.getRandomUUID());
             wxUserEntity.setState(0);
+            wxUserEntity.setCreateBy(number);
             wxUserService.insert(wxUserEntity);
         }
     }
