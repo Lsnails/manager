@@ -34,19 +34,19 @@ import java.util.Map;
 @Service("sysDeptService")
 @Transactional(rollbackFor = {Throwable.class}, propagation = Propagation.REQUIRED)
 public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> implements SysDeptService {
-	
+
 	@Autowired
 	private SysRoleDeptService sysRoleDeptService;
-	
+
 	@Autowired
 	private SysUserService sysUserService;
-	
+
 	@Autowired
 	private SysUserRoleService sysUserRoleService;
-	
+
 	@Autowired
 	private SysRoleService sysRoleService;
-	
+
 	@Override
 	@DataFilter(subDept = true, user = false)
 	public List<SysDeptEntity> queryList(Map<String, Object> params){
@@ -71,11 +71,12 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 	}
 
 	@Override
-	public List<SysDeptEntity> getList() {
+	public List<SysDeptEntity> getList(String number) {
 //		Long queryNumber = baseMapper.queryNumber();
 		EntityWrapper<SysDeptEntity> entityWrapper = new EntityWrapper<SysDeptEntity>();
 		entityWrapper.eq("del_flag", 0);
 //		entityWrapper.eq("number", queryNumber);
+		entityWrapper.eq("create_by",number);
         List<SysDeptEntity> sysDeptEntities = this.selectList(entityWrapper);
         return sysDeptEntities;
 	}
@@ -146,7 +147,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 		EntityWrapper<SysUserEntity> userWrapper = new EntityWrapper<SysUserEntity>();
 		userWrapper.eq("dept_id", deptId);
 		sysUserService.update(user, userWrapper);
-		
+
 		//5.解除角色表中的部门id关系
 		SysRoleEntity role =new SysRoleEntity();
 		EntityWrapper<SysRoleEntity> roleWrapper = new EntityWrapper<SysRoleEntity>();
@@ -156,9 +157,9 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
 	}
 
 	@Override
-	public SysDeptEntity getQrCode() {
+	public SysDeptEntity getQrCode(String number) {
 		long now = DateUtils.dateToLong(new Date(), "HH:mm:ss");//取当前的时分秒
-        List<SysDeptEntity> list = this.getList();
+        List<SysDeptEntity> list = this.getList(number);
         SysDeptEntity rBean = null;
         for (SysDeptEntity entity : list) {
             String showTime = entity.getShowTime();

@@ -50,11 +50,13 @@ public class ActivityinfoServiceImpl extends ServiceImpl<ActivityinfoDao, Activi
      */
     @Override
     public List<ActivityinfoEntity> getListByStates() {
+        Long userId = ((SysUserEntity) SecurityUtils.getSubject().getPrincipal()).getUserId();
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper<ActivityinfoEntity>();
         entityWrapper.eq("status",1);
+        entityWrapper.eq("create_by",userId);
         return this.selectList(entityWrapper);
     }
-    
+
     @Override
     public ActivityinfoEntity selectOne(Wrapper<ActivityinfoEntity> wrapper) {
     	// TODO Auto-generated method stub

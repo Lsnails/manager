@@ -235,6 +235,7 @@ public class WxController {
     private WxUserEntity getWxUserEntity(String openid, RedirectAttributes redirectAttributes,String number) {
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
+        entityWrapper.eq("create_by", number);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
         if (null != activityinfoEntity) {
             WxUserEntity entity = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
@@ -310,7 +311,7 @@ public class WxController {
         entityWrapper.eq("open_id", openId);
         entityWrapper.eq("activity_id", activityId);
         WxUserEntity wxUserEntity = wxUserService.selectOne(entityWrapper);
-        SysDeptEntity qrCode = sysDeptService.getQrCode();
+        SysDeptEntity qrCode = sysDeptService.getQrCode(number);
         //只有当用户不存在的时候,才存入用户数据
         if (wxUserEntity == null) {
             wxUserEntity = new WxUserEntity();

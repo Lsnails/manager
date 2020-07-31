@@ -15,7 +15,7 @@ public interface SysDeptService extends IService<SysDeptEntity> {
 
 	List<SysDeptEntity> queryList(Map<String, Object> map);
 
-	List<SysDeptEntity> getList();
+	List<SysDeptEntity> getList(String number);
 
 	/**
 	 * 查询子部门ID列表
@@ -36,14 +36,14 @@ public interface SysDeptService extends IService<SysDeptEntity> {
 	SysDeptEntity getWdInfo(String id);
 
 	/**
-	 * 1.删除部门 
+	 * 1.删除部门
 	 * 2.删除部门和角色关系
 	 * 3.解除用户和部门的关系
 	 * 4.删除用户和此部门下角色的关系
 	 * @param deptId
 	 */
 	void deleteDeptAndRelatedInfo(Long deptId);
-	
-	SysDeptEntity getQrCode();
+
+	SysDeptEntity getQrCode(String number);
 
 }
