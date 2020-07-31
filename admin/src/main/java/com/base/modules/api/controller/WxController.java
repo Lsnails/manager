@@ -235,7 +235,7 @@ public class WxController {
     private WxUserEntity getWxUserEntity(String openid, RedirectAttributes redirectAttributes,String number) {
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper();
         entityWrapper.eq("status", 1);
-        entityWrapper.eq("create_by", number);
+        entityWrapper.eq("createby", number);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
         if (null != activityinfoEntity) {
             WxUserEntity entity = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());

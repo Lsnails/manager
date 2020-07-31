@@ -53,7 +53,7 @@ public class ActivityinfoServiceImpl extends ServiceImpl<ActivityinfoDao, Activi
         Long userId = ((SysUserEntity) SecurityUtils.getSubject().getPrincipal()).getUserId();
         EntityWrapper<ActivityinfoEntity> entityWrapper = new EntityWrapper<ActivityinfoEntity>();
         entityWrapper.eq("status",1);
-        entityWrapper.eq("create_by",userId);
+        entityWrapper.eq("createby",userId);
         return this.selectList(entityWrapper);
     }
 
