@@ -1,9 +1,11 @@
 package com.base.modules.business.system.activityinfo.entity;
 
 
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,6 +18,7 @@ import java.util.Date;
  * @date 2019-10-15 15:48:42
  */
 @TableName("biz_activityinfo")
+@Data
 public class ActivityinfoEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/**业务字段，即非数据库字段，使用此注释 @TableField(exist=false)*/
@@ -68,6 +71,18 @@ public class ActivityinfoEntity implements Serializable {
 	 * 最新修改时间
 	 */
 	private Date lastmodifytime;
+	private Integer number;
+	@TableField(exist=false)
+	private Integer snumber;
+
+	public Integer getSnumber() {
+		return snumber;
+	}
+
+	public void setSnumber(Integer snumber) {
+		this.snumber = snumber;
+	}
+
 
 	/**
 	 * 设置：

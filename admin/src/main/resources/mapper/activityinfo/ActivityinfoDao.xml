@@ -17,7 +17,12 @@
         <result property="createtime" column="createtime"/>
         <result property="lastmodifyby" column="lastmodifyby"/>
         <result property="lastmodifytime" column="lastmodifytime"/>
+        <result property="number" column="number"/>
     </resultMap>
 
+    <select id="countNum"  resultType="java.lang.Integer">
+        select sum(number) as total from sys_dept t
+        where t.create_by=#{createBy}
+    </select>
 
 </mapper>

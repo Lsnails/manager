@@ -140,12 +140,13 @@ var vm = new Vue({
             })
         },
         add: function(){
+            debugger
             vm.showList = false;
             vm.title = "新增";
             vm.image = "";
             vm.imgFlag =false;
             vm.dept.showTime='';
-            $("#showTime").val("");
+            $("#showTime").val("00:00:00 - 23:59:59");
             $('#qrcodeimg').removeAttr("src");
             vm.dept = {parentName:'',parentId:"0",orderNum:0,qrcodetitle:'',qrcodeurl:'',showTime:''};
             vm.getDept();

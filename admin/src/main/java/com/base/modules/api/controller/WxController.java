@@ -238,6 +238,12 @@ public class WxController {
         entityWrapper.eq("createby", number);
         ActivityinfoEntity activityinfoEntity = activityinfoService.selectOne(entityWrapper);
         if (null != activityinfoEntity) {
+            if(activityinfoEntity.getSnumber() >= activityinfoEntity.getNumber()){
+                //禁用活动
+                activityinfoEntity.setStatus("0");
+                activityinfoService.updateAllColumnById(activityinfoEntity);
+                return null;
+            }
             WxUserEntity entity = wxUserService.getUserInfo(openid, activityinfoEntity.getActivityinfoId());
             if (null == entity) {
                 setWxUser(openid, activityinfoEntity.getActivityinfoId(), activityinfoEntity.getName() , number);

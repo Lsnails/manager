@@ -41,6 +41,14 @@ public class ActivityinfoServiceImpl extends ServiceImpl<ActivityinfoDao, Activi
                 new Query<ActivityinfoEntity>(params).getPage(),
                 entityWrapper
         );
+        List<ActivityinfoEntity> records = page.getRecords();
+        if(records!=null && !records.isEmpty()){
+            for (ActivityinfoEntity entity:records ) {
+                String createby = entity.getCreateby();
+                int total = baseMapper.countNum(createby);
+                entity.setSnumber(total);
+            }
+        }
 
         return page;
     }
@@ -61,6 +69,11 @@ public class ActivityinfoServiceImpl extends ServiceImpl<ActivityinfoDao, Activi
     public ActivityinfoEntity selectOne(Wrapper<ActivityinfoEntity> wrapper) {
     	// TODO Auto-generated method stub
     	ActivityinfoEntity selectOne = super.selectOne(wrapper);
+    	if(selectOne != null){
+            String createby = selectOne.getCreateby();
+            int total = baseMapper.countNum(createby);
+            selectOne.setSnumber(total);
+        }
     	return selectOne;
     }
 

@@ -38,7 +38,9 @@ layui.use(['form','laydate','element','table',],function(){
 					return '其他';
 				}
             }},
-			{ title: '创建时间',field: 'createtime',minWidth: 70}, 
+            { title: '总展示次数',field: 'number',minWidth: 200},
+            { title: '已展示次数',field: 'snumber',minWidth: 200},
+            { title: '创建时间',field: 'createtime',minWidth: 70},
 			{ title: '最新修改时间',field: 'lastmodifytime',minWidth: 70}
 			//{ title:"操作",fixed:'right',toolbar: "#operationBar",width:100}
 		]]
