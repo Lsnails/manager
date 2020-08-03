@@ -165,6 +165,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptDao, SysDeptEntity> i
             String showTime = entity.getShowTime();
             Map<String,Object> obj = new HashMap<String,Object>();
             obj.put("showTime",showTime);
+            obj.put("createBy",number);
             Long queryNumber = baseMapper.queryNumber(obj);
             if (StringUtils.isNotBlank(showTime)) {
                 String[] split = showTime.split(" - ");
