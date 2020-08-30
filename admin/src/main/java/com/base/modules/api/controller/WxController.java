@@ -84,10 +84,10 @@ public class WxController {
         return "cWjF0KqOz7Y4hKc2";
     }
 
-    @GetMapping(value = "/MP_verify_0dMvLgMEHKVcs2y7.txt")
+    @GetMapping(value = "/MP_verify_rO8A7s8Cif9QkRHP.txt")
     @ResponseBody
     public String txConfig1() {
-        return "0dMvLgMEHKVcs2y7";
+        return "rO8A7s8Cif9QkRHP";
     }
 
     @GetMapping(value = "/wxLogin")
